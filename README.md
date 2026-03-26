@@ -1,6 +1,28 @@
-# TCS NQT Exam Platform · 2025–26
+# CodeAssess — Online Assessment Platform
 
-> A full-featured, browser-based coding assessment platform that accurately simulates the TCS National Qualifier Test (NQT) environment — complete with a live Python runtime, auto-graded test cases, countdown timer, and real-time scoring.
+> A professional-grade technical assessment platform for coding challenges with an integrated in-browser Python judge engine. Built with Next.js 16, React 19, and Pyodide WebAssembly.
+
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2-blue?logo=react)](https://reactjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?logo=tailwind-css)](https://tailwindcss.com/)
+[![Pyodide](https://img.shields.io/badge/Pyodide-0.27.3-306998?logo=python)](https://pyodide.org/)
+
+---
+
+## 🎯 Overview
+
+CodeAssess is a modern, client-heavy web application designed to simulate professional coding assessments. Originally built for TCS NQT exam preparation, it features 37 curated programming questions with auto-graded test cases, real-time scoring, and a 90-minute countdown timer.
+
+The platform runs entirely in the browser using Pyodide (CPython compiled to WebAssembly), eliminating the need for backend infrastructure while providing accurate Python 3 code evaluation.
+
+### Key Features
+
+- **37 Curated Questions** — 25 confirmed from previous TCS NQT papers + 12 high-probability predictions
+- **In-Browser Python Execution** — Pyodide WebAssembly runtime (CPython 3.12)
+- **Auto-Graded Test Cases** — Instant feedback with AC/WA/TLE/RE verdicts
+- **Session Persistence** — Auto-save with localStorage recovery on page refresh
+- **Real-Time Scoring** — Best submission tracking per question
+- **Professional UI** — Dark theme with responsive layout, code editor, and results dashboard
 
 ---
 
@@ -9,207 +31,272 @@
 ```
 tcs-nqt-exam/
 │
-├── index.html                    ← Main application entry point (open in browser)
+├── README.md                          # This file
+├── docs/                              # Comprehensive documentation
+│   ├── ARCHITECTURE.md                # System design & component hierarchy
+│   ├── COMPONENTS.md                  # Component catalog with props & features
+│   ├── JUDGE.md                       # Pyodide integration & execution details
+│   ├── SCALING.md                     # Full-stack migration blueprint
+│   ├── PROMPT.md                      # Migration objectives
+│   ├── docx/                          # TCS NQT preparation guides (Word)
+│   └── pdf/                           # TCS NQT preparation guides (PDF)
 │
-├── assets/
-│   ├── css/
-│   │   └── styles.css            ← Full UI stylesheet (dark industrial theme)
-│   │
-│   └── js/
-│       ├── questions.js          ← All 37 questions, test cases & starter code
-│       ├── judge.js              ← Code execution engine (Pyodide/WebAssembly)
-│       └── examEngine.js        ← Exam state, timer, scoring & session manager
+├── legacy/                            # Original vanilla HTML/JS implementation
+│   ├── index.html                     # Single-page app shell
+│   ├── README.md                      # Legacy documentation
+│   └── assets/
+│       ├── css/styles.css             # Dark industrial theme
+│       └── js/
+│           ├── questions.js           # 37 hardcoded questions
+│           ├── judge.js               # Pyodide execution engine
+│           └── examEngine.js          # State, timer, scoring
 │
-└── README.md                     ← This file
+└── web/                               # Modern Next.js 16 application
+    ├── package.json                   # Dependencies
+    ├── next.config.mjs                # Next.js configuration
+    ├── tailwind.config.js             # Tailwind CSS configuration
+    │
+    └── src/
+        ├── app/
+        │   ├── layout.js              # Root layout (fonts, Pyodide script)
+        │   ├── page.js                # Landing page (SSR)
+        │   └── exam/page.js           # Exam IDE (CSR)
+        │
+        ├── components/
+        │   ├── exam/                  # Exam UI components
+        │   └── ui/                    # Reusable UI primitives
+        │
+        ├── context/
+        │   └── ExamContext.js         # State management (useReducer + Context)
+        │
+        ├── hooks/
+        │   ├── usePyodide.js          # Pyodide runtime management
+        │   └── useTimer.js            # Countdown timer
+        │
+        ├── lib/
+        │   ├── api.js                 # Data access abstraction layer
+        │   └── judge.js               # Pyodide execution wrapper
+        │
+        └── data/
+            └── questions.json         # 37 questions with test cases
 ```
 
 ---
 
-## 🧠 Question Bank — 37 Questions
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ and npm/yarn/pnpm
+- Modern browser (Chrome 90+, Firefox 88+, Safari 15+, Edge 90+)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd tcs-nqt-exam
+
+# Navigate to the Next.js app
+cd web
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Production Build
+
+```bash
+npm run build
+npm start
+```
+
+### Legacy Version
+
+For the original vanilla JavaScript implementation:
+
+```bash
+# Navigate to legacy folder
+cd legacy
+
+# Serve with any HTTP server
+python3 -m http.server 8080
+# or
+npx serve .
+```
+
+Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+---
+
+## 🧠 Question Bank
 
 ### Section A — Confirmed from Previous Papers (Q1–Q25)
 
-| # | Title | Topic | Difficulty |
-|---|-------|-------|-----------|
-| 1 | Chocolate Packets — Move Zeros to End | Arrays / Two Pointer | Easy |
-| 2 | Second Largest Element | Arrays / Linear Scan | Easy |
-| 3 | Sort 0s, 1s and 2s — Color Flag | Arrays / Dutch National Flag | Easy |
-| 4 | Missing Roll Number | Arrays / Math | Easy |
-| 5 | Rotate the Regiment — Array Rotation | Arrays / Reversal Algorithm | Easy |
-| 6 | Split Array with Equal Averages | Arrays / Prefix Sum | Medium |
-| 7 | Hotel Guest Counter — Peak Occupancy | Arrays / Greedy / Sorting | Medium |
-| 8 | Palindrome Password Check | Strings / Two Pointer | Easy |
-| 9 | Anagram Detector | Strings / Frequency Map | Easy |
-| 10 | First Non-Repeating Character | Strings / HashMap | Easy |
-| 11 | Curtain Color Chunks — Max 'a' Count | Strings / Substring | Easy |
-| 12 | Reverse the Sentence | Strings / Manipulation | Easy |
-| 13 | Count Palindrome Numbers in Range | Strings / Number Conversion | Easy |
-| 14 | Fibonacci Sequence — Nth Term | Math / Recursion / DP | Easy |
-| 15 | Prime Number Check | Math / Number Theory | Easy |
-| 16 | Factorial of a Number | Math / Iteration | Easy |
-| 17 | Binary Search | Arrays / Binary Search | Easy |
-| 18 | Pattern Printing — Right Triangle | Loops / Pattern | Easy |
-| 19 | Linked List Reversal (Array Simulation) | Linked List / Simulation | Easy |
-| 20 | Stack Push-Pop Simulation | Stack / Simulation | Easy |
-| 21 | Sum of Digits | Math / Number Theory | Easy |
-| 22 | Jump Game — Reach the Last Pad | Arrays / Greedy | Medium |
-| 23 | Inventory Manager — Word Frequency | HashMap / Strings | Easy |
-| 24 | Weekly Exercise Tracker | Arrays / Floating Point | Easy |
-| 25 | All Permutations of a String | Recursion / Backtracking | Medium |
+Topics include:
+- Arrays (Move Zeros, Second Largest, Dutch National Flag, Array Rotation)
+- Strings (Palindrome Check, Anagram Detection, First Non-Repeating Character)
+- Math (Fibonacci, Prime Check, Factorial, Sum of Digits)
+- Data Structures (Binary Search, Stack Simulation, Linked List Reversal)
+- Algorithms (Jump Game, Permutations, Frequency Counter)
 
 ### Section B — Predicted High-Probability Topics (Q26–Q37)
 
-| # | Title | Topic | Difficulty |
-|---|-------|-------|-----------|
-| 26 | Sliding Window Maximum | Arrays / Deque / Sliding Window | Medium |
-| 27 | Detect Cycle in Linked List | Linked List / Floyd's Algorithm | Medium |
-| 28 | Longest Common Subsequence | Dynamic Programming | Medium |
-| 29 | Caesar Cipher Encryption | Strings / ASCII Arithmetic | Easy |
-| 30 | Matrix Spiral Traversal | 2D Arrays / Simulation | Medium |
-| 31 | Trapping Rain Water | Arrays / Two Pointer | Medium |
-| 32 | Maximum Subarray Sum — Kadane's Algorithm | Arrays / Greedy / DP | Easy-Medium |
-| 33 | Valid Parentheses / Balanced Brackets | Stack / String | Easy |
-| 34 | GCD of Array Elements | Math / Euclidean Algorithm | Easy |
-| 35 | Coin Change — Minimum Coins | Dynamic Programming | Medium |
-| 36 | Bubble Sort — Descending Order | Sorting / Implementation | Easy |
-| 37 | BFS — Minimum Steps in Grid | Graphs / Breadth-First Search | Medium |
+Topics include:
+- Advanced Arrays (Sliding Window Maximum, Trapping Rain Water, Kadane's Algorithm)
+- Dynamic Programming (Longest Common Subsequence, Coin Change)
+- Graphs (BFS — Minimum Steps in Grid)
+- Strings (Caesar Cipher, Valid Parentheses)
+- 2D Arrays (Matrix Spiral Traversal)
+- Sorting (Bubble Sort)
+
+**Difficulty Distribution:**
+- Easy: 22 questions
+- Medium: 14 questions
+- Hard: 1 question
 
 ---
 
-## 🚀 How to Use
+## 🏗️ Architecture
 
-### Option 1 — Open directly (recommended)
+### Current Architecture (Client-Side)
 
-Double-click `index.html` to open it in any modern browser.
-
-> **Note:** Some browsers restrict WebAssembly from `file://` origins.  
-> If Pyodide fails to load, use Option 2.
-
-### Option 2 — Local HTTP server
-
-```bash
-# Python 3
-cd tcs-nqt-exam/
-python3 -m http.server 8080
-
-# Node.js (npx)
-npx serve .
-
-# VS Code
-# Install "Live Server" extension → Right-click index.html → Open with Live Server
+```
+┌──────────────────────────────────────────────────────────────┐
+│                        Browser                               │
+│                                                              │
+│  ┌──────────────┐    ┌──────────────────────────────────┐    │
+│  │  Landing     │    │         Exam IDE                 │    │
+│  │  Page (SSR)  │───>│  ┌────────────────────────────┐  │    │
+│  │  /           │    │  │     ExamContext            │  │    │
+│  └──────────────┘    │  │  (useReducer + Context)    │  │    │
+│                      │  │  ┌─────┐ ┌──────┐ ┌──────┐ │  │    │
+│                      │  │  │State│ │Drafts│ │Submit│ │  │    │
+│                      │  │  └──┬──┘ └───┬──┘ └───┬──┘ │  │    │
+│                      │  └─────┼────────┼────────┼────┘  │    │
+│                      │        │        │        │       │    │
+│                      │  ┌─────▼────────▼────────▼────┐  │    │
+│                      │  │     localStorage           │  │    │
+│                      │  │     (session persistence)  │  │    │
+│                      │  └────────────────────────────┘  │    │
+│                      │                                  │    │
+│                      │  ┌────────────────────────────┐  │    │
+│                      │  │  Pyodide (WASM Python)     │  │    │
+│                      │  │  - Code execution          │  │    │
+│                      │  │  - TLE detection           │  │    │
+│                      │  │  - Output normalization    │  │    │
+│                      │  └────────────────────────────┘  │    │
+│                      └──────────────────────────────────┘    │
+│                                                              │
+│  ┌────────────────────────────────────────────────────┐      │
+│  │              questions.json (static data)          │      │
+│  └────────────────────────────────────────────────────┘      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-Then navigate to `http://localhost:8080` in your browser.
+### Component Hierarchy
 
-### Browser requirements
+```
+RootLayout
+├── LandingPage (Server Component)
+│   ├── Hero section
+│   ├── Stats grid
+│   └── Feature cards
+│
+└── ExamPage (Client Component)
+    └── ExamProvider (Context)
+        └── ExamShell (orchestrator)
+            ├── Header (timer, score, question counter)
+            ├── Sidebar (question list with status dots)
+            ├── ProblemPanel (problem description, test cases)
+            ├── CodePanel (React CodeMirror editor)
+            ├── OutputPanel (test results, console, custom input)
+            ├── ResultsScreen (final score breakdown)
+            ├── Modal (End Exam, Reset Code)
+            └── Toast (notifications)
+```
 
-| Browser | Minimum Version |
-|---------|----------------|
-| Chrome / Chromium | 90+ |
-| Firefox | 88+ |
-| Safari | 15+ |
-| Edge | 90+ |
+### State Management
 
----
-
-## 🔧 Architecture & File Descriptions
-
-### `index.html`
-
-The single-page application shell. Contains:
-- **Startup screen** — exam info, begin button
-- **Header** — live timer, total score, question counter
-- **Sidebar** — navigable question list with status indicators
-- **Problem panel** — scenario, statement, constraints, sample I/O, hints
-- **Code panel** — CodeMirror editor with Python syntax highlighting
-- **Output panel** — test results, console output, custom input runner
-- **Results screen** — final score breakdown table
-- **Inline main controller** — wires all UI events, delegates to engine modules
-
-### `assets/js/questions.js`
-
-Defines the `QUESTIONS` array — an array of 37 question objects.
-
-Each question object has:
-
+**State Shape:**
 ```javascript
 {
-  id:           Number,          // 1–37
-  title:        String,
-  section:      'A' | 'B',
-  topic:        String,
-  difficulty:   'Easy' | 'Medium' | 'Hard',
-  maxScore:     Number,          // always 100
-  scenario:     String,          // real-world story
-  statement:    String,          // formal problem statement
-  constraints:  String[],        // constraint list
-  inputFormat:  String,
-  outputFormat: String,
-  sampleCases:  Array<{ input, output, explanation? }>,  // visible to candidate
-  hiddenCases:  Array<{ input, output }>,                 // used only on Submit
-  hint:         String,
-  starterCode:  String,          // pre-filled Python 3 template
+  status: 'idle' | 'active' | 'finished',
+  startTime: ISO string | null,
+  currentQuestionIndex: number,
+  questions: Question[],
+  submissions: { [questionId]: Submission },
+  drafts: { [questionId]: string },
+  totalDuration: number (seconds),
 }
 ```
 
-### `assets/js/judge.js`
+**Key Actions:**
+- `LOAD_QUESTIONS` — Populate questions array
+- `START_EXAM` — Set active, record startTime
+- `FINISH_EXAM` — Set finished
+- `SET_QUESTION` — Update currentQuestionIndex
+- `SAVE_DRAFT` — Persist code string
+- `RECORD_SUBMISSION` — Store best submission
+- `RESTORE_SESSION` — Load from localStorage
+- `CLEAR_SESSION` — Reset all state
 
-Executes Python code in the browser using **Pyodide** (CPython compiled to WebAssembly).
+---
 
-Key functions:
+## 🐍 Python Runtime
 
-| Function | Description |
-|----------|-------------|
-| `Judge.loadPyodide()` | Downloads and initialises the Pyodide runtime (~10 MB, cached after first load) |
-| `Judge.runSampleCases(code, question, onProgress)` | Runs only the visible sample cases |
-| `Judge.runAllCases(code, question, onProgress)` | Runs all sample + hidden cases (used on Submit) |
-| `Judge.runTestCase(code, input, expected, timeoutMs)` | Runs a single case, returns `{ passed, status, actual, expected, error }` |
+### Pyodide Integration
 
-**Execution harness** (injected into Pyodide once):
-- Replaces `sys.stdin` with `StringIO(test_input)` so `input()` reads from the test case
-- Captures `sys.stdout` to compare with expected output
-- Catches `Exception` and `SystemExit`; returns a structured result
-- Each test case has an **8-second timeout** (`Promise.race` with `setTimeout`)
+| Property | Value |
+|----------|-------|
+| Runtime | Pyodide 0.27.3 (CPython 3.12) |
+| Delivery | WebAssembly via CDN (cdn.jsdelivr.net) |
+| Available stdlib | Full Python standard library |
+| Per-case timeout | 8 seconds |
+| Execution | Browser-side, no server needed |
 
-**Verdict codes:**
+### Execution Flow
 
-| Code | Meaning |
-|------|---------|
-| `AC` | Accepted — output matches expected |
-| `WA` | Wrong Answer — output doesn't match |
-| `TLE` | Time Limit Exceeded — took > 8 seconds |
-| `RE` | Runtime Error — Python exception thrown |
+1. **Loading Phase**
+   - Next.js loads Pyodide script via `<Script>` tag (afterInteractive)
+   - `usePyodide` hook polls for `window.loadPyodide`
+   - Initializes runtime (~10-15 MB WASM download, cached)
+   - Installs Python execution harness (`_run_user_code`)
 
-### `assets/js/examEngine.js`
+2. **Test Case Execution**
+   - For each test case: `Promise.race([execution, 8s timeout])`
+   - Redirects `sys.stdin` to test input
+   - Captures `sys.stdout` for comparison
+   - Handles exceptions and `SystemExit` gracefully
 
-Manages all exam state and lifecycle.
+3. **Output Normalization**
+   - Trim trailing spaces per line
+   - Strip leading/trailing blank lines
+   - Compare normalized actual vs expected
 
-| Method / Property | Description |
-|-------------------|-------------|
-| `startExam()` | Sets `startTime`, begins countdown |
-| `resumeExam()` | Resumes from `localStorage` if session exists |
-| `finishExam()` | Stops timer, marks exam done |
-| `clearSession()` | Resets state, clears `localStorage` |
-| `setQuestion(idx)` | Changes current question index |
-| `saveDraft(qId, code)` | Auto-saves editor content |
-| `getDraft(qId, fallback)` | Retrieves saved draft or starter code |
-| `recordSubmission(qId, code, judgeResult)` | Stores best submission per question |
-| `getTotalScore()` | Sum of best scores across all submissions |
-| `getSummary()` | Full breakdown for results screen |
-| `formatTime(seconds)` | `mm:ss` or `h:mm:ss` string |
-| `onTick` | Setter for per-second timer callback |
-| `onTimeUp` | Setter for time-expiry callback |
+4. **Verdict Types**
 
-**Persistence:** Session state is serialised to `localStorage` under the key `tcs_nqt_session` every second, so refreshing the page doesn't lose progress.
+| Verdict | Condition | Color |
+|---------|-----------|-------|
+| **AC** | Output matches expected | Green ✓ |
+| **WA** | Output doesn't match | Red ✗ |
+| **TLE** | Execution > 8 seconds | Yellow ⏱ |
+| **RE** | Python exception thrown | Orange ⚠ |
 
-### `assets/css/styles.css`
+### Scoring
 
-Industrial-precision dark theme with:
-- **Palette:** deep navy background, electric blue accents, cyan highlights
-- **Typography:** Sora (headings), JetBrains Mono (code/numbers)
-- **Components:** sidebar, code panel, output tabs, test result rows, results screen
-- **Animations:** spinner, pulse, blink (timer warning), fade-in
-- **Responsive:** two-column layout collapses on narrower viewports
+```javascript
+score = Math.round((passed / total) × question.maxScore)
+```
+
+- **Run Samples**: Runs only visible sample cases (no scoring)
+- **Submit**: Runs all cases (sample + hidden), calculates score
+- **Best submission**: Only recorded if `newScore >= existingScore`
 
 ---
 
@@ -224,115 +311,135 @@ Industrial-precision dark theme with:
 
 ---
 
-## 🏆 Scoring System
+## 🎨 Tech Stack
 
-- Each question is worth **100 points** → maximum total = **3700 points**
-- Score per question = `round((cases_passed / total_cases) × 100)`
-- Hidden test cases are only evaluated on **Submit** (not on "Run Samples")
-- The **best submission** per question is retained
-- Sample cases: 2 visible per question
-- Hidden cases: 4–6 per question (edge cases, large inputs, boundary values)
-
----
-
-## 🐍 Python Runtime Details
-
-| Property | Value |
-|----------|-------|
-| Runtime | Pyodide 0.27.3 (CPython 3.12) |
-| Delivery | WebAssembly via CDN (`cdn.jsdelivr.net`) |
-| Available stdlib | Full Python standard library |
-| Available packages | Base Pyodide packages (no pip install needed for standard solutions) |
-| I/O method | `sys.stdin` replaced with `StringIO`; stdout captured |
-| Per-case timeout | 8 seconds |
-
-Standard library modules that work out of the box:
-`sys`, `io`, `math`, `collections`, `itertools`, `functools`, `heapq`, `bisect`, `re`, `string`, `copy`
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| **Frontend Framework** | Next.js | 16.2.1 | App Router, SSR, API routes |
+| **UI Library** | React | 19.2.4 | Component-based UI |
+| **Styling** | Tailwind CSS | 4.0 | Utility-first CSS framework |
+| **Code Editor** | @uiw/react-codemirror | 4.25.9 | Python syntax highlighting |
+| **Python Runtime** | Pyodide | 0.27.3 | WebAssembly CPython 3.12 |
+| **State Management** | React Context + useReducer | — | Exam state, drafts, submissions |
+| **Fonts** | Google Fonts | — | Sora, Space Grotesk, JetBrains Mono |
+| **Persistence** | localStorage | — | Session recovery |
 
 ---
 
-## 🔄 Test Case Design
+## 📚 Documentation
 
-Each question has:
-- **2 visible sample cases** — exactly matching the TCS NQT paper
-- **4–6 hidden cases** — including:
-  - Edge cases (minimum N, all-same elements, empty/single values)
-  - Large-range boundary values
-  - Cases designed to catch common implementation mistakes
+Comprehensive documentation is available in the `docs/` folder:
 
----
-
-## 🏗️ External Dependencies
-
-All loaded via CDN — no local installation required.
-
-| Library | Version | Purpose |
-|---------|---------|---------|
-| CodeMirror | 5.65.17 | Code editor with Python syntax highlighting |
-| Pyodide | 0.27.3 | WebAssembly Python runtime |
-| Google Fonts | – | Sora + JetBrains Mono typefaces |
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** — System design, component hierarchy, data flow
+- **[COMPONENTS.md](docs/COMPONENTS.md)** — Component catalog with props, features, usage
+- **[JUDGE.md](docs/JUDGE.md)** — Pyodide integration, execution harness, security considerations
+- **[SCALING.md](docs/SCALING.md)** — Full-stack migration blueprint (database schema, API design, deployment)
+- **[PROMPT.md](docs/PROMPT.md)** — Migration objectives and implementation requirements
 
 ---
 
-## 📝 Candidate Instructions (Exam Rules)
+## 🔮 Future Roadmap
 
-1. The **90-minute timer** begins immediately when you click "Begin Exam".
-2. You may attempt questions in **any order** — use the sidebar to navigate.
-3. Write your solution **inside the pre-defined function structure** (starter code).
-4. Click **▷ Run Samples** to test against the 2 visible sample cases.
-5. Click **✓ Submit** to evaluate against all hidden test cases and record your score.
-6. You may **re-submit** as many times as you wish — the best score is kept.
-7. Click **End Exam** (or wait for the timer) to see your full results.
+### Phase 1: Current State (Client-Only) ✅
+- Pyodide in-browser execution
+- localStorage persistence
+- 37 curated questions
+- Single-user experience
+
+### Phase 2: Backend API (Planned)
+- **Frontend**: Next.js 16 (unchanged)
+- **API**: NestJS (Node.js) for business logic
+- **Database**: PostgreSQL + Redis
+- **Judge**: Docker containers for multi-language support
+- **Auth**: NextAuth.js + JWT with Redis blocklist
+
+### Phase 3: Enterprise Features (Future)
+- Multi-tenant support (examiners create exams, candidates take them)
+- Role-based access control (Admin, Examiner, Candidate)
+- Real-time monitoring & proctoring
+- Analytics dashboards
+- Kubernetes auto-scaling for judge workers
+- Multi-language support (Python, C++, Java, JavaScript, Go)
+
+See [SCALING.md](docs/SCALING.md) for the complete migration blueprint.
 
 ---
 
-## 🛠️ Customisation Guide
+## 🛠️ Customization
 
-### Add a new question
+### Add a New Question
 
-Append an object to the `QUESTIONS` array in `assets/js/questions.js`:
+Edit `web/src/data/questions.json`:
 
-```javascript
+```json
 {
-  id:          38,
-  title:       "Your Question Title",
-  section:     'B',
-  topic:       "Topic Name",
-  difficulty:  "Easy",
-  maxScore:    100,
-  scenario:    "Story context here.",
-  statement:   "Formal problem statement.",
-  constraints: ["1 ≤ N ≤ 1000"],
-  inputFormat: "Line 1: N",
-  outputFormat: "Print the answer.",
-  sampleCases: [
-    { input: "5", output: "25", explanation: "5² = 25." }
+  "id": 38,
+  "title": "Your Question Title",
+  "section": "B",
+  "topic": "Topic Name",
+  "difficulty": "Easy",
+  "maxScore": 100,
+  "scenario": "Story context here.",
+  "statement": "Formal problem statement.",
+  "constraints": ["1 ≤ N ≤ 1000"],
+  "inputFormat": "Line 1: N",
+  "outputFormat": "Print the answer.",
+  "sampleCases": [
+    { "input": "5", "output": "25", "explanation": "5² = 25." }
   ],
-  hiddenCases: [
-    { input: "1",  output: "1" },
-    { input: "10", output: "100" },
+  "hiddenCases": [
+    { "input": "1", "output": "1" },
+    { "input": "10", "output": "100" }
   ],
-  hint: "Multiply n by itself.",
-  starterCode: `def solve():\n    n = int(input())\n    # Write here\nsolve()`
+  "hint": "Multiply n by itself.",
+  "starterCode": "def solve():\n    n = int(input())\n    # Write here\nsolve()"
 }
 ```
 
-### Change the exam duration
+### Change Exam Duration
 
-In `assets/js/examEngine.js`, modify:
-
-```javascript
-const TOTAL_SECONDS = 90 * 60;   // change 90 to desired minutes
-```
-
-### Adjust per-case timeout
-
-In `assets/js/judge.js`, modify `runTestCase`:
+Edit `web/src/context/ExamContext.js`:
 
 ```javascript
-async function runTestCase(code, input, expectedOutput, timeoutMs = 8000) {
-  // change 8000 to desired milliseconds
+const initialState = {
+  // ...
+  totalDuration: 90 * 60, // Change 90 to desired minutes
+};
 ```
+
+### Adjust Per-Case Timeout
+
+Edit `web/src/hooks/usePyodide.js`:
+
+```javascript
+const runTestCase = async (code, input, expected, timeout = 8000) => {
+  // Change 8000 to desired milliseconds
+```
+
+---
+
+## 🔒 Security Considerations
+
+### Current (In-Browser) Security
+
+- Code runs in the user's own browser — no server attack surface
+- Execution is sandboxed within the Pyodide WASM runtime
+- `exec()` uses an empty namespace `{}` — no access to application state
+- TLE protection via `Promise.race` prevents infinite loops from hanging the UI
+
+### Limitations
+
+- No memory limit enforcement (Pyodide uses browser's WASM memory)
+- File system access is limited but not fully restricted
+- Network requests from user code are possible (though unusual in a coding exam)
+
+### Future Remote Judge Security
+
+When migrating to a backend judge:
+- Execute in **Docker containers** with CPU/memory/network limits
+- Use **seccomp** and **cgroups** for syscall filtering
+- Implement **per-test-case timeouts** server-side
+- Sandbox file system access with read-only mounts
 
 ---
 
@@ -347,4 +454,38 @@ async function runTestCase(code, input, expectedOutput, timeoutMs = 8000) {
 
 ---
 
-*Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.*
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🙏 Acknowledgments
+
+- **TCS NQT** — Question bank sourced from previous-year papers
+- **Pyodide** — WebAssembly Python runtime
+- **Next.js** — React framework for production
+- **Tailwind CSS** — Utility-first CSS framework
+- **CodeMirror** — Code editor component
+
+---
+
+## 📞 Support
+
+For questions, issues, or feature requests, please open an issue on GitHub.
+
+---
+
+**Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.**

@@ -1,13 +1,15 @@
-# TCS NQT Exam Platform · 2025–26
+# CodeAssess — Legacy Implementation
 
-> A full-featured, browser-based coding assessment platform that accurately simulates the TCS National Qualifier Test (NQT) environment — complete with a live Python runtime, auto-graded test cases, countdown timer, and real-time scoring.
+> Original vanilla HTML/CSS/JavaScript implementation of the CodeAssess platform. This is a full-featured, browser-based coding assessment platform with a live Python runtime, auto-graded test cases, countdown timer, and real-time scoring.
+
+**Note:** This is the legacy version. For the modern Next.js implementation, see the [`/web`](../web) directory.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-tcs-nqt-exam/
+legacy/
 │
 ├── index.html                    ← Main application entry point (open in browser)
 │
@@ -88,8 +90,10 @@ Double-click `index.html` to open it in any modern browser.
 ### Option 2 — Local HTTP server
 
 ```bash
+# Navigate to legacy directory
+cd legacy
+
 # Python 3
-cd tcs-nqt-exam/
 python3 -m http.server 8080
 
 # Node.js (npx)
@@ -344,6 +348,32 @@ async function runTestCase(code, input, expectedOutput, timeoutMs = 8000) {
 | 2600–3299 | Strong — High chance of clearing NQT cutoff |
 | 1800–2599 | Moderate — Revisit greedy, DP, and string topics |
 | Below 1800 | Needs improvement — Focus on Section A fundamentals |
+
+---
+
+## 🔄 Migration to Modern Stack
+
+This legacy implementation has been migrated to a modern Next.js application. Key improvements in the new version:
+
+- **React 19 + Next.js 16** — Component-based architecture with App Router
+- **Tailwind CSS 4** — Utility-first styling with custom design tokens
+- **React CodeMirror 6** — Modern code editor with better performance
+- **Context API + useReducer** — Structured state management
+- **Modular architecture** — Easier to test, maintain, and extend
+
+See the [`/web`](../web) directory for the modern implementation.
+
+---
+
+## 📚 Documentation
+
+For comprehensive documentation, see:
+
+- **[Main README](../README.md)** — Project overview and quick start
+- **[Architecture](../docs/ARCHITECTURE.md)** — System design and component hierarchy
+- **[Judge Engine](../docs/JUDGE.md)** — Pyodide integration details
+- **[Components](../docs/COMPONENTS.md)** — Component catalog
+- **[Scaling](../docs/SCALING.md)** — Full-stack migration blueprint
 
 ---
 
