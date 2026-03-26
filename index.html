@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TCS NQT Exam Platform · 2025–26</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- CodeMirror 5 -->
+  <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css" />
+  <link  rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/dracula.min.css" />
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     STARTUP SCREEN
+════════════════════════════════════════════════════════════════════════ -->
+<div id="startup-screen">
+  <div class="logo-badge">TCS NQT · 2025–26 Edition</div>
+  <h1>Coding <span>Assessment</span><br>Platform</h1>
+  <p class="subtitle">37 Questions · Ninja · Digital · Prime · Real exam simulation</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="val">37</div>
+      <div class="lbl">Questions</div>
+    </div>
+    <div class="info-card">
+      <div class="val">90</div>
+      <div class="lbl">Minutes</div>
+    </div>
+    <div class="info-card">
+      <div class="val">3700</div>
+      <div class="lbl">Max Score</div>
+    </div>
+  </div>
+
+  <button class="btn-start" id="btn-start-exam">
+    ▶ &nbsp; Begin Exam
+  </button>
+  <p style="margin-top:16px;font-size:0.72rem;color:var(--text-muted);">
+    Timer starts immediately · Python 3 · All test cases auto-graded
+  </p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     PYODIDE LOADER OVERLAY
+════════════════════════════════════════════════════════════════════════ -->
+<div id="pyodide-loader" class="hidden">
+  <div class="loader-spinner"></div>
+  <div class="loader-title">Loading Python Runtime…</div>
+  <div class="loader-sub">Initialising Pyodide WebAssembly engine</div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     MAIN APP SHELL
+════════════════════════════════════════════════════════════════════════ -->
+<div id="app" style="display:none;">
+
+  <!-- ── HEADER ── -->
+  <header id="header">
+    <div class="header-brand">
+      <span class="tcs-tag">TCS</span>
+      NQT Assessment
+    </div>
+
+    <div class="header-center">
+      <div class="header-score-panel">
+        Score: <span class="score-val" id="hdr-score">0</span>
+        <span class="score-sep">/</span>
+        <span id="hdr-max-score">3700</span>
+      </div>
+
+      <div id="timer">
+        <span class="timer-icon">⏱</span>
+        <span id="timer-display">90:00</span>
+      </div>
+
+      <div class="header-score-panel" style="font-size:0.78rem;">
+        Q <span id="hdr-q-num">1</span>/<span>37</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="btn btn-ghost" id="btn-view-results" style="display:none;">
+        📊 Results
+      </button>
+      <button class="btn btn-submit-all" id="btn-finish-exam">
+        ⏹ End Exam
+      </button>
+    </div>
+  </header>
+
+  <!-- ── SIDEBAR ── -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <h3>Questions</h3>
+    </div>
+    <div id="question-list">
+      <!-- Dynamically generated -->
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main id="main">
+
+    <!-- Problem Panel -->
+    <section id="problem-panel">
+      <div class="problem-header">
+        <div class="q-meta" id="q-meta-tags"></div>
+        <h2 id="q-title">Select a question</h2>
+        <div class="score-line" id="q-score-line"></div>
+      </div>
+      <div class="problem-body" id="q-body"></div>
+    </section>
+
+    <!-- Code Panel -->
+    <div id="code-panel">
+      <div class="code-panel-header">
+        <div class="lang-badge">Python 3</div>
+
+        <div class="code-actions">
+          <button class="btn btn-reset" id="btn-reset-code" title="Reset to starter code">
+            ↺ Reset
+          </button>
+          <button class="btn btn-run" id="btn-run">
+            <span class="spinner hidden" id="run-spinner"></span>
+            ▷ Run Samples
+          </button>
+          <button class="btn btn-submit" id="btn-submit">
+            <span class="spinner hidden" id="submit-spinner"></span>
+            ✓ Submit
+          </button>
+        </div>
+      </div>
+
+      <!-- CodeMirror will attach here -->
+      <div id="editor-wrapper">
+        <textarea id="code-editor"></textarea>
+      </div>
+
+      <!-- Output Panel -->
+      <div id="output-panel">
+        <div class="output-tabs">
+          <div class="output-tab active" data-tab="results">Test Results</div>
+          <div class="output-tab" data-tab="stdout">Console</div>
+          <div class="output-tab" data-tab="custom">Custom Input</div>
+        </div>
+
+        <!-- Results tab -->
+        <div class="tab-content active" id="tab-results">
+          <div class="empty-state" id="results-empty">
+            Click <strong>Run Samples</strong> or <strong>Submit</strong> to see results
+          </div>
+          <div id="results-content" class="hidden"></div>
+        </div>
+
+        <!-- Console tab -->
+        <div class="tab-content" id="tab-stdout">
+          <div class="empty-state" id="stdout-empty">No output yet</div>
+          <pre class="stdout-area hidden" id="stdout-content"></pre>
+          <pre class="stderr-area hidden" id="stderr-content"></pre>
+        </div>
+
+        <!-- Custom input tab -->
+        <div class="tab-content" id="tab-custom">
+          <div style="display:flex;flex-direction:column;gap:8px;height:100%;">
+            <textarea id="custom-input"
+              placeholder="Type your custom input here…"
+              style="flex:1;background:var(--bg-tertiary);border:1px solid var(--border-main);
+                     border-radius:var(--radius-sm);color:var(--text-primary);
+                     font-family:var(--font-mono);font-size:0.8rem;padding:8px;resize:none;
+                     outline:none;min-height:60px;">
+            </textarea>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button class="btn btn-run" id="btn-run-custom" style="font-size:0.75rem;padding:5px 12px;">
+                ▷ Run
+              </button>
+              <span style="font-size:0.72rem;color:var(--text-muted);">
+                Run your code against custom input
+              </span>
+            </div>
+            <pre class="stdout-area hidden" id="custom-output" style="font-size:0.8rem;max-height:80px;overflow-y:auto;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     RESULTS SCREEN
+════════════════════════════════════════════════════════════════════════ -->
+<div id="results-screen">
+  <div class="results-container">
+    <div class="results-header">
+      <h1>Exam Complete 🎉</h1>
+      <p class="tag">TCS NQT 2025–26 · Coding Assessment</p>
+    </div>
+
+    <div class="score-ring-container">
+      <div class="score-ring">
+        <div class="final-score" id="res-total-score">0</div>
+        <div class="score-denom">/ 3700 pts</div>
+      </div>
+    </div>
+
+    <div class="results-stats">
+      <div class="result-stat">
+        <div class="val" id="res-attempted">0</div>
+        <div class="lbl">Attempted</div>
+      </div>
+      <div class="result-stat">
+        <div class="val" id="res-time-taken">–</div>
+        <div class="lbl">Time Taken</div>
+      </div>
+      <div class="result-stat">
+        <div class="val" id="res-accuracy">0%</div>
+        <div class="lbl">Accuracy</div>
+      </div>
+    </div>
+
+    <div class="results-table">
+      <div class="results-table-header">
+        <div>#</div>
+        <div>Question</div>
+        <div>Section</div>
+        <div>Score</div>
+        <div>Status</div>
+      </div>
+      <div id="res-breakdown"></div>
+    </div>
+
+    <button class="btn-finish" id="btn-back-to-exam">
+      ← Back to Exam
+    </button>
+  </div>
+</div>
+
+<!-- ── Toast notification ── -->
+<div id="toast"></div>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════════════════════════ -->
+<!-- CodeMirror 5 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/comment/comment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/addon/selection/active-line.min.js"></script>
+
+<!-- Pyodide (WebAssembly Python) -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.3/full/pyodide.js"></script>
+
+<!-- App modules -->
+<script src="assets/js/questions.js"></script>
+<script src="assets/js/judge.js"></script>
+<script src="assets/js/examEngine.js"></script>
+
+<!-- Main controller -->
+<script>
+// ════════════════════════════════════════════════════════════════════════════
+//  main.js (inline) — UI controller
+// ════════════════════════════════════════════════════════════════════════════
+
+/* ── State ── */
+let editor = null;
+let currentResults = null;
+
+/* ── DOM refs ── */
+const $  = id => document.getElementById(id);
+const $$ = sel => document.querySelectorAll(sel);
+
+/* ── Toast ── */
+let toastTimer;
+function showToast(msg, type = 'default', duration = 3000) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', duration);
+}
+
+/* ── Tab switching ── */
+function activateTab(tabName) {
+  $$('.output-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabName));
+  $$('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tabName}`));
+}
+
+$$('.output-tab').forEach(tab => {
+  tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+});
+
+/* ── Question list builder ── */
+function buildSidebar() {
+  const list = $('question-list');
+  list.innerHTML = '';
+
+  let lastSection = null;
+  QUESTIONS.forEach((q, idx) => {
+    if (q.section !== lastSection) {
+      const lbl = document.createElement('div');
+      lbl.className = 'sidebar-section-label';
+      lbl.textContent = `Section ${q.section} — ${q.section === 'A' ? 'Confirmed' : 'Predicted'}`;
+      list.appendChild(lbl);
+      lastSection = q.section;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'q-item';
+    item.dataset.idx = idx;
+
+    const diffClass = q.difficulty.toLowerCase().split('-')[0];
+    const sub = ExamEngine.getSubmissionStatus(q.id);
+    const dotClass = sub
+      ? (sub.score >= q.maxScore ? 'submitted' : sub.score > 0 ? 'partial' : '')
+      : '';
+
+    item.innerHTML = `
+      <span class="q-num">${q.id}</span>
+      <span class="q-title">${q.title}</span>
+      <span class="q-status-dot ${dotClass}" title="${sub ? sub.score + '/' + q.maxScore : 'Not attempted'}"></span>
+    `;
+
+    item.addEventListener('click', () => loadQuestion(idx));
+    list.appendChild(item);
+  });
+}
+
+/* ── Load question ── */
+function loadQuestion(idx) {
+  ExamEngine.setQuestion(idx);
+  const q = ExamEngine.getQuestion(idx);
+
+  // Sidebar highlight
+  $$('.q-item').forEach(el => el.classList.toggle('active', +el.dataset.idx === idx));
+
+  // Header Q counter
+  $('hdr-q-num').textContent = q.id;
+
+  // ── Problem panel ──
+  const metaTags = $('q-meta-tags');
+  const diffClass = q.difficulty.toLowerCase().split('-')[0];
+  metaTags.innerHTML = `
+    <span class="meta-tag section-${q.section.toLowerCase()}">Section ${q.section}</span>
+    <span class="meta-tag topic-tag">${q.topic}</span>
+    <span class="difficulty-pill ${diffClass}">${q.difficulty}</span>
+  `;
+
+  $('q-title').textContent = `Q${q.id}. ${q.title}`;
+  $('q-score-line').textContent = `Max Score: ${q.maxScore} pts · Time Limit: 90 min (shared)`;
+
+  const body = $('q-body');
+  body.innerHTML = `
+    <h4>Problem Scenario</h4>
+    <div class="scenario-box">${q.scenario}</div>
+
+    <h4>Problem Statement</h4>
+    <p>${q.statement}</p>
+
+    <h4>Constraints</h4>
+    <ul class="constraints-list">
+      ${q.constraints.map(c => `<li>${c}</li>`).join('')}
+    </ul>
+
+    <h4>Input Format</h4>
+    <div class="io-box">${q.inputFormat}</div>
+
+    <h4>Output Format</h4>
+    <div class="io-box">${q.outputFormat}</div>
+
+    <h4>Sample Test Cases</h4>
+    ${q.sampleCases.map((sc, i) => `
+      <div class="sample-case">
+        <div class="sample-case-header">Sample ${i + 1}</div>
+        <div class="sample-grid">
+          <div class="sample-io">
+            <label>Input</label>
+            <pre>${escHtml(sc.input)}</pre>
+          </div>
+          <div class="sample-io">
+            <label>Output</label>
+            <pre>${escHtml(sc.output)}</pre>
+          </div>
+        </div>
+        ${sc.explanation ? `<div class="explanation">💡 ${escHtml(sc.explanation)}</div>` : ''}
+      </div>
+    `).join('')}
+
+    <h4>Approach / Hint</h4>
+    <div class="hint-box">${q.hint}</div>
+  `;
+
+  // ── Code editor ──
+  const draft = ExamEngine.getDraft(q.id, q.starterCode);
+  editor.setValue(draft);
+  editor.clearHistory();
+
+  // ── Reset output ──
+  resetOutput();
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function resetOutput() {
+  $('results-empty').classList.remove('hidden');
+  $('results-content').classList.add('hidden');
+  $('stdout-empty').classList.remove('hidden');
+  $('stdout-content').classList.add('hidden');
+  $('stderr-content').classList.add('hidden');
+  $('custom-output').classList.add('hidden');
+  currentResults = null;
+}
+
+/* ── Render test results ── */
+function renderResults(judgeResult, mode) {
+  $('results-empty').classList.add('hidden');
+  const container = $('results-content');
+  container.classList.remove('hidden');
+
+  const { results, passed, total, score } = judgeResult;
+
+  const pct = total > 0 ? (passed / total) * 100 : 0;
+  const scoreNote = mode === 'submit'
+    ? `<span style="color:var(--accent-cyan);font-family:var(--font-mono);">Score: ${score}/${ExamEngine.getCurrentQuestion().maxScore}</span>`
+    : `<span style="color:var(--text-muted);font-size:0.75rem;">(sample only — submit to score all hidden cases)</span>`;
+
+  container.innerHTML = `
+    <div class="summary-bar">
+      <span class="pass-count">${passed}</span>
+      <span class="total-count">/ ${total}</span>
+      <span style="color:var(--text-muted);font-size:0.78rem;">test cases passed</span>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:${pct}%"></div>
+      </div>
+      ${scoreNote}
+    </div>
+    ${results.map(r => renderResultRow(r)).join('')}
+  `;
+
+  activateTab('results');
+}
+
+function renderResultRow(r) {
+  const cls = r.status.toLowerCase();
+  let detail = '';
+
+  if (r.status === 'WA') {
+    const inp = r.isSample ? `<span class="io-label">Input:</span> <code>${escHtml(r.input.replace(/\n/g,' ↵ '))}</code><br>` : '';
+    detail = `
+      ${inp}
+      <span class="io-label">Expected:</span> <code>${escHtml((r.expected||'').trim())}</code><br>
+      <span class="io-label">Got:</span> <code style="color:var(--accent-red)">${escHtml((r.actual||'').trim())}</code>
+    `;
+  } else if (r.status === 'RE' || r.status === 'TLE') {
+    detail = `<code style="color:var(--accent-orange)">${escHtml(r.error || r.status)}</code>`;
+  } else if (r.status === 'AC') {
+    detail = `<span style="color:var(--accent-green);font-size:0.75rem;">Correct ✓</span>`;
+  }
+
+  return `
+    <div class="test-result-row ${cls}">
+      <div class="test-label">${r.label}</div>
+      <div class="test-verdict verdict-${r.status}">${r.status}</div>
+      <div class="test-detail">${detail}</div>
+    </div>
+  `;
+}
+
+/* ── Run / Submit buttons ── */
+async function runSamples() {
+  const q    = ExamEngine.getCurrentQuestion();
+  const code = editor.getValue();
+
+  ExamEngine.saveDraft(q.id, code);
+
+  setRunning(true, 'run');
+  try {
+    const result = await Judge.runSampleCases(code, q, (done, total, r) => {
+      // Could show live progress here
+    });
+    currentResults = result;
+    renderResults(result, 'run');
+
+    // Show stdout from last run
+    showConsoleOutput(result.results);
+  } catch (e) {
+    showToast('Execution error: ' + e.message, 'error');
+  } finally {
+    setRunning(false, 'run');
+  }
+}
+
+async function submitAll() {
+  const q    = ExamEngine.getCurrentQuestion();
+  const code = editor.getValue();
+
+  ExamEngine.saveDraft(q.id, code);
+
+  setRunning(true, 'submit');
+  try {
+    const result = await Judge.runAllCases(code, q);
+    currentResults = result;
+
+    ExamEngine.recordSubmission(q.id, code, result);
+    updateHeaderScore();
+    buildSidebar(); // refresh status dots
+
+    renderResults(result, 'submit');
+    showConsoleOutput(result.results);
+
+    const pct = Math.round((result.passed / result.total) * 100);
+    showToast(
+      `Q${q.id}: ${result.passed}/${result.total} passed · Score: ${result.score}/${q.maxScore}`,
+      result.passed === result.total ? 'success' : 'default'
+    );
+
+    // Re-highlight active
+    $$('.q-item').forEach(el => {
+      if (+el.dataset.idx === ExamEngine.currentQ)
+        el.classList.add('active');
+    });
+
+  } catch (e) {
+    showToast('Submission error: ' + e.message, 'error');
+  } finally {
+    setRunning(false, 'submit');
+  }
+}
+
+async function runCustom() {
+  const q     = ExamEngine.getCurrentQuestion();
+  const code  = editor.getValue();
+  const input = $('custom-input').value;
+
+  ExamEngine.saveDraft(q.id, code);
+
+  $('btn-run-custom').disabled = true;
+  $('btn-run-custom').innerHTML = '<span class="spinner"></span> Running…';
+  $('custom-output').classList.add('hidden');
+
+  try {
+    const r = await Judge.runSampleCases(code, { sampleCases: [{ input, output: '' }] }, null);
+    const out = r.results[0];
+    const el  = $('custom-output');
+    el.classList.remove('hidden');
+    if (out.error) {
+      el.style.color = 'var(--accent-red)';
+      el.textContent = out.error;
+    } else {
+      el.style.color = 'var(--text-secondary)';
+      el.textContent = out.actual || '(no output)';
+    }
+    activateTab('custom');
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+  } finally {
+    $('btn-run-custom').disabled = false;
+    $('btn-run-custom').innerHTML = '▷ Run';
+  }
+}
+
+function showConsoleOutput(results) {
+  const lastResult = results[results.length - 1];
+  if (!lastResult) return;
+
+  const stdout = $('stdout-content');
+  const stderr = $('stderr-content');
+  const emptyEl = $('stdout-empty');
+
+  const allStdout = results.map(r => r.actual).filter(Boolean).join('');
+  const allStderr = results.map(r => r.error).filter(Boolean).join('\n');
+
+  if (allStdout) {
+    stdout.textContent = allStdout;
+    stdout.classList.remove('hidden');
+    emptyEl.classList.add('hidden');
+  } else {
+    stdout.classList.add('hidden');
+    emptyEl.classList.remove('hidden');
+  }
+
+  if (allStderr) {
+    stderr.textContent = allStderr;
+    stderr.classList.remove('hidden');
+  } else {
+    stderr.classList.add('hidden');
+  }
+}
+
+function setRunning(running, mode) {
+  const runBtn    = $('btn-run');
+  const submitBtn = $('btn-submit');
+  const runSpin   = $('run-spinner');
+  const subSpin   = $('submit-spinner');
+
+  runBtn.disabled    = running;
+  submitBtn.disabled = running;
+
+  if (mode === 'run') {
+    runSpin.classList.toggle('hidden', !running);
+    runBtn.childNodes[runBtn.childNodes.length - 1].textContent = running ? ' Running…' : ' ▷ Run Samples';
+  } else {
+    subSpin.classList.toggle('hidden', !running);
+    submitBtn.childNodes[submitBtn.childNodes.length - 1].textContent = running ? ' Judging…' : ' ✓ Submit';
+  }
+}
+
+/* ── Score header update ── */
+function updateHeaderScore() {
+  $('hdr-score').textContent = ExamEngine.getTotalScore();
+}
+
+/* ── Results screen ── */
+function showResultsScreen() {
+  const summary = ExamEngine.getSummary();
+
+  $('res-total-score').textContent = summary.totalScore;
+  $('res-attempted').textContent   = summary.attempted + '/37';
+  $('res-time-taken').textContent  = ExamEngine.formatTime(summary.elapsed);
+
+  const totalPossible = summary.breakdown.reduce((s,q) => s + (q.status ? q.status.passed : 0), 0);
+  const totalCases    = summary.breakdown.reduce((s,q) => s + (q.status ? q.status.total : 0), 0);
+  const acc = totalCases > 0 ? Math.round((totalPossible / totalCases) * 100) : 0;
+  $('res-accuracy').textContent = acc + '%';
+
+  const breakdown = $('res-breakdown');
+  breakdown.innerHTML = summary.breakdown.map(q => {
+    const pct = q.maxScore > 0 ? (q.score / q.maxScore) : 0;
+    const cls = !q.attempted ? 'zero' : pct >= 1 ? 'full' : pct > 0 ? 'partial' : 'zero';
+    const status = !q.attempted ? '–'
+      : pct >= 1 ? '✓ AC'
+      : pct > 0  ? '~ Partial'
+      : '✗ WA';
+    return `
+      <div class="results-table-row">
+        <div class="mono" style="color:var(--text-muted)">${q.id}</div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${q.title}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted)">§${q.section}</div>
+        <div class="res-score ${cls}">${q.score}/${q.maxScore}</div>
+        <div style="font-size:0.75rem;color:var(${!q.attempted?'--text-muted':pct>=1?'--accent-green':pct>0?'--accent-gold':'--accent-red'})">${status}</div>
+      </div>
+    `;
+  }).join('');
+
+  $('results-screen').style.display = 'block';
+  $('btn-view-results').style.display = 'inline-flex';
+}
+
+/* ── Timer callbacks ── */
+ExamEngine.onTick = ({ remaining }) => {
+  $('timer-display').textContent = ExamEngine.formatTime(remaining);
+  const timerEl = $('timer');
+  if (remaining <= 300)       timerEl.className = 'critical';
+  else if (remaining <= 900)  timerEl.className = 'warning';
+  else                        timerEl.className = '';
+};
+
+ExamEngine.onTimeUp = () => {
+  showToast('⏰ Time is up! Your exam has ended.', 'error', 6000);
+  setTimeout(showResultsScreen, 1500);
+};
+
+/* ── Keyboard shortcuts ── */
+document.addEventListener('keydown', e => {
+  // Ctrl/Cmd + Enter → Run
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    runSamples();
+  }
+  // Ctrl/Cmd + Shift + Enter → Submit
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Enter') {
+    e.preventDefault();
+    submitAll();
+  }
+});
+
+/* ── Init ── */
+async function initApp() {
+  // Build sidebar
+  buildSidebar();
+
+  // Init CodeMirror
+  editor = CodeMirror.fromTextArea($('code-editor'), {
+    mode:              'python',
+    theme:             'dracula',
+    lineNumbers:       true,
+    matchBrackets:     true,
+    autoCloseBrackets: true,
+    styleActiveLine:   true,
+    indentUnit:        4,
+    tabSize:           4,
+    indentWithTabs:    false,
+    lineWrapping:      false,
+    extraKeys: {
+      Tab: cm => { cm.replaceSelection('    '); },
+      'Ctrl-/': cm => cm.toggleComment({ indent: true }),
+    },
+  });
+
+  // Auto-save draft on change
+  editor.on('change', () => {
+    const q = ExamEngine.getCurrentQuestion();
+    if (q) ExamEngine.saveDraft(q.id, editor.getValue());
+  });
+
+  // Load Q1
+  loadQuestion(0);
+  updateHeaderScore();
+
+  // Wire buttons
+  $('btn-run').addEventListener('click', runSamples);
+  $('btn-submit').addEventListener('click', submitAll);
+  $('btn-run-custom').addEventListener('click', runCustom);
+  $('btn-reset-code').addEventListener('click', () => {
+    const q = ExamEngine.getCurrentQuestion();
+    if (confirm('Reset to starter code? Your current code will be lost.')) {
+      editor.setValue(q.starterCode);
+      ExamEngine.saveDraft(q.id, q.starterCode);
+    }
+  });
+
+  $('btn-finish-exam').addEventListener('click', () => {
+    if (confirm('End the exam now? This action cannot be undone.')) {
+      ExamEngine.finishExam();
+      showResultsScreen();
+    }
+  });
+
+  $('btn-view-results').addEventListener('click', showResultsScreen);
+
+  $('btn-back-to-exam').addEventListener('click', () => {
+    $('results-screen').style.display = 'none';
+  });
+
+  // Load Pyodide in background
+  showToast('Loading Python runtime… this may take a moment.', 'default', 5000);
+  await Judge.loadPyodide();
+  showToast('✓ Python runtime ready!', 'success', 2500);
+}
+
+/* ── Startup sequence ── */
+$('btn-start-exam').addEventListener('click', async () => {
+  $('startup-screen').style.display = 'none';
+  $('app').style.display = 'grid';
+  $('pyodide-loader').classList.remove('hidden');
+
+  ExamEngine.clearSession();
+  ExamEngine.startExam();
+
+  await Judge.loadPyodide();
+
+  $('pyodide-loader').classList.add('hidden');
+  initApp();
+});
+</script>
+</body>
+</html>
