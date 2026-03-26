@@ -25,6 +25,10 @@ export const metadata = {
   description:
     "Professional-grade technical assessment platform for coding challenges with an integrated online judge.",
   keywords: ["coding", "assessment", "online judge", "programming", "exam"],
+  appleWebApp: {
+    title: "CodeAssess",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {

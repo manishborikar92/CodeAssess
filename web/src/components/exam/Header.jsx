@@ -38,11 +38,9 @@ export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
   return (
     <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-5 gap-4 z-10 h-[52px] shrink-0">
       {/* Brand */}
-      <div className="flex items-center gap-2.5 font-bold text-[0.92rem] tracking-wide whitespace-nowrap">
-        <span className="bg-accent-blue text-white rounded px-2 py-0.5 text-[0.72rem] font-bold tracking-[1.5px]">
-          CODE
-        </span>
-        <span className="text-text-primary">Assess</span>
+      <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
+        <img src="/logo.svg" alt="EvalCode" className="w-8 h-8 object-contain" />
+        <span className="text-white tracking-wide font-bold">Code<span className="text-accent-cyan">Assess</span></span>
       </div>
 
       {/* Center: Score + Timer + Q counter */}

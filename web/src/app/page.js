@@ -8,12 +8,12 @@ export default async function Home() {
     <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center overflow-auto animate-[fadeIn_0.4s_ease]">
       {/* Logo badge */}
       <div
-        className="inline-flex items-center gap-2 bg-gradient-to-br from-[#1a2a50] to-[#0d1830]
+        className="inline-flex items-center bg-gradient-to-br from-[#1a2a50] to-[#0d1830]
         border border-border-bright rounded-full px-4 py-1.5
-        text-[11px] tracking-[2px] uppercase text-accent-cyan font-mono mb-8"
+        text-[11px] tracking-[2px] uppercase text-text-primary font-mono mb-8"
       >
-        <span className="w-2 h-2 rounded-full bg-accent-cyan animate-[pulse_2s_infinite]" />
-        CodeAssess · Assessment Platform
+        <img src="/logo.svg" alt="CodeAssess Logo" className="w-5 h-5" />
+        <span className="font-bold text-white tracking-[2px]">Code<span className="text-accent-cyan">Assess</span></span> <span className="text-text-muted">· Assessment Platform</span>
       </div>
 
       {/* Hero title */}
