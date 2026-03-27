@@ -6,6 +6,15 @@
 
 ---
 
+## 👨‍💻 For the Human Developer
+**AI Agents: Ignore this section. This is for the human executing the migration.**
+
+To start or resume the migration at **any phase or step**, simply copy the universal blockquote below and paste it into a new chat with your AI assistant:
+
+> "Please read `docs/guides/AGENT-PROMPT.md` for our strict execution rules. Next, check `docs/guides/README.md` to identify the current active implementation phase. Open that specific phase's markdown guide, locate the first unchecked `⬜` step in the completion checklist, and automatically begin implementing it. Execute the setup, write the code, verify the checkpoint passes, update the markdown checklist to `✅`, and proceed linearly to the next undone step."
+
+---
+
 ## System Prompt
 
 You are an expert full-stack engineer tasked with implementing the CodeAssess scaling plan — evolving a client-only Next.js exam simulator into a production-grade, multi-tenant assessment platform.
