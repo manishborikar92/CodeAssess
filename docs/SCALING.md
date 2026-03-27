@@ -1794,6 +1794,13 @@ Per-IP limits (keyed by IP address):
 
 ## 12. Migration Phases
 
+> **📋 Detailed Implementation Guides:** Step-by-step guides for each phase are available
+> in [`docs/guides/`](guides/README.md). Each guide contains granular steps, code examples,
+> checkpoint validations, and completion checklists.
+>
+> **🤖 AI Agent Prompt:** A ready-to-use prompt for AI coding agents is available at
+> [`docs/guides/AGENT-PROMPT.md`](guides/AGENT-PROMPT.md).
+
 ### Current Project Structure → Target Migration Map
 
 The existing codebase (observed in `web/`) is a vanilla Next.js JavaScript project.
@@ -1916,25 +1923,46 @@ export default nextConfig;
 
 ---
 
+### Phase 0: Foundation & Infrastructure (3-5 days)
+
+> 📋 **Detailed Guide:** [docs/guides/PHASE-0-FOUNDATION.md](guides/PHASE-0-FOUNDATION.md)
+
+- [ ] Scaffold NestJS backend at `apps/api/`
+- [ ] Set up PostgreSQL + Redis via Docker Compose
+- [ ] Configure environment variables with Zod validation
+- [ ] Create Prisma schema with all 12 models, run initial migration
+- [ ] Bootstrap NestJS with Fastify adapter
+- [ ] Create Prisma + Redis global service modules
+- [ ] Implement health check endpoints
+- [ ] Create common infrastructure (guards, filters, interceptors, pipes)
+- [ ] Create seed script to import 37 questions into PostgreSQL
+
 ### Phase 1: Authentication & User Management (2-3 weeks)
 
+> 📋 **Detailed Guide:** [docs/guides/PHASE-1-AUTH.md](guides/PHASE-1-AUTH.md)
+
 - [ ] Set up Auth.js with Google + GitHub + Credentials providers
-- [ ] Create `users` table in PostgreSQL via Prisma migration
+- [ ] Create auth module in NestJS (signup, login, logout, refresh, OAuth sync)
+- [ ] Implement `JwtAuthGuard` + `RolesGuard` with Redis blocklist
 - [ ] Build sign-up / login / profile pages in Next.js
-- [ ] Implement `JwtAuthGuard` + `RolesGuard` in NestJS with Redis blocklist
 - [ ] Add role-based access control (examiner / candidate)
 - [ ] Add protected routes via Next.js `proxy.js` (Next.js 16 — replaces `middleware.js`)
+- [ ] Write auth unit + E2E tests
 
 ### Phase 2: Question Bank & Practice Mode (2-3 weeks)
 
-- [ ] Migrate questions from `questions.json` → PostgreSQL (Prisma seed)
-- [ ] Build question CRUD API (`/api/v1/questions`)
+> 📋 **Detailed Guide:** [docs/guides/PHASE-2-QUESTIONS.md](guides/PHASE-2-QUESTIONS.md)
+
+- [ ] Build question CRUD API (`/api/v1/questions`) with hidden case stripping
 - [ ] Build examiner dashboard: create/edit questions UI
 - [ ] Build public question browser for candidates
 - [ ] Implement practice mode (no timer, unlimited attempts)
-- [ ] Replace `lib/api.js` with typed API client pointing to NestJS
+- [ ] Replace `lib/api.js` with structured API client pointing to NestJS
+- [ ] Write question unit + E2E tests
 
 ### Phase 3: Exam Management & Invitations (3-4 weeks)
+
+> 📋 **Detailed Guide:** [docs/guides/PHASE-3-EXAMS.md](guides/PHASE-3-EXAMS.md)
 
 - [ ] Build exam CRUD API with all configuration options
 - [ ] Implement `exam_questions` junction (select/order questions)
@@ -1943,44 +1971,53 @@ export default nextConfig;
 - [ ] Build examiner dashboard: create exam wizard UI
 - [ ] Implement `exam_sessions` lifecycle (pending → active → finished)
 - [ ] Add auto-save drafts via `PUT /api/v1/drafts/:sessionId/:questionId`
+- [ ] Write exam unit + E2E tests
 
 ### Phase 4: Remote Judge Engine (3-4 weeks)
 
-- [ ] Build judge worker service (Rust or Go)
-- [ ] Create Docker runner images for each language
-- [ ] Set up BullMQ job queue with Redis
-- [ ] Implement sandboxed execution with resource limits
-- [ ] Add WebSocket layer (Redis adapter for multi-instance) for real-time results
+> 📋 **Detailed Guide:** [docs/guides/PHASE-4-JUDGE.md](guides/PHASE-4-JUDGE.md)
+
+- [ ] Build submissions API and judge module with BullMQ
+- [ ] Create Docker runner images for 5 languages (Python, C++, Java, JS, Go)
+- [ ] Implement sandboxed execution with resource limits via `dockerode`
+- [ ] Add WebSocket layer (Socket.IO + Redis adapter) for real-time results
 - [ ] Implement hybrid mode (Pyodide fallback for practice)
+- [ ] Add rate limiting on judge endpoints
 - [ ] Load testing: verify 100+ concurrent submissions
 
 ### Phase 5: Monitoring & Analytics (2-3 weeks)
 
+> 📋 **Detailed Guide:** [docs/guides/PHASE-5-MONITORING.md](guides/PHASE-5-MONITORING.md)
+
 - [ ] Build live exam monitoring dashboard (WebSocket)
 - [ ] Implement proctoring features (tab switch, fullscreen) — write to `focus_events` table
-- [ ] Build results export (CSV/PDF) as async job → S3 → signed URL
+- [ ] Build results export (CSV/PDF) as async job
 - [ ] Add per-exam analytics (score distribution, time analysis)
 - [ ] Implement leaderboard system (Redis sorted set for live, PostgreSQL for final)
 - [ ] Add audit logging for all critical operations
 
 ### Phase 6: Production Hardening (2 weeks)
 
+> 📋 **Detailed Guide:** [docs/guides/PHASE-6-PRODUCTION.md](guides/PHASE-6-PRODUCTION.md)
+
 - [ ] Security audit (OWASP Top 10)
 - [ ] Rate limiting on all endpoints
 - [ ] Penetration testing on judge sandbox
 - [ ] CDN setup for Pyodide WASM + static assets
 - [ ] Automated backups + disaster recovery plan
-- [ ] CI/CD pipeline (lint → type-check → test → build → migrate → deploy)
+- [ ] CI/CD pipeline (lint → test → build → migrate → deploy)
 - [ ] Load testing at target scale
 - [ ] OpenTelemetry tracing across Next.js + NestJS + judge worker
+- [ ] Error tracking with Sentry
 
 ### Total Estimated Timeline: 14-19 weeks
 
 ```
-Phase 1 ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  Weeks 1-3
-Phase 2 ░░░░░░░░████████░░░░░░░░░░░░░░░░░░░░░░░  Weeks 3-6
-Phase 3 ░░░░░░░░░░░░░░░░████████████░░░░░░░░░░░  Weeks 6-10
-Phase 4 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░████████████  Weeks 10-14
-Phase 5 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░████████  Weeks 14-17
-Phase 6 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░████  Weeks 17-19
+Phase 0 ████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  Days 1-5
+Phase 1 ░░░░████████░░░░░░░░░░░░░░░░░░░░░░░░░░░  Weeks 1-3
+Phase 2 ░░░░░░░░░░░░████████░░░░░░░░░░░░░░░░░░░  Weeks 3-6
+Phase 3 ░░░░░░░░░░░░░░░░░░░░████████████░░░░░░░  Weeks 6-10
+Phase 4 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░████████  Weeks 10-14
+Phase 5 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░████  Weeks 14-17
+Phase 6 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██  Weeks 17-19
 ```

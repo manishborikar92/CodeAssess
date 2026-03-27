@@ -66,7 +66,7 @@ In-depth coverage of the code execution engine:
 ### [SCALING.md](SCALING.md)
 **Scaling & Full-Stack Migration Blueprint**
 
-Comprehensive 11-section guide for evolving into an enterprise platform:
+Comprehensive 12-section guide for evolving into an enterprise platform:
 1. Current State & Limitations
 2. Technology Decisions (Backend, Database, Auth, Judge)
 3. System Roles & Permissions
@@ -87,6 +87,26 @@ Comprehensive 11-section guide for evolving into an enterprise platform:
 - Build a remote judge system
 - Deploy to production
 - Scale to thousands of concurrent users
+
+---
+
+### [guides/README.md](guides/README.md)
+**Step-by-Step Implementation Guides**
+
+A collection of detailed, sequential execution guides for the full-stack migration:
+- `PHASE-0-FOUNDATION.md`
+- `PHASE-1-AUTH.md`
+- `PHASE-2-QUESTIONS.md`
+- `PHASE-3-EXAMS.md`
+- `PHASE-4-JUDGE.md`
+- `PHASE-5-MONITORING.md`
+- `PHASE-6-PRODUCTION.md`
+- `AGENT-PROMPT.md` (AI coding agent instructions)
+
+**Read this if you want to:**
+- Execute the migration plan step-by-step
+- Track progress through the 7 phases
+- Prime an AI agent to write the implementation code
 
 ---
 
@@ -124,6 +144,17 @@ docs/
 ├── JUDGE.md                                       ← Pyodide execution engine
 ├── SCALING.md                                     ← Full-stack migration blueprint
 ├── PROMPT.md                                      ← Migration objectives
+│
+├── guides/                                        ← Implementation guides
+│   ├── README.md                                  ← Guide index & Phase overview
+│   ├── PHASE-0-FOUNDATION.md
+│   ├── PHASE-1-AUTH.md
+│   ├── PHASE-2-QUESTIONS.md
+│   ├── PHASE-3-EXAMS.md
+│   ├── PHASE-4-JUDGE.md
+│   ├── PHASE-5-MONITORING.md
+│   ├── PHASE-6-PRODUCTION.md
+│   └── AGENT-PROMPT.md                            ← Prompt for AI coding agents
 │
 ├── pdf/                                           ← Preparation guides (PDF)
 │   ├── TCS_NQT_DSA_Preparation_Guide_2025-26.pdf
@@ -173,8 +204,9 @@ When contributing to documentation:
 | ARCHITECTURE.md | 2025-03 | Core Team |
 | COMPONENTS.md | 2025-03 | Core Team |
 | JUDGE.md | 2025-03 | Core Team |
-| SCALING.md | 2025-03 | Core Team |
+| SCALING.md | 2026-03 | Core Team |
 | PROMPT.md | 2025-03 | Core Team |
+| guides/*.md | 2026-03 | Core Team |
 
 ---
 
