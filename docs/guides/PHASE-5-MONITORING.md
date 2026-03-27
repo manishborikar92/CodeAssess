@@ -118,7 +118,7 @@ Add to the sessions module:
 
 ### Step 5.4 — Analytics Module
 
-Create `apps/api/src/modules/analytics/`:
+Create `server/src/modules/analytics/`:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|

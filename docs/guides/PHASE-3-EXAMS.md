@@ -21,7 +21,7 @@
 
 ### Step 3.1 — Exams DTOs
 
-Create `apps/api/src/modules/exams/dto/`:
+Create `server/src/modules/exams/dto/`:
 
 | File | Fields |
 |------|--------|
@@ -35,7 +35,7 @@ Create `apps/api/src/modules/exams/dto/`:
 
 ### Step 3.2 — Exams Service
 
-Create `apps/api/src/modules/exams/exams.service.ts`:
+Create `server/src/modules/exams/exams.service.ts`:
 
 | Method | Responsibility |
 |--------|---------------|
@@ -63,7 +63,7 @@ draft → published → active → closed → archived
 
 ### Step 3.3 — Exams Controller
 
-Create `apps/api/src/modules/exams/exams.controller.ts`:
+Create `server/src/modules/exams/exams.controller.ts`:
 
 | Endpoint | Method | Auth | Role | Description |
 |----------|--------|------|------|-------------|
@@ -83,7 +83,7 @@ Create `apps/api/src/modules/exams/exams.controller.ts`:
 
 ### Step 3.4 — Invitations Module
 
-Create `apps/api/src/modules/invitations/`:
+Create `server/src/modules/invitations/`:
 
 | Method / Endpoint | Responsibility |
 |-------------------|---------------|
@@ -113,7 +113,7 @@ function generateInviteToken(): string {
 
 ### Step 3.5 — Sessions Module
 
-Create `apps/api/src/modules/sessions/`:
+Create `server/src/modules/sessions/`:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -141,7 +141,7 @@ Token validated → pending → start clicked → active → timer expires OR ca
 
 ### Step 3.6 — Code Drafts Module
 
-Create `apps/api/src/modules/drafts/`:
+Create `server/src/modules/drafts/`:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|

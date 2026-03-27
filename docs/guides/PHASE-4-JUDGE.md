@@ -22,7 +22,7 @@
 
 ### Step 4.1 — Submissions Module
 
-Create `apps/api/src/modules/submissions/`:
+Create `server/src/modules/submissions/`:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -46,7 +46,7 @@ Create `apps/api/src/modules/submissions/`:
 
 ### Step 4.2 — Judge Module (BullMQ Producer)
 
-Create `apps/api/src/modules/judge/`:
+Create `server/src/modules/judge/`:
 
 | File | Purpose |
 |------|---------|
@@ -91,7 +91,7 @@ import { BullModule } from '@nestjs/bullmq';
 
 ### Step 4.3 — Docker Runner Images
 
-Create `apps/judge/images/` directory with Dockerfiles for each language:
+Create `judge/images/` directory with Dockerfiles for each language:
 
 | Language | Directory | Base Image | Notes |
 |----------|-----------|------------|-------|
@@ -104,7 +104,7 @@ Create `apps/judge/images/` directory with Dockerfiles for each language:
 **Build all images:**
 
 ```bash
-# From apps/judge/images/
+# From judge/images/
 docker build -t codeassess/runner-python:3.11 ./python
 docker build -t codeassess/runner-cpp:17 ./cpp
 docker build -t codeassess/runner-java:17 ./java
@@ -125,7 +125,7 @@ docker build -t codeassess/runner-go:1.22 ./go
 
 ### Step 4.4 — Judge Processor (BullMQ Consumer)
 
-Create `apps/api/src/modules/judge/judge.processor.ts`:
+Create `server/src/modules/judge/judge.processor.ts`:
 
 This is the core execution engine. For the MVP, it runs in the same NestJS process using `dockerode` (Node.js Docker SDK).
 
@@ -206,7 +206,7 @@ await publishJudgeResult(submissionId, sessionId, result);
 
 ### Step 4.5 — WebSocket Gateway
 
-Create `apps/api/src/websockets/`:
+Create `server/src/websockets/`:
 
 | File | Purpose |
 |------|---------|

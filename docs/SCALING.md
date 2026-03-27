@@ -1114,7 +1114,7 @@ owning its controller, service, repository, DTOs, guards, and tests. Global cros
 concerns live in `common/`.
 
 ```
-apps/api/                          # NestJS application
+server/                          # NestJS application
 ├── src/
 │   ├── main.ts                    # Bootstrap: Fastify adapter, global pipes, Swagger, CORS
 │   ├── app.module.ts              # Root module — imports all feature modules
@@ -1927,7 +1927,7 @@ export default nextConfig;
 
 > 📋 **Detailed Guide:** [docs/guides/PHASE-0-FOUNDATION.md](guides/PHASE-0-FOUNDATION.md)
 
-- [ ] Scaffold NestJS backend at `apps/api/`
+- [ ] Scaffold NestJS backend at `server/`
 - [ ] Set up PostgreSQL + Redis via Docker Compose
 - [ ] Configure environment variables with Zod validation
 - [ ] Create Prisma schema with all 12 models, run initial migration

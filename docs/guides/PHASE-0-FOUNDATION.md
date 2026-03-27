@@ -19,17 +19,17 @@
 
 ### Step 0.1 — Initialize the NestJS Backend
 
-> Creates the `apps/api` directory with a production-grade NestJS scaffold.
+> Creates the `server` directory with a production-grade NestJS scaffold.
 
 ```bash
 # From the project root (c:\Users\manis\Projects\CodeAssess)
-npx -y @nestjs/cli new apps/api --skip-git --package-manager npm --language TypeScript --strict
+npx -y @nestjs/cli new server --skip-git --package-manager npm --language TypeScript --strict
 ```
 
 After scaffolding:
 
 ```bash
-cd apps/api
+cd server
 ```
 
 **Install core dependencies:**
@@ -54,7 +54,7 @@ npm install @prisma/client
 npx prisma init --datasource-provider postgresql
 ```
 
-- [ ] **Checkpoint:** `apps/api/` exists with `src/`, `prisma/schema.prisma`, `package.json`, `tsconfig.json`.
+- [ ] **Checkpoint:** `server/` exists with `src/`, `prisma/schema.prisma`, `package.json`, `tsconfig.json`.
 
 ---
 
@@ -117,7 +117,7 @@ docker compose ps
 
 ### Step 0.3 — Configure Environment Variables
 
-Create `apps/api/.env`:
+Create `server/.env`:
 
 ```env
 # ─── App ──────────────────────────────
@@ -139,9 +139,9 @@ JWT_REFRESH_TTL=604800
 CORS_ORIGINS=http://localhost:3000
 ```
 
-Create `apps/api/.env.example` (same content, but with placeholder values — commit this to Git).
+Create `server/.env.example` (same content, but with placeholder values — commit this to Git).
 
-Add to `apps/api/.gitignore`:
+Add to `server/.gitignore`:
 
 ```
 .env
@@ -154,7 +154,7 @@ Add to `apps/api/.gitignore`:
 
 ### Step 0.4 — Prisma Schema (Full Database Schema)
 
-Replace the contents of `apps/api/prisma/schema.prisma` with the full schema from `docs/SCALING.md` Section 5, translated to Prisma DSL:
+Replace the contents of `server/prisma/schema.prisma` with the full schema from `docs/SCALING.md` Section 5, translated to Prisma DSL:
 
 ```prisma
 generator client {
@@ -483,7 +483,7 @@ model AuditLog {
 **Run the initial migration:**
 
 ```bash
-cd apps/api
+cd server
 npx prisma migrate dev --name init
 ```
 
@@ -498,7 +498,7 @@ npx prisma studio
 
 ### Step 0.5 — NestJS Bootstrap with Fastify
 
-Replace `apps/api/src/main.ts` with the production-grade bootstrap from `docs/SCALING.md` Section 6.2.
+Replace `server/src/main.ts` with the production-grade bootstrap from `docs/SCALING.md` Section 6.2.
 
 Key configuration:
 - Fastify adapter (not Express)
@@ -570,7 +570,7 @@ Create the `src/common/` directory with all cross-cutting concerns:
 
 ### Step 0.10 — Seed Script
 
-Create `apps/api/prisma/seed.ts` that migrates the existing 37 questions from `web/src/data/questions.json` into PostgreSQL:
+Create `server/prisma/seed.ts` that migrates the existing 37 questions from `web/src/data/questions.json` into PostgreSQL:
 
 - Reads the JSON file
 - Maps fields to the Prisma `Question` model
@@ -578,7 +578,7 @@ Create `apps/api/prisma/seed.ts` that migrates the existing 37 questions from `w
 - Sets `visibility: 'public'`
 - Inserts using `prisma.question.createMany()`
 
-Add to `apps/api/package.json`:
+Add to `server/package.json`:
 
 ```json
 "prisma": {
@@ -600,7 +600,7 @@ npx prisma db seed
 
 | # | Item | Status |
 |---|------|--------|
-| 0.1 | NestJS project scaffolded at `apps/api/` | ⬜ |
+| 0.1 | NestJS project scaffolded at `server/` | ⬜ |
 | 0.2 | PostgreSQL + Redis running via Docker Compose | ⬜ |
 | 0.3 | `.env` + `.env.example` configured | ⬜ |
 | 0.4 | Prisma schema with all 12 models, initial migration applied | ⬜ |

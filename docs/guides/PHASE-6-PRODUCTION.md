@@ -65,7 +65,7 @@ Implement tiered rate limiting (as defined in SCALING.md Section 10.3):
 Implement using Redis sliding window or install `@nestjs/throttler`:
 
 ```bash
-cd apps/api
+cd server
 npm install @nestjs/throttler
 ```
 
@@ -165,7 +165,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: cd web && npm ci && npm run lint
-      - run: cd apps/api && npm ci && npm run lint
+      - run: cd server && npm ci && npm run lint
 
   test-api:
     runs-on: ubuntu-latest
@@ -184,12 +184,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - run: cd apps/api && npm ci
-      - run: cd apps/api && npx prisma migrate deploy
+      - run: cd server && npm ci
+      - run: cd server && npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/codeassess_test
-      - run: cd apps/api && npm run test
-      - run: cd apps/api && npm run test:e2e
+      - run: cd server && npm run test
+      - run: cd server && npm run test:e2e
 
   build-web:
     runs-on: ubuntu-latest
@@ -249,11 +249,11 @@ k6 run --vus 100 --duration 60s loadtest.js
 Add distributed tracing across NestJS + judge worker:
 
 ```bash
-cd apps/api
+cd server
 npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/auto-instrumentations-node @opentelemetry/exporter-trace-otlp-http
 ```
 
-Create `apps/api/src/tracing.ts`:
+Create `server/src/tracing.ts`:
 
 ```typescript
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -296,7 +296,7 @@ jaeger:
 ### Step 6.9 — Error Tracking (Sentry)
 
 ```bash
-cd apps/api && npm install @sentry/node
+cd server && npm install @sentry/node
 cd web && npm install @sentry/nextjs
 ```
 

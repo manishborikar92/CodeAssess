@@ -21,7 +21,7 @@
 
 ### Step 1.1 — NestJS Auth Module: DTOs & Zod Schemas
 
-Create `apps/api/src/modules/auth/dto/`:
+Create `server/src/modules/auth/dto/`:
 
 | File | Schema Fields |
 |------|---------------|
@@ -51,7 +51,7 @@ export type SignupDto = z.infer<typeof signupSchema>;
 
 ### Step 1.2 — Auth Service
 
-Create `apps/api/src/modules/auth/auth.service.ts`:
+Create `server/src/modules/auth/auth.service.ts`:
 
 | Method | Responsibility |
 |--------|---------------|
@@ -82,7 +82,7 @@ Create `apps/api/src/modules/auth/auth.service.ts`:
 **Install bcrypt:**
 
 ```bash
-cd apps/api
+cd server
 npm install bcryptjs
 npm install -D @types/bcryptjs
 ```
@@ -93,7 +93,7 @@ npm install -D @types/bcryptjs
 
 ### Step 1.3 — JWT Strategy (Passport.js)
 
-Create `apps/api/src/modules/auth/strategies/jwt.strategy.ts`:
+Create `server/src/modules/auth/strategies/jwt.strategy.ts`:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -193,7 +193,7 @@ export class RolesGuard implements CanActivate {
 
 ### Step 1.6 — Auth Controller
 
-Create `apps/api/src/modules/auth/auth.controller.ts`:
+Create `server/src/modules/auth/auth.controller.ts`:
 
 | Endpoint | Method | Auth | Description | Cookie Action |
 |----------|--------|------|-------------|---------------|
@@ -227,7 +227,7 @@ Create `apps/api/src/modules/auth/auth.controller.ts`:
 
 ### Step 1.7 — Users Module
 
-Create `apps/api/src/modules/users/`:
+Create `server/src/modules/users/`:
 
 | Endpoint | Method | Auth | Description |
 |----------|--------|------|-------------|
@@ -243,7 +243,7 @@ Key: The response DTO must **never** include `passwordHash`.
 
 ### Step 1.8 — Auth Service Unit Tests
 
-Create `apps/api/src/modules/auth/auth.service.spec.ts`:
+Create `server/src/modules/auth/auth.service.spec.ts`:
 
 | Test | Assertion |
 |------|-----------|
@@ -258,7 +258,7 @@ Create `apps/api/src/modules/auth/auth.service.spec.ts`:
 | `refreshToken` with revoked token | Throws UnauthorizedException |
 
 ```bash
-cd apps/api
+cd server
 npm run test -- --testPathPattern auth
 ```
 
@@ -268,7 +268,7 @@ npm run test -- --testPathPattern auth
 
 ### Step 1.9 — Auth E2E Tests
 
-Create `apps/api/test/auth.e2e-spec.ts`:
+Create `server/test/auth.e2e-spec.ts`:
 
 Tests the full HTTP request/response cycle including cookies.
 
@@ -436,10 +436,10 @@ Create `web/src/app/(examiner)/profile/page.js` and `web/src/app/(candidate)/pro
 
 ```bash
 # Unit tests
-cd apps/api && npm run test -- --testPathPattern auth
+cd server && npm run test -- --testPathPattern auth
 
 # E2E tests
-cd apps/api && npm run test:e2e
+cd server && npm run test:e2e
 ```
 
 ---

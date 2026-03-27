@@ -20,7 +20,7 @@
 
 ### Step 2.1 — Questions DTOs
 
-Create `apps/api/src/modules/questions/dto/`:
+Create `server/src/modules/questions/dto/`:
 
 | File | Purpose |
 |------|---------|
@@ -69,7 +69,7 @@ export function toQuestionResponse(question: any, showHidden: boolean = false) {
 
 ### Step 2.2 — Questions Service
 
-Create `apps/api/src/modules/questions/questions.service.ts`:
+Create `server/src/modules/questions/questions.service.ts`:
 
 | Method | Responsibility |
 |--------|---------------|
@@ -111,7 +111,7 @@ function generateSlug(title: string): string {
 
 ### Step 2.3 — Questions Controller
 
-Create `apps/api/src/modules/questions/questions.controller.ts`:
+Create `server/src/modules/questions/questions.controller.ts`:
 
 | Endpoint | Method | Auth | Role | Description |
 |----------|--------|------|------|-------------|
