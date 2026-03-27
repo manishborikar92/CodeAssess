@@ -54,7 +54,6 @@ tcs-nqt-exam/
 └── web/                               # Modern Next.js 16 application
     ├── package.json                   # Dependencies
     ├── next.config.mjs                # Next.js configuration
-    ├── tailwind.config.js             # Tailwind CSS configuration
     │
     └── src/
         ├── app/

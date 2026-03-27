@@ -58,7 +58,6 @@ npm run lint
 web/
 ├── package.json                   # Dependencies
 ├── next.config.mjs                # Next.js configuration
-├── tailwind.config.js             # Tailwind CSS configuration
 ├── postcss.config.mjs             # PostCSS configuration
 ├── jsconfig.json                  # JavaScript path aliases
 ├── eslint.config.mjs              # ESLint configuration

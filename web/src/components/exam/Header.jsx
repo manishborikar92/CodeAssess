@@ -39,7 +39,7 @@ export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
     <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-5 gap-4 z-10 h-[52px] shrink-0">
       {/* Brand */}
       <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
-        <img src="/logo.svg" alt="EvalCode" className="w-8 h-8 object-contain" />
+        <img src="/logo.svg" alt="CodeAssess" className="w-8 h-8 object-contain" />
         <span className="text-white tracking-wide font-bold">Code<span className="text-accent-cyan">Assess</span></span>
       </div>
 
