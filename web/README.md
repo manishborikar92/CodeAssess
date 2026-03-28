@@ -144,6 +144,7 @@ For comprehensive documentation, see:
 - **[Judge Engine](../docs/JUDGE.md)** — Pyodide integration and execution model
 - **[Components](../docs/COMPONENTS.md)** — Component catalog with props and features
 - **[Scaling](../docs/SCALING.md)** — Full-stack migration blueprint
+- **[Implementation Guides](../docs/guides/README.md)** — Step-by-step execution plan
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -228,23 +229,32 @@ const runTestCase = async (code, input, expected, timeout = 8000) => {
 
 ---
 
-## 🔮 Future Roadmap
+## 🔮 Future Roadmap (Scaling Blueprint)
 
-### Phase 2: Backend API (Planned)
-- **API**: NestJS (Node.js) for business logic
-- **Database**: PostgreSQL + Redis
-- **Judge**: Docker containers for multi-language support
-- **Auth**: NextAuth.js + JWT with Redis blocklist
+The project is currently embarking on a full-stack migration to a production-grade assessment platform.
 
-### Phase 3: Enterprise Features (Future)
-- Multi-tenant support (examiners create exams, candidates take them)
-- Role-based access control (Admin, Examiner, Candidate)
-- Real-time monitoring & proctoring
-- Analytics dashboards
-- Kubernetes auto-scaling for judge workers
-- Multi-language support (Python, C++, Java, JavaScript, Go)
+### Phase 0: Foundation
+- NestJS backend scaffold + Docker (PostgreSQL, Redis) + Prisma schema
 
-See [SCALING.md](../docs/SCALING.md) for the complete migration blueprint.
+### Phase 1: Authentication & User Management
+- NextAuth.js + JWT auth with Redis blocklist + Role-Based Access Control
+
+### Phase 2: Question Bank & Practice Mode
+- Question CRUD API + DB-driven Practice Mode + Examiner Dashboard
+
+### Phase 3: Exam Management
+- Exam CRUD + Invitations + Session lifecycles + Auto-save drafts
+
+### Phase 4: Remote Judge Engine
+- Docker-based sandboxed judge for 5 languages + BullMQ + WebSockets
+
+### Phase 5: Monitoring & Analytics
+- Live exam dashboard + Proctoring events + Analytics + Leaderboards
+
+### Phase 6: Production Hardening
+- Rate limiting + Security Audit + CI/CD + Load Testing + Tracing
+
+**See [SCALING.md](../docs/SCALING.md) for the complete migration blueprint and `docs/guides/` for the step-by-step execution plan.**
 
 ---
 
