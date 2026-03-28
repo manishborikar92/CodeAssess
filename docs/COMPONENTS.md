@@ -12,6 +12,7 @@ The top-level orchestrator that manages the entire exam experience.
 - Manages current code state
 - Handles Run/Submit/Reset flows
 - Wires child components together
+- Implements resizable panel layout using `react-resizable-panels`
 
 **Internal State:**
 | State | Type | Purpose |
@@ -24,6 +25,21 @@ The top-level orchestrator that manages the entire exam experience.
 | `showEndModal` | boolean | End exam confirmation visible |
 | `showResetModal` | boolean | Reset code confirmation visible |
 | `pyodideLoading` | boolean | Pyodide is loading |
+| `isSidebarOpen` | boolean | Sidebar drawer visibility |
+| `isSidebarClosing` | boolean | Sidebar exit animation state |
+
+**Layout Structure:**
+- Uses `Group` (from react-resizable-panels) with nested horizontal and vertical splits
+- Sidebar: Animated overlay drawer (420px width) with backdrop
+  - Slides in from left with smooth animation (300ms)
+  - Backdrop fades in/out (200ms)
+  - Click backdrop or toggle button to close
+- Problem panel: 20-50% width, adjustable via drag handle
+- Code + Output panel group: 30-80% width with vertical split
+  - Code panel: 30-70% height
+  - Output panel: 20-70% height
+- Custom resize handles with hover effects and visual indicators
+- Smooth animations using CSS keyframes with cubic-bezier easing
 
 ---
 
@@ -37,6 +53,8 @@ Top bar with exam controls and live metrics.
 | `onFinishExam` | function | Called when End Exam is clicked |
 | `onViewResults` | function | Called when Results button is clicked |
 | `pyodideReady` | boolean | Whether Pyodide is loaded |
+| `onToggleSidebar` | function | Called to open/close the problems list panel |
+| `isSidebarOpen` | boolean | Current state of the problems list panel |
 
 **Features:**
 - Live countdown timer with warning (< 15min) and critical (< 5min) states
@@ -48,16 +66,20 @@ Top bar with exam controls and live metrics.
 
 ### Sidebar (`components/exam/Sidebar.jsx`)
 
-Scrollable question list with status indicators.
+Animated overlay drawer with question list and status indicators.
 
 **Props:** None (reads from ExamContext)
 
 **Features:**
+- Slides in from left as overlay (420px width)
+- Semi-transparent backdrop (click to close)
+- Smooth animations (300ms slide, 200ms fade)
 - Questions grouped by section with section headers
 - Per-question difficulty badge (E/M/H)
 - Status dots: hollow (not attempted), gold (partial), green (AC)
 - Active question highlight with left border accent
 - Click to navigate between questions
+- Does not affect main panel layout (overlay mode)
 
 ---
 

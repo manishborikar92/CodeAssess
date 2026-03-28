@@ -54,7 +54,7 @@ export default function OutputPanel({
       .join("\n") || "";
 
   return (
-    <div className="border-t border-border-main bg-bg-secondary shrink-0 h-[220px] flex flex-col overflow-hidden">
+    <div className="flex flex-col h-full bg-bg-secondary overflow-hidden w-full">
       {/* Tabs */}
       <div className="flex items-center gap-0 border-b border-border-subtle px-3 bg-bg-secondary shrink-0">
         {tabs.map((tab) => (

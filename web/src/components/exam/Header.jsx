@@ -3,8 +3,9 @@
 import { useExam } from "@/context/ExamContext";
 import { useTimer } from "@/hooks/useTimer";
 import { useState, useCallback } from "react";
+import { PanelLeftClose, PanelLeft } from "lucide-react";
 
-export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
+export default function Header({ onFinishExam, onViewResults, pyodideReady, onToggleSidebar, isSidebarOpen }) {
   const {
     status,
     startTime,
@@ -36,11 +37,20 @@ export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
   const currentQ = questions[currentQuestionIndex];
 
   return (
-    <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-5 gap-4 z-10 h-[52px] shrink-0">
-      {/* Brand */}
-      <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
-        <img src="/logo.svg" alt="CodeAssess" className="w-8 h-8 object-contain" />
-        <span className="text-white tracking-wide font-bold">Code<span className="text-accent-cyan">Assess</span></span>
+    <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-4 gap-4 z-10 h-[52px] shrink-0">
+      {/* Left Section: Sidebar Toggle + Brand */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleSidebar}
+          className="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-hover rounded transition-colors cursor-pointer"
+          title={isSidebarOpen ? "Close Problems List" : "Open Problems List"}
+        >
+          {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
+        </button>
+        <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
+          <img src="/logo.svg" alt="CodeAssess" className="w-8 h-8 object-contain" />
+          <span className="text-white tracking-wide font-bold">Code<span className="text-accent-cyan">Assess</span></span>
+        </div>
       </div>
 
       {/* Center: Score + Timer + Q counter */}
