@@ -1,12 +1,12 @@
 "use client";
 
-import { ExamProvider } from "@/context/ExamContext";
-import ExamShell from "@/components/exam/ExamShell";
+import { PracticeSessionProvider } from "@/context/PracticeSessionContext";
+import PracticeWorkspaceShell from "@/components/exam/PracticeWorkspaceShell";
 
 export default function PracticePage() {
   return (
-    <ExamProvider>
-      <ExamShell />
-    </ExamProvider>
+    <PracticeSessionProvider>
+      <PracticeWorkspaceShell />
+    </PracticeSessionProvider>
   );
 }

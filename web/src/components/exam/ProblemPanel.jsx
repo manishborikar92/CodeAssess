@@ -1,6 +1,6 @@
 "use client";
 
-export default function ProblemPanel({ question, timer }) {
+export default function ProblemPanel({ question, timer, timeSummary }) {
   if (!question) {
     return (
       <div className="flex items-center justify-center h-full text-text-muted text-sm px-6 text-center">
@@ -12,6 +12,8 @@ export default function ProblemPanel({ question, timer }) {
 
   const difficulty = question.difficulty.toLowerCase().split("-")[0];
   const timeLimitMinutes = Math.round((question.timeLimitSeconds || 0) / 60);
+  const resolvedTimeSummary =
+    timeSummary || `Time Limit: ${timeLimitMinutes} min per question`;
 
   return (
     <section className="border-r border-border-main overflow-y-auto flex flex-col h-full">
@@ -55,8 +57,7 @@ export default function ProblemPanel({ question, timer }) {
         </h2>
 
         <div className="text-[0.72rem] text-text-muted mt-1.5">
-          Max Score: {question.maxScore} pts | Time Limit: {timeLimitMinutes} min per
-          question
+          Max Score: {question.maxScore} pts | {resolvedTimeSummary}
         </div>
       </div>
 

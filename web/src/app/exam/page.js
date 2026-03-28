@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import ExamModeShell from "@/components/exam/ExamModeShell";
 
 export default function ExamPage() {
-  redirect("/practice");
+  return <ExamModeShell />;
 }
