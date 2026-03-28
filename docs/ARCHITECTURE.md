@@ -52,17 +52,23 @@ RootLayout
     └── ExamProvider (Context)
         └── ExamShell (orchestrator)
             ├── Header
-            │   └── Timer (via useTimer hook)
-            ├── Sidebar
-            │   └── Question items (with status dots)
-            ├── ProblemPanel
-            │   └── Problem description, test cases
-            ├── CodePanel
-            │   └── React CodeMirror editor
-            ├── OutputPanel
-            │   ├── Test Results tab
-            │   ├── Console tab
-            │   └── Custom Input tab
+            │   ├── Timer (via useTimer hook)
+            │   └── Sidebar toggle button (lucide-react icons)
+            ├── Sidebar Overlay (animated drawer)
+            │   ├── Backdrop (click to close)
+            │   └── Question list with status indicators
+            ├── Group (horizontal) — react-resizable-panels
+            │   ├── ProblemPanel
+            │   │   └── Problem description, test cases
+            │   ├── Separator (custom styled)
+            │   └── Group (vertical)
+            │       ├── CodePanel
+            │       │   └── React CodeMirror editor
+            │       ├── Separator (custom styled)
+            │       └── OutputPanel
+            │           ├── Test Results tab
+            │           ├── Console tab
+            │           └── Custom Input tab
             ├── ResultsScreen (overlay)
             ├── Modal (End Exam, Reset Code)
             └── Toast (notifications)

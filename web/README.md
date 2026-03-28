@@ -45,6 +45,8 @@ npm run lint
 | **UI Library** | React | 19.2.4 | Component-based UI |
 | **Styling** | Tailwind CSS | 4.0 | Utility-first CSS framework |
 | **Code Editor** | @uiw/react-codemirror | 4.25.9 | Python syntax highlighting |
+| **Resizing Engine** | react-resizable-panels | 4.7.6 | IDE-style adjustable layout |
+| **Icons** | lucide-react | 1.7.0 | Modern UI SVG icons |
 | **Python Runtime** | Pyodide | 0.27.3 | WebAssembly CPython 3.12 |
 | **State Management** | React Context + useReducer | — | Exam state, drafts, submissions |
 | **Fonts** | Google Fonts | — | Sora, Space Grotesk, JetBrains Mono |
@@ -132,8 +134,10 @@ RootLayout
 - **90-Minute Timer** — Countdown with warning states (< 15min, < 5min)
 - **Custom Input Testing** — Debug with your own test cases
 - **Keyboard Shortcuts** — `Ctrl+Enter` (Run), `Ctrl+Shift+Enter` (Submit)
-- **Professional UI** — Dark theme with responsive layout
-- **Question Navigation** — Jump between questions in any order
+- **Professional UI** — Dark theme with fully adjustable, resizable split panels (IDE-style)
+- **Resizable Panels** — Drag-to-resize horizontal and vertical dividers with smooth transitions
+- **Animated Sidebar Drawer** — Slides in from left with backdrop, 420px width, smooth animations
+- **Question Navigation** — Toggle sidebar overlay with header button or click backdrop to close
 
 ## 📚 Documentation
 

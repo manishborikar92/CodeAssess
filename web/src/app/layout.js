@@ -1,4 +1,4 @@
-import { Sora, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Sora, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -21,10 +21,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "CodeAssess — Online Assessment Platform",
+  title: "CodeAssess - Coding Practice Workspace",
   description:
-    "Professional-grade technical assessment platform for coding challenges with an integrated online judge.",
-  keywords: ["coding", "assessment", "online judge", "programming", "exam"],
+    "Client-side coding practice workspace with per-question timers, an in-browser Python judge, and a future path to full exam sessions.",
+  keywords: ["coding", "practice", "online judge", "programming", "assessment"],
   appleWebApp: {
     title: "CodeAssess",
   },

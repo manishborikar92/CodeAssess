@@ -1,14 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Spinner from "@/components/ui/Spinner";
-
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
 
 export default function OutputPanel({
   results,
@@ -16,6 +9,8 @@ export default function OutputPanel({
   question,
   onRunCustom,
   isRunning,
+  isInteractionDisabled,
+  disableReason,
 }) {
   const [activeTab, setActiveTab] = useState("results");
   const [customInput, setCustomInput] = useState("");
@@ -29,9 +24,13 @@ export default function OutputPanel({
   ];
 
   const handleRunCustom = async () => {
-    if (!onRunCustom) return;
+    if (!onRunCustom || isInteractionDisabled) {
+      return;
+    }
+
     setCustomRunning(true);
     setCustomOutput(null);
+
     try {
       const result = await onRunCustom(customInput);
       setCustomOutput(result);
@@ -41,21 +40,19 @@ export default function OutputPanel({
     }
   };
 
-  // Collect stdout/stderr from results
   const allStdout =
     results?.results
-      ?.map((r) => r.actual)
+      ?.map((result) => result.actual)
       .filter(Boolean)
       .join("") || "";
   const allStderr =
     results?.results
-      ?.map((r) => r.error)
+      ?.map((result) => result.error)
       .filter(Boolean)
       .join("\n") || "";
 
   return (
-    <div className="border-t border-border-main bg-bg-secondary shrink-0 h-[220px] flex flex-col overflow-hidden">
-      {/* Tabs */}
+    <div className="flex flex-col h-full bg-bg-secondary overflow-hidden w-full">
       <div className="flex items-center gap-0 border-b border-border-subtle px-3 bg-bg-secondary shrink-0">
         {tabs.map((tab) => (
           <button
@@ -74,26 +71,21 @@ export default function OutputPanel({
         ))}
       </div>
 
-      {/* Tab content */}
       <div className="flex-1 overflow-y-auto p-3 min-h-0">
-        {/* Results tab */}
         {activeTab === "results" && (
           <>
             {!results ? (
               <div className="text-center py-5 text-text-muted text-[0.82rem]">
-                Click <strong>Run Samples</strong> or <strong>Submit</strong> to
-                see results
+                Click <strong>Run Samples</strong> or <strong>Submit</strong> to see
+                results.
               </div>
             ) : (
               <div>
-                {/* Summary bar */}
                 <div className="flex items-center gap-2.5 px-2.5 py-1.5 bg-bg-tertiary rounded mb-2.5 text-[0.8rem]">
                   <span className="text-accent-green font-bold font-mono">
                     {results.passed}
                   </span>
-                  <span className="text-text-muted font-mono">
-                    / {results.total}
-                  </span>
+                  <span className="text-text-muted font-mono">/ {results.total}</span>
                   <span className="text-text-muted text-[0.78rem]">
                     test cases passed
                   </span>
@@ -114,76 +106,73 @@ export default function OutputPanel({
                       Score: {results.score}/{question.maxScore}
                     </span>
                   ) : (
-                    <span className="text-text-muted text-[0.75rem]">
-                      (sample only)
-                    </span>
+                    <span className="text-text-muted text-[0.75rem]">(sample only)</span>
                   )}
                 </div>
 
-                {/* Result rows */}
-                {results.results.map((r, i) => (
+                {results.results.map((result, index) => (
                   <div
-                    key={i}
+                    key={index}
                     className={`grid grid-cols-[100px_80px_1fr] gap-2 items-start
                       px-2.5 py-2 rounded mb-1.5 text-[0.78rem]
                       border bg-bg-card
                       ${
-                        r.status === "AC"
+                        result.status === "AC"
                           ? "border-[rgba(46,204,143,0.3)]"
-                          : r.status === "WA"
+                          : result.status === "WA"
                           ? "border-[rgba(255,77,106,0.3)]"
-                          : r.status === "TLE"
+                          : result.status === "TLE"
                           ? "border-[rgba(240,192,64,0.3)]"
                           : "border-[rgba(255,140,66,0.3)]"
                       }`}
                   >
                     <span className="font-mono font-semibold text-text-muted">
-                      {r.label}
+                      {result.label}
                     </span>
                     <span
                       className={`font-bold text-[0.72rem] tracking-[0.5px] px-1.5 py-0.5 rounded text-center ${
-                        r.status === "AC"
+                        result.status === "AC"
                           ? "bg-[rgba(46,204,143,0.15)] text-status-ac"
-                          : r.status === "WA"
+                          : result.status === "WA"
                           ? "bg-[rgba(255,77,106,0.15)] text-status-wa"
-                          : r.status === "TLE"
+                          : result.status === "TLE"
                           ? "bg-[rgba(240,192,64,0.15)] text-status-tle"
                           : "bg-[rgba(255,140,66,0.15)] text-status-re"
                       }`}
                     >
-                      {r.status}
+                      {result.status}
                     </span>
                     <div className="text-text-muted">
-                      {r.status === "AC" && (
-                        <span className="text-accent-green text-[0.75rem]">
-                          Correct ✓
-                        </span>
+                      {result.status === "AC" && (
+                        <span className="text-accent-green text-[0.75rem]">Correct</span>
                       )}
-                      {r.status === "WA" && (
+
+                      {result.status === "WA" && (
                         <div className="text-[0.75rem]">
-                          {r.isSample && (
+                          {result.isSample && (
                             <>
                               <span className="text-text-muted">Input: </span>
                               <code className="font-mono text-text-primary bg-bg-tertiary px-1 rounded text-[0.75rem]">
-                                {r.input?.replace(/\n/g, " ↵ ")}
+                                {result.input?.replace(/\n/g, " | ")}
                               </code>
                               <br />
                             </>
                           )}
                           <span className="text-text-muted">Expected: </span>
                           <code className="font-mono text-text-primary bg-bg-tertiary px-1 rounded text-[0.75rem]">
-                            {(r.expected || "").trim()}
+                            {(result.expected || "").trim()}
                           </code>
                           <br />
                           <span className="text-text-muted">Got: </span>
                           <code className="font-mono text-accent-red bg-bg-tertiary px-1 rounded text-[0.75rem]">
-                            {(r.actual || "").trim()}
+                            {(result.actual || "").trim()}
                           </code>
                         </div>
                       )}
-                      {(r.status === "RE" || r.status === "TLE") && (
+
+                      {(result.status === "RE" || result.status === "TLE") && (
                         <code className="font-mono text-accent-orange text-[0.75rem]">
-                          {r.error || r.status}
+                          {result.error || result.status}
                         </code>
                       )}
                     </div>
@@ -194,12 +183,11 @@ export default function OutputPanel({
           </>
         )}
 
-        {/* Console tab */}
         {activeTab === "stdout" && (
           <>
             {!allStdout && !allStderr ? (
               <div className="text-center py-5 text-text-muted text-[0.82rem]">
-                No output yet
+                No output yet.
               </div>
             ) : (
               <>
@@ -218,21 +206,29 @@ export default function OutputPanel({
           </>
         )}
 
-        {/* Custom input tab */}
         {activeTab === "custom" && (
           <div className="flex flex-col gap-2 h-full">
+            {disableReason && (
+              <div className="text-[0.75rem] text-accent-red bg-[rgba(255,77,106,0.08)] border border-[rgba(255,77,106,0.18)] rounded p-2">
+                {disableReason}
+              </div>
+            )}
+
             <textarea
               value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              placeholder="Type your custom input here…"
+              onChange={(event) => setCustomInput(event.target.value)}
+              placeholder="Type your custom input here..."
+              disabled={isInteractionDisabled}
               className="flex-1 bg-bg-tertiary border border-border-main rounded
                 text-text-primary font-mono text-[0.8rem] p-2 resize-none outline-none
-                min-h-[60px] focus:border-accent-blue transition-colors duration-200"
+                min-h-[60px] focus:border-accent-blue transition-colors duration-200
+                disabled:opacity-50 disabled:cursor-not-allowed"
             />
+
             <div className="flex items-center gap-2">
               <button
                 onClick={handleRunCustom}
-                disabled={customRunning || isRunning}
+                disabled={customRunning || isRunning || isInteractionDisabled}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.75rem] font-semibold
                   text-accent-cyan bg-bg-card border border-[rgba(15,240,200,0.3)] rounded
                   hover:bg-[rgba(15,240,200,0.1)] transition-all duration-200
@@ -240,16 +236,17 @@ export default function OutputPanel({
               >
                 {customRunning ? (
                   <>
-                    <Spinner size="sm" /> Running…
+                    <Spinner size="sm" /> Running...
                   </>
                 ) : (
-                  "▷ Run"
+                  "Run"
                 )}
               </button>
               <span className="text-[0.72rem] text-text-muted">
-                Run your code against custom input
+                Run your code against custom input.
               </span>
             </div>
+
             {customOutput && (
               <pre
                 className={`font-mono text-[0.8rem] whitespace-pre-wrap max-h-20 overflow-y-auto ${

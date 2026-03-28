@@ -1,65 +1,99 @@
 "use client";
 
+import Image from "next/image";
+import { useCallback, useState } from "react";
+import { PanelLeft, PanelLeftClose } from "lucide-react";
 import { useExam } from "@/context/ExamContext";
 import { useTimer } from "@/hooks/useTimer";
-import { useState, useCallback } from "react";
 
-export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
+export default function Header({
+  onViewResults,
+  onQuestionTimeUp,
+  pyodideReady,
+  onToggleSidebar,
+  isSidebarOpen,
+}) {
   const {
-    status,
-    startTime,
-    totalDuration,
-    totalScore,
-    maxPossibleScore,
+    currentQuestion,
     currentQuestionIndex,
+    currentQuestionTimer,
+    maxPossibleScore,
     questions,
+    totalScore,
   } = useExam();
 
-  const [remaining, setRemaining] = useState(totalDuration);
-  const [timerState, setTimerState] = useState(""); // '' | 'warning' | 'critical'
+  const timerLimitSeconds = currentQuestion?.timeLimitSeconds || 0;
+  const [liveRemaining, setLiveRemaining] = useState(null);
 
-  const onTick = useCallback(({ remaining: r }) => {
-    setRemaining(r);
-    if (r <= 300) setTimerState("critical");
-    else if (r <= 900) setTimerState("warning");
-    else setTimerState("");
+  const onTick = useCallback(({ remaining: nextRemaining }) => {
+    setLiveRemaining(nextRemaining);
   }, []);
 
   const { formatTime } = useTimer({
-    startTime,
-    totalSeconds: totalDuration,
-    isRunning: status === "active",
+    durationSeconds: timerLimitSeconds,
+    elapsedSeconds: currentQuestionTimer?.spentSeconds || 0,
+    isRunning: currentQuestionTimer?.isRunning || false,
     onTick,
-    onTimeUp: onFinishExam,
+    onTimeUp: currentQuestion ? onQuestionTimeUp : undefined,
   });
 
-  const currentQ = questions[currentQuestionIndex];
+  const remaining = currentQuestionTimer?.isRunning
+    ? liveRemaining ?? currentQuestionTimer?.remainingSeconds ?? 0
+    : currentQuestionTimer?.remainingSeconds || 0;
+  const timerState = !currentQuestion
+    ? ""
+    : currentQuestionTimer?.isExpired || remaining <= 5 * 60
+    ? "critical"
+    : remaining <= 10 * 60
+    ? "warning"
+    : "";
+
+  const questionLabel =
+    currentQuestionIndex !== null && currentQuestion
+      ? `Q ${currentQuestion.id} / ${questions.length}`
+      : `Questions ${questions.length}`;
 
   return (
-    <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-5 gap-4 z-10 h-[52px] shrink-0">
-      {/* Brand */}
-      <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
-        <img src="/logo.svg" alt="CodeAssess" className="w-8 h-8 object-contain" />
-        <span className="text-white tracking-wide font-bold">Code<span className="text-accent-cyan">Assess</span></span>
+    <header className="flex items-center justify-between bg-bg-secondary border-b border-border-main px-4 gap-4 z-10 h-[52px] shrink-0">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleSidebar}
+          className="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-hover rounded transition-colors cursor-pointer"
+          title={isSidebarOpen ? "Close question list" : "Open question list"}
+        >
+          {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
+        </button>
+
+        <div className="flex items-center font-bold text-base tracking-wide whitespace-nowrap px-1">
+          <Image
+            src="/logo.svg"
+            alt="CodeAssess"
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
+          />
+          <span className="text-white tracking-wide font-bold">
+            Code<span className="text-accent-cyan">Assess</span>
+          </span>
+        </div>
       </div>
 
-      {/* Center: Score + Timer + Q counter */}
       <div className="flex-1 flex items-center justify-center gap-5">
-        {/* Score */}
         <div className="flex items-center gap-1.5 bg-bg-card border border-border-main rounded-lg px-3.5 py-1 font-mono text-[0.82rem]">
-          Score:{" "}
+          Score:
           <span className="text-accent-cyan font-semibold">{totalScore}</span>
           <span className="text-text-muted">/</span>
           <span>{maxPossibleScore}</span>
         </div>
 
-        {/* Timer */}
         <div
           className={`
             flex items-center gap-2 bg-bg-card border rounded-lg px-3.5 py-1
-            font-mono text-base font-semibold transition-all duration-200
+            font-mono text-base font-semibold transition-all duration-200 min-w-[148px] justify-center
             ${
-              timerState === "critical"
+              !currentQuestion
+                ? "border-border-main text-text-muted"
+                : timerState === "critical"
                 ? "border-accent-red text-accent-red animate-[blink_1s_infinite]"
                 : timerState === "warning"
                 ? "border-accent-gold text-accent-gold"
@@ -67,42 +101,34 @@ export default function Header({ onFinishExam, onViewResults, pyodideReady }) {
             }
           `}
         >
-          <span className="text-[0.85rem]">⏱</span>
-          <span>{formatTime(remaining)}</span>
+          <span className="text-[0.85rem]">T</span>
+          <span>
+            {!currentQuestion
+              ? "Pick a question"
+              : currentQuestionTimer?.isExpired
+              ? "Time up"
+              : formatTime(remaining)}
+          </span>
         </div>
 
-        {/* Question counter */}
         <div className="flex items-center gap-1.5 bg-bg-card border border-border-main rounded-lg px-3.5 py-1 font-mono text-[0.78rem]">
-          Q <span className="text-accent-blue font-semibold">{currentQ?.id || 1}</span>
-          <span className="text-text-muted">/</span>
-          <span>{questions.length}</span>
+          <span className="text-accent-blue font-semibold">{questionLabel}</span>
         </div>
       </div>
 
-      {/* Right: Actions */}
       <div className="flex items-center gap-2">
-        {/* Pyodide indicator */}
         <div
           className={`w-2 h-2 rounded-full mr-1 ${
             pyodideReady ? "bg-accent-green" : "bg-accent-gold animate-pulse"
           }`}
-          title={pyodideReady ? "Python runtime ready" : "Loading Python runtime..."}
+          title={pyodideReady ? "Python runtime ready" : "Loading Python runtime"}
         />
 
-        {status === "finished" && (
-          <button
-            onClick={onViewResults}
-            className="px-3 py-1.5 text-[0.78rem] font-semibold text-text-secondary bg-transparent border border-border-main rounded hover:bg-bg-hover hover:text-text-primary transition-all duration-200 cursor-pointer"
-          >
-            📊 Results
-          </button>
-        )}
         <button
-          onClick={onFinishExam}
-          disabled={status === "finished"}
-          className="bg-gradient-to-br from-accent-green to-[#25a070] text-white border-none rounded px-4 py-1.5 text-[0.8rem] font-semibold cursor-pointer transition-all duration-200 hover:opacity-90 hover:-translate-y-px disabled:opacity-40 disabled:cursor-not-allowed"
+          onClick={onViewResults}
+          className="px-3 py-1.5 text-[0.78rem] font-semibold text-text-secondary bg-transparent border border-border-main rounded hover:bg-bg-hover hover:text-text-primary transition-all duration-200 cursor-pointer"
         >
-          ⏹ End Exam
+          View Progress
         </button>
       </div>
     </header>
