@@ -9,6 +9,7 @@ const testFiles = [
   "practice-session.test.mjs",
   "exam-session.test.mjs",
   "assessment-config.test.mjs",
+  "submission-state.test.mjs",
 ];
 
 let failed = false;

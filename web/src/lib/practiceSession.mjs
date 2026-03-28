@@ -1,3 +1,5 @@
+import { clampQuestionIndex } from "./workspaceNavigation.mjs";
+
 export const PRACTICE_MODE = "practice";
 export const PRACTICE_SESSION_VERSION = 2;
 export const QUESTION_TIME_LIMIT_SECONDS = 30 * 60;
@@ -16,14 +18,6 @@ function isPlainObject(value) {
 
 function toIsoTimestamp(now) {
   return new Date(now).toISOString();
-}
-
-export function clampQuestionIndex(index, questionCount) {
-  if (!Number.isInteger(index) || questionCount < 1) {
-    return null;
-  }
-
-  return Math.max(0, Math.min(questionCount - 1, index));
 }
 
 export function withQuestionTimeLimit(questions) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePracticeSession } from "@/context/PracticeSessionContext";
+import { usePractice } from "@/context/PracticeContext";
 import { usePyodide } from "@/hooks/usePyodide";
 import { useTimer } from "@/hooks/useTimer";
 import { getQuestions } from "@/lib/api";
@@ -66,15 +66,15 @@ function formatPracticeSubmissionToast({ currentQuestion, result }) {
 }
 
 export default function PracticeWorkspaceShell() {
-  const practiceSession = usePracticeSession();
+  const practice = usePractice();
   const pyodide = usePyodide();
 
   const sidebar = useSidebarState();
   const resetDialog = useDialogState();
   const resultsDialog = useDialogState();
   const { isLoading } = usePracticeInitializer({
-    loadQuestions: practiceSession.loadQuestions,
-    restoreSession: practiceSession.restoreSession,
+    loadQuestions: practice.loadQuestions,
+    restoreSession: practice.restoreSession,
   });
   const { isPyodideLoading } = usePyodideInitializer(pyodide, isLoading);
 
@@ -87,14 +87,14 @@ export default function PracticeWorkspaceShell() {
     handleCodeChange,
     resetToStarter,
   } = useWorkspaceCodeEditor({
-    currentQuestion: practiceSession.currentQuestion,
-    getDraft: practiceSession.getDraft,
-    saveDraft: practiceSession.saveDraft,
+    currentQuestion: practice.currentQuestion,
+    getDraft: practice.getDraft,
+    saveDraft: practice.saveDraft,
   });
 
-  const hasSelectedQuestion = Boolean(practiceSession.currentQuestion);
-  const isQuestionExpired = Boolean(practiceSession.currentQuestionTimer?.isExpired);
-  const activeQuestionIndex = practiceSession.currentQuestionIndex ?? 0;
+  const hasSelectedQuestion = Boolean(practice.currentQuestion);
+  const isQuestionExpired = Boolean(practice.currentQuestionTimer?.isExpired);
+  const activeQuestionIndex = practice.currentQuestionIndex ?? 0;
 
   const interactionDisabledMessage = !hasSelectedQuestion
     ? "Choose a question from the sidebar to start coding."
@@ -116,7 +116,7 @@ export default function PracticeWorkspaceShell() {
     handleRunCustom,
   } = useWorkspaceExecution({
     code,
-    currentQuestion: practiceSession.currentQuestion,
+    currentQuestion: practice.currentQuestion,
     disableReason: interactionDisabledMessage,
     formatSubmissionToast: formatPracticeSubmissionToast,
     isInteractionDisabled: !hasSelectedQuestion || isQuestionExpired,
@@ -124,7 +124,7 @@ export default function PracticeWorkspaceShell() {
     setResultMode,
     setResults,
     onSuccessfulSubmission: ({ code: submittedCode, questionId, result }) =>
-      practiceSession.recordSubmission(questionId, submittedCode, result),
+      practice.recordSubmission(questionId, submittedCode, result),
   });
 
   const expiredQuestionToastRef = useRef(null);
@@ -135,7 +135,7 @@ export default function PracticeWorkspaceShell() {
       }
 
       expiredQuestionToastRef.current = questionId;
-      practiceSession.expireQuestion(questionId);
+      practice.expireQuestion(questionId);
       sidebar.open();
       showToast(
         `Q${questionId}: the 30-minute limit has ended. Choose another question to keep practicing.`,
@@ -143,18 +143,18 @@ export default function PracticeWorkspaceShell() {
         5000
       );
     },
-    [practiceSession, sidebar]
+    [practice, sidebar]
   );
 
   const [questionTimeRemaining, setQuestionTimeRemaining] = useState(null);
   const { formatTime } = useTimer({
-    durationSeconds: practiceSession.currentQuestion?.timeLimitSeconds || 0,
-    elapsedSeconds: practiceSession.currentQuestionTimer?.spentSeconds || 0,
-    isRunning: practiceSession.currentQuestionTimer?.isRunning || false,
+    durationSeconds: practice.currentQuestion?.timeLimitSeconds || 0,
+    elapsedSeconds: practice.currentQuestionTimer?.spentSeconds || 0,
+    isRunning: practice.currentQuestionTimer?.isRunning || false,
     onTick: ({ remaining }) => setQuestionTimeRemaining(remaining),
     onTimeUp: () => {
-      if (practiceSession.currentQuestion) {
-        notifyQuestionExpired(practiceSession.currentQuestion.id);
+      if (practice.currentQuestion) {
+        notifyQuestionExpired(practice.currentQuestion.id);
       }
     },
   });
@@ -164,8 +164,8 @@ export default function PracticeWorkspaceShell() {
     if (
       isLoading ||
       autoOpenSidebarRef.current ||
-      practiceSession.questions.length === 0 ||
-      practiceSession.currentQuestion
+      practice.questions.length === 0 ||
+      practice.currentQuestion
     ) {
       return;
     }
@@ -174,21 +174,21 @@ export default function PracticeWorkspaceShell() {
     sidebar.open();
   }, [
     isLoading,
-    practiceSession.currentQuestion,
-    practiceSession.questions.length,
+    practice.currentQuestion,
+    practice.questions.length,
     sidebar,
   ]);
 
   useEffect(() => {
-    if (!practiceSession.currentQuestion || !practiceSession.currentQuestionTimer?.isExpired) {
+    if (!practice.currentQuestion || !practice.currentQuestionTimer?.isExpired) {
       return;
     }
 
-    notifyQuestionExpired(practiceSession.currentQuestion.id);
+    notifyQuestionExpired(practice.currentQuestion.id);
   }, [
     notifyQuestionExpired,
-    practiceSession.currentQuestion,
-    practiceSession.currentQuestionTimer?.isExpired,
+    practice.currentQuestion,
+    practice.currentQuestionTimer?.isExpired,
   ]);
 
   const handlePreviousQuestion = useCallback(() => {
@@ -196,37 +196,37 @@ export default function PracticeWorkspaceShell() {
       return;
     }
 
-    practiceSession.setQuestion(
-      getPreviousQuestionIndex(activeQuestionIndex, practiceSession.questions.length)
+    practice.setQuestion(
+      getPreviousQuestionIndex(activeQuestionIndex, practice.questions.length)
     );
-  }, [activeQuestionIndex, hasSelectedQuestion, practiceSession]);
+  }, [activeQuestionIndex, hasSelectedQuestion, practice]);
 
   const handleNextQuestion = useCallback(() => {
     if (!hasSelectedQuestion) {
       return;
     }
 
-    practiceSession.setQuestion(
-      getNextQuestionIndex(activeQuestionIndex, practiceSession.questions.length)
+    practice.setQuestion(
+      getNextQuestionIndex(activeQuestionIndex, practice.questions.length)
     );
-  }, [activeQuestionIndex, hasSelectedQuestion, practiceSession]);
+  }, [activeQuestionIndex, hasSelectedQuestion, practice]);
 
   const handleShuffleQuestion = useCallback(() => {
-    if (!hasSelectedQuestion || practiceSession.questions.length < 2) {
+    if (!hasSelectedQuestion || practice.questions.length < 2) {
       return;
     }
 
-    practiceSession.setQuestion(
-      getRandomQuestionIndex(activeQuestionIndex, practiceSession.questions.length)
+    practice.setQuestion(
+      getRandomQuestionIndex(activeQuestionIndex, practice.questions.length)
     );
-  }, [activeQuestionIndex, hasSelectedQuestion, practiceSession]);
+  }, [activeQuestionIndex, hasSelectedQuestion, practice]);
 
   const handleSelectQuestion = useCallback(
     (index) => {
-      practiceSession.setQuestion(index);
+      practice.setQuestion(index);
       sidebar.close();
     },
-    [practiceSession, sidebar]
+    [practice, sidebar]
   );
 
   const handleResetConfirm = useCallback(() => {
@@ -234,10 +234,10 @@ export default function PracticeWorkspaceShell() {
     resetDialog.close();
   }, [resetDialog, resetToStarter]);
 
-  const sidebarQuestions = practiceSession.questions.map((question) => {
-    const submission = practiceSession.getSubmissionStatus(question.id);
-    const timer = practiceSession.getQuestionTimerStatus(question.id);
-    const hasDraft = practiceSession.drafts[question.id] !== undefined;
+  const sidebarQuestions = practice.questions.map((question) => {
+    const submission = practice.getSubmissionStatus(question.id);
+    const timer = practice.getQuestionTimerStatus(question.id);
+    const hasDraft = practice.drafts[question.id] !== undefined;
     const isSolved = Boolean(submission && submission.score >= question.maxScore);
     const isPartial = Boolean(submission && submission.score > 0 && !isSolved);
     const isInProgress = !submission && (timer.hasStarted || hasDraft);
@@ -272,7 +272,7 @@ export default function PracticeWorkspaceShell() {
 
   const sidebarVisible = sidebar.isOpen || sidebar.isClosing;
   const currentTimerSeconds =
-    questionTimeRemaining ?? practiceSession.currentQuestionTimer?.remainingSeconds ?? 0;
+    questionTimeRemaining ?? practice.currentQuestionTimer?.remainingSeconds ?? 0;
 
   return (
     <>
@@ -281,16 +281,16 @@ export default function PracticeWorkspaceShell() {
       <WorkspaceChrome
         header={
           <WorkspaceHeader
-            canGoNext={hasSelectedQuestion && activeQuestionIndex < practiceSession.questions.length - 1}
+            canGoNext={hasSelectedQuestion && activeQuestionIndex < practice.questions.length - 1}
             canGoPrevious={hasSelectedQuestion && activeQuestionIndex > 0}
-            canShuffle={hasSelectedQuestion && practiceSession.questions.length > 1}
+            canShuffle={hasSelectedQuestion && practice.questions.length > 1}
             currentQuestionLabel={
               hasSelectedQuestion
-                ? `Practice Workspace - Question ${practiceSession.currentQuestion.id} of ${practiceSession.questions.length}`
+                ? `Practice Workspace - Question ${practice.currentQuestion.id} of ${practice.questions.length}`
                 : "Practice Workspace"
             }
             currentQuestionTitle={
-              practiceSession.currentQuestion?.title || "Choose a question to begin"
+              practice.currentQuestion?.title || "Choose a question to begin"
             }
             onNextQuestion={handleNextQuestion}
             onPreviousQuestion={handlePreviousQuestion}
@@ -298,7 +298,7 @@ export default function PracticeWorkspaceShell() {
             onShuffleQuestion={handleShuffleQuestion}
             onToggleSidebar={sidebar.toggle}
             primaryActionLabel="View Progress"
-            scoreLabel={`Score ${practiceSession.totalScore}/${practiceSession.maxPossibleScore}`}
+            scoreLabel={`Score ${practice.totalScore}/${practice.maxPossibleScore}`}
             showShuffleButton
             timerLabel={
               hasSelectedQuestion ? `Timer ${formatTime(currentTimerSeconds)}` : "Select a problem"
@@ -316,7 +316,7 @@ export default function PracticeWorkspaceShell() {
         }
         sidebar={
           <QuestionSidebar
-            currentQuestionIndex={practiceSession.currentQuestionIndex}
+            currentQuestionIndex={practice.currentQuestionIndex}
             description="Pick any question. Selecting one opens it and closes this list."
             questions={sidebarQuestions}
             onSelectQuestion={handleSelectQuestion}
@@ -327,8 +327,8 @@ export default function PracticeWorkspaceShell() {
         onCloseSidebar={sidebar.close}
         problemPanel={
           <ProblemPanel
-            question={practiceSession.currentQuestion}
-            timer={practiceSession.currentQuestionTimer}
+            question={practice.currentQuestion}
+            timer={practice.currentQuestionTimer}
           />
         }
         codePanel={
@@ -349,7 +349,7 @@ export default function PracticeWorkspaceShell() {
           <OutputPanel
             results={results}
             mode={resultMode}
-            question={practiceSession.currentQuestion}
+            question={practice.currentQuestion}
             onRunCustom={handleRunCustom}
             isRunning={isRunning}
             isInteractionDisabled={!hasSelectedQuestion || isQuestionExpired}

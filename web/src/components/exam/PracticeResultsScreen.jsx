@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { usePracticeSession } from "@/context/PracticeSessionContext";
+import { usePractice } from "@/context/PracticeContext";
 
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
@@ -22,7 +22,7 @@ function formatTime(seconds) {
 }
 
 export default function PracticeResultsScreen({ onClose }) {
-  const { getSummary, questions } = usePracticeSession();
+  const { getSummary, questions } = usePractice();
   const summary = useMemo(() => getSummary(), [getSummary]);
 
   const totalCases = summary.breakdown.reduce(

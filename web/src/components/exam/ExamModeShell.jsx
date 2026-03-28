@@ -1,24 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useExam } from "@/context/ExamContext";
 import { usePyodide } from "@/hooks/usePyodide";
 import { useTimer } from "@/hooks/useTimer";
 import { useExamIntegrityGuards } from "@/hooks/useExamIntegrityGuards";
-import {
-  clearExamSession,
-  getExamConfig,
-  getExamQuestions,
-  loadExamSession,
-  saveExamSession,
-} from "@/lib/api";
-import {
-  EXAM_DURATION_SECONDS,
-  finishExamSession,
-  getExamTimerState,
-  normalizeExamSession,
-  registerIntegrityViolation,
-  startExamSession,
-} from "@/lib/examSession.mjs";
 import {
   getNextQuestionIndex,
   getPreviousQuestionIndex,
@@ -107,87 +93,35 @@ function formatExamSubmissionToast({ currentQuestion, result }) {
 }
 
 export default function ExamModeShell() {
+  const {
+    acceptRules,
+    config,
+    currentQuestion,
+    durationSeconds,
+    finishExam,
+    getDraft,
+    isLoading,
+    maxScore,
+    questions,
+    recordIntegrityViolation,
+    recordSubmission,
+    resetExam,
+    saveDraft,
+    session,
+    setQuestion,
+    startExam,
+    timerState,
+    totalScore,
+  } = useExam();
   const pyodide = usePyodide();
   const sidebar = useSidebarState();
   const finishDialog = useDialogState();
   const resetDialog = useDialogState();
-  const [config, setConfig] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [session, setSession] = useState(() => normalizeExamSession(null, 0));
-  const [isLoading, setIsLoading] = useState(true);
   const [isStarting, setIsStarting] = useState(false);
   const [isFullscreenActive, setIsFullscreenActive] = useState(false);
   const [requiresFullscreenResume, setRequiresFullscreenResume] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      const [nextConfig, nextQuestions] = await Promise.all([
-        getExamConfig(),
-        getExamQuestions(),
-      ]);
-      const savedSession = loadExamSession();
-      const normalizedSession = normalizeExamSession(savedSession, nextQuestions.length);
-
-      if (cancelled) {
-        return;
-      }
-
-      setConfig(nextConfig);
-      setQuestions(nextQuestions);
-      setSession(normalizedSession);
-      setIsLoading(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-
-    saveExamSession(session);
-  }, [isLoading, session]);
-
   const { isPyodideLoading } = usePyodideInitializer(pyodide, isLoading);
-
-  const currentQuestion =
-    questions[session.currentQuestionIndex] || questions[0] || null;
-  const examTimerState = getExamTimerState(session);
-  const totalScore = useMemo(
-    () =>
-      Object.values(session.submissions || {}).reduce(
-        (sum, submission) => sum + (submission.score || 0),
-        0
-      ),
-    [session.submissions]
-  );
-  const maxScore = useMemo(
-    () => questions.reduce((sum, question) => sum + question.maxScore, 0),
-    [questions]
-  );
-
-  const saveDraft = useCallback((questionId, code) => {
-    setSession((previousSession) => ({
-      ...previousSession,
-      drafts: {
-        ...previousSession.drafts,
-        [questionId]: code,
-      },
-    }));
-  }, []);
-
-  const getDraft = useCallback(
-    (questionId, fallbackStarter) =>
-      session.drafts?.[questionId] !== undefined
-        ? session.drafts[questionId]
-        : fallbackStarter || "",
-    [session.drafts]
-  );
 
   const {
     code,
@@ -203,43 +137,16 @@ export default function ExamModeShell() {
     saveDraft,
   });
 
-  const handleRecordSubmission = useCallback(({ code: submittedCode, questionId, result }) => {
-    setSession((previousSession) => {
-      const previousSubmission = previousSession.submissions?.[questionId];
-
-      if (previousSubmission && result.score < previousSubmission.score) {
-        return previousSession;
-      }
-
-      return {
-        ...previousSession,
-        submissions: {
-          ...previousSession.submissions,
-          [questionId]: {
-            code: submittedCode,
-            score: result.score,
-            passed: result.passed,
-            total: result.total,
-            submittedAt: new Date().toISOString(),
-          },
-        },
-      };
-    });
-  }, []);
+  const handleRecordSubmission = useCallback(
+    ({ code: submittedCode, questionId, result }) => {
+      recordSubmission(questionId, submittedCode, result);
+    },
+    [recordSubmission]
+  );
 
   const handleFinishExam = useCallback(
     (reason = "completed") => {
-      setSession((previousSession) => {
-        if (
-          previousSession.status === "completed" ||
-          previousSession.status === "time-limit" ||
-          previousSession.status === "integrity-limit"
-        ) {
-          return previousSession;
-        }
-
-        return finishExamSession(previousSession, reason);
-      });
+      finishExam(reason);
 
       if (typeof document !== "undefined" && document.fullscreenElement) {
         document.exitFullscreen().catch(() => {});
@@ -248,21 +155,27 @@ export default function ExamModeShell() {
       setRequiresFullscreenResume(false);
       finishDialog.close();
     },
-    [finishDialog]
+    [finishDialog, finishExam]
   );
 
-  const [remainingTime, setRemainingTime] = useState(EXAM_DURATION_SECONDS);
+  const [remainingTime, setRemainingTime] = useState(durationSeconds);
   useEffect(() => {
-    setRemainingTime(examTimerState.remainingSeconds);
-  }, [examTimerState.remainingSeconds]);
+    setRemainingTime(timerState.remainingSeconds);
+  }, [timerState.remainingSeconds]);
 
   const { formatTime } = useTimer({
-    durationSeconds: session.durationSeconds || EXAM_DURATION_SECONDS,
-    elapsedSeconds: examTimerState.elapsedSeconds,
-    isRunning: examTimerState.isRunning,
+    durationSeconds,
+    elapsedSeconds: timerState.elapsedSeconds,
+    isRunning: timerState.isRunning,
     onTick: ({ remaining }) => setRemainingTime(remaining),
     onTimeUp: () => handleFinishExam("time-limit"),
   });
+
+  useEffect(() => {
+    if (session.status === "active" && timerState.isExpired) {
+      handleFinishExam("time-limit");
+    }
+  }, [handleFinishExam, session.status, timerState.isExpired]);
 
   const recordViolation = useCallback(
     (type) => {
@@ -270,16 +183,11 @@ export default function ExamModeShell() {
         return;
       }
 
-      const outcome = registerIntegrityViolation(session.integrityViolations, type);
+      const outcome = recordIntegrityViolation(type);
 
       if (outcome.violations.length === session.integrityViolations.length) {
         return;
       }
-
-      setSession((previousSession) => ({
-        ...previousSession,
-        integrityViolations: outcome.violations,
-      }));
 
       if (type === "fullscreen-exit") {
         setRequiresFullscreenResume(true);
@@ -302,7 +210,13 @@ export default function ExamModeShell() {
         4500
       );
     },
-    [config?.integrityPolicy.maxViolations, handleFinishExam, session]
+    [
+      config?.integrityPolicy.maxViolations,
+      handleFinishExam,
+      recordIntegrityViolation,
+      session.integrityViolations.length,
+      session.status,
+    ]
   );
 
   useExamIntegrityGuards({
@@ -380,14 +294,14 @@ export default function ExamModeShell() {
 
       setIsFullscreenActive(Boolean(document.fullscreenElement));
       setRequiresFullscreenResume(false);
-      setSession((previousSession) => startExamSession(previousSession));
+      startExam();
       sidebar.close();
     } catch {
       showToast("The browser blocked fullscreen mode. Try again to start the exam.", "error");
     } finally {
       setIsStarting(false);
     }
-  }, [config, session.acceptedRules, sidebar]);
+  }, [config, session.acceptedRules, sidebar, startExam]);
 
   const handleResumeFullscreen = useCallback(async () => {
     try {
@@ -406,16 +320,15 @@ export default function ExamModeShell() {
   }, []);
 
   const handleResetExam = useCallback(() => {
-    clearExamSession();
-    setSession(normalizeExamSession(null, questions.length));
+    resetExam();
     setIsFullscreenActive(false);
     setRequiresFullscreenResume(false);
-    setRemainingTime(EXAM_DURATION_SECONDS);
+    setRemainingTime(durationSeconds);
 
     if (typeof document !== "undefined" && document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
-  }, [questions.length]);
+  }, [durationSeconds, resetExam]);
 
   const handleResetCodeConfirm = useCallback(() => {
     resetToStarter();
@@ -425,6 +338,21 @@ export default function ExamModeShell() {
   const sidebarQuestions = useMemo(
     () => buildExamSidebarQuestions(questions, session, session.currentQuestionIndex),
     [questions, session]
+  );
+  const activeQuestionIndex = session.currentQuestionIndex ?? 0;
+  const sidebarVisible = sidebar.isOpen || sidebar.isClosing;
+  const handlePreviousQuestion = useCallback(() => {
+    setQuestion(getPreviousQuestionIndex(activeQuestionIndex, questions.length));
+  }, [activeQuestionIndex, questions.length, setQuestion]);
+  const handleNextQuestion = useCallback(() => {
+    setQuestion(getNextQuestionIndex(activeQuestionIndex, questions.length));
+  }, [activeQuestionIndex, questions.length, setQuestion]);
+  const handleSelectQuestion = useCallback(
+    (index) => {
+      setQuestion(index);
+      sidebar.close();
+    },
+    [setQuestion, sidebar]
   );
 
   if (isLoading || !config) {
@@ -442,7 +370,7 @@ export default function ExamModeShell() {
           onReset={handleResetExam}
           questions={questions}
           session={session}
-          totalDurationSeconds={session.durationSeconds || EXAM_DURATION_SECONDS}
+          totalDurationSeconds={durationSeconds}
         />
         <WorkspaceToastHost />
       </>
@@ -455,12 +383,7 @@ export default function ExamModeShell() {
         <ExamStartScreen
           config={config}
           isStarting={isStarting}
-          onAcceptRulesChange={(acceptedRules) =>
-            setSession((previousSession) => ({
-              ...previousSession,
-              acceptedRules,
-            }))
-          }
+          onAcceptRulesChange={acceptRules}
           onStart={handleStartExam}
           questions={questions}
           rulesAccepted={session.acceptedRules}
@@ -469,9 +392,6 @@ export default function ExamModeShell() {
       </>
     );
   }
-
-  const activeQuestionIndex = session.currentQuestionIndex ?? 0;
-  const sidebarVisible = sidebar.isOpen || sidebar.isClosing;
 
   return (
     <>
@@ -485,24 +405,8 @@ export default function ExamModeShell() {
             currentQuestionLabel={`Exam Session - Question ${activeQuestionIndex + 1} of ${questions.length}`}
             currentQuestionTitle={currentQuestion?.title || "Loading question"}
             integrityCount={session.integrityViolations.length}
-            onNextQuestion={() =>
-              setSession((previousSession) => ({
-                ...previousSession,
-                currentQuestionIndex: getNextQuestionIndex(
-                  activeQuestionIndex,
-                  questions.length
-                ),
-              }))
-            }
-            onPreviousQuestion={() =>
-              setSession((previousSession) => ({
-                ...previousSession,
-                currentQuestionIndex: getPreviousQuestionIndex(
-                  activeQuestionIndex,
-                  questions.length
-                ),
-              }))
-            }
+            onNextQuestion={handleNextQuestion}
+            onPreviousQuestion={handlePreviousQuestion}
             onPrimaryAction={finishDialog.open}
             onToggleSidebar={sidebar.toggle}
             primaryActionLabel="Finish Exam"
@@ -522,13 +426,7 @@ export default function ExamModeShell() {
             currentQuestionIndex={session.currentQuestionIndex}
             description="Use the list or arrow buttons to move between the exam questions."
             questions={sidebarQuestions}
-            onSelectQuestion={(index) => {
-              setSession((previousSession) => ({
-                ...previousSession,
-                currentQuestionIndex: index,
-              }));
-              sidebar.close();
-            }}
+            onSelectQuestion={handleSelectQuestion}
             title="Exam Problems"
           />
         }

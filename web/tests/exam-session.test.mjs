@@ -11,6 +11,7 @@ import {
   startExamSession,
 } from "../src/lib/examSession.mjs";
 import {
+  clampQuestionIndex,
   getNextQuestionIndex,
   getPreviousQuestionIndex,
   getRandomQuestionIndex,
@@ -98,6 +99,14 @@ test("workspace navigation moves backward and forward within bounds", () => {
   assert.equal(getPreviousQuestionIndex(3, 5), 2);
   assert.equal(getNextQuestionIndex(4, 5), 4);
   assert.equal(getNextQuestionIndex(1, 5), 2);
+});
+
+test("clampQuestionIndex returns a safe index or null when unavailable", () => {
+  assert.equal(clampQuestionIndex(-1, 4), 0);
+  assert.equal(clampQuestionIndex(10, 4), 3);
+  assert.equal(clampQuestionIndex(2, 4), 2);
+  assert.equal(clampQuestionIndex(1, 0), null);
+  assert.equal(clampQuestionIndex("1", 4), null);
 });
 
 test("workspace shuffle never returns the same question when alternatives exist", () => {

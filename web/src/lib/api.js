@@ -4,7 +4,11 @@ import {
   buildPracticeConfig,
   getOrderedQuestionSubset,
 } from "@/lib/assessmentConfig.mjs";
-import { withQuestionTimeLimit } from "@/lib/practiceSession.mjs";
+import {
+  PRACTICE_MODE,
+  PRACTICE_SESSION_VERSION,
+  withQuestionTimeLimit,
+} from "@/lib/practiceSession.mjs";
 
 const PRACTICE_STORAGE_KEY = "codeassess_practice_session";
 const EXAM_STORAGE_KEY = "codeassess_exam_session";
@@ -149,7 +153,3 @@ export function clearExamSession(storageKey = EXAM_STORAGE_KEY) {
 
   localStorage.removeItem(storageKey);
 }
-
-export const loadSession = loadPracticeSession;
-export const saveSession = savePracticeSession;
-export const clearSession = clearPracticeSession;
