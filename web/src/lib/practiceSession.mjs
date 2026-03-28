@@ -1,9 +1,12 @@
+import { clampQuestionIndex } from "./workspaceNavigation.mjs";
+
 export const PRACTICE_MODE = "practice";
 export const PRACTICE_SESSION_VERSION = 2;
 export const QUESTION_TIME_LIMIT_SECONDS = 30 * 60;
 
 function createDefaultTimer() {
   return {
+    isEnabled: false,
     accumulatedSeconds: 0,
     startedAt: null,
     expiredAt: null,
@@ -16,14 +19,6 @@ function isPlainObject(value) {
 
 function toIsoTimestamp(now) {
   return new Date(now).toISOString();
-}
-
-export function clampQuestionIndex(index, questionCount) {
-  if (!Number.isInteger(index) || questionCount < 1) {
-    return null;
-  }
-
-  return Math.max(0, Math.min(questionCount - 1, index));
 }
 
 export function withQuestionTimeLimit(questions) {
@@ -43,7 +38,14 @@ export function getTimerRecord(questionTimers = {}, questionId) {
     return createDefaultTimer();
   }
 
+  const hasLegacyTimerState =
+    (Number.isFinite(timer.accumulatedSeconds) && timer.accumulatedSeconds > 0) ||
+    typeof timer.startedAt === "string" ||
+    typeof timer.expiredAt === "string";
+
   return {
+    isEnabled:
+      typeof timer.isEnabled === "boolean" ? timer.isEnabled : hasLegacyTimerState,
     accumulatedSeconds:
       Number.isFinite(timer.accumulatedSeconds) && timer.accumulatedSeconds > 0
         ? timer.accumulatedSeconds
@@ -82,7 +84,11 @@ export function getQuestionTimerState(
   const timerRecord = getTimerRecord(questionTimers, questionId);
   const spentSeconds = getElapsedSeconds(timerRecord, now, limitSeconds);
   const remainingSeconds = Math.max(0, limitSeconds - spentSeconds);
-  const hasStarted = spentSeconds > 0 || Boolean(timerRecord.startedAt) || Boolean(timerRecord.expiredAt);
+  const hasStarted =
+    timerRecord.isEnabled ||
+    spentSeconds > 0 ||
+    Boolean(timerRecord.startedAt) ||
+    Boolean(timerRecord.expiredAt);
   const isExpired = remainingSeconds === 0 && hasStarted;
 
   return {
@@ -103,6 +109,29 @@ export function resumeQuestionTimer(
 ) {
   const timerState = getQuestionTimerState(questionTimers, questionId, now, limitSeconds);
 
+  if (!timerState.isEnabled || timerState.isExpired || timerState.isRunning) {
+    return questionTimers;
+  }
+
+  return {
+    ...questionTimers,
+    [String(questionId)]: {
+      isEnabled: true,
+      accumulatedSeconds: timerState.spentSeconds,
+      startedAt: toIsoTimestamp(now),
+      expiredAt: timerState.expiredAt,
+    },
+  };
+}
+
+export function enableQuestionTimer(
+  questionTimers,
+  questionId,
+  now = Date.now(),
+  limitSeconds = QUESTION_TIME_LIMIT_SECONDS
+) {
+  const timerState = getQuestionTimerState(questionTimers, questionId, now, limitSeconds);
+
   if (timerState.isExpired || timerState.isRunning) {
     return questionTimers;
   }
@@ -110,6 +139,7 @@ export function resumeQuestionTimer(
   return {
     ...questionTimers,
     [String(questionId)]: {
+      isEnabled: true,
       accumulatedSeconds: timerState.spentSeconds,
       startedAt: toIsoTimestamp(now),
       expiredAt: timerState.expiredAt,
@@ -134,6 +164,7 @@ export function pauseQuestionTimer(
   return {
     ...questionTimers,
     [String(questionId)]: {
+      isEnabled: timerState.isEnabled,
       accumulatedSeconds: timerState.spentSeconds,
       startedAt: null,
       expiredAt: isExpired ? timerState.expiredAt || toIsoTimestamp(now) : timerState.expiredAt,
@@ -147,10 +178,29 @@ export function expireQuestionTimer(questionTimers, questionId, now = Date.now()
   return {
     ...questionTimers,
     [String(questionId)]: {
+      isEnabled: true,
       accumulatedSeconds: QUESTION_TIME_LIMIT_SECONDS,
       startedAt: null,
       expiredAt: timerState.expiredAt || toIsoTimestamp(now),
     },
+  };
+}
+
+export function unlockQuestionTimer(questionTimers, questionId) {
+  const timerRecord = getTimerRecord(questionTimers, questionId);
+
+  if (
+    !timerRecord.isEnabled &&
+    timerRecord.accumulatedSeconds === 0 &&
+    !timerRecord.startedAt &&
+    !timerRecord.expiredAt
+  ) {
+    return questionTimers;
+  }
+
+  return {
+    ...questionTimers,
+    [String(questionId)]: createDefaultTimer(),
   };
 }
 
@@ -206,7 +256,7 @@ export function buildPracticeSummary({
     return {
       id: question.id,
       title: question.title,
-      section: question.section,
+      difficulty: question.difficulty,
       score: submission ? submission.score || 0 : 0,
       maxScore: question.maxScore,
       attempted: Boolean(submission),

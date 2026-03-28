@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node tests/practice-session.test.mjs"
+    "test": "node tests/run-tests.mjs"
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.2.1",

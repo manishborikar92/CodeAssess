@@ -1,32 +1,26 @@
 "use client";
 
-export default function ProblemPanel({ question, timer }) {
+import { formatQuestionDifficulty } from "@/lib/questionCatalog.mjs";
+
+export default function ProblemPanel({ question, timer, timeSummary, controls }) {
   if (!question) {
     return (
       <div className="flex items-center justify-center h-full text-text-muted text-sm px-6 text-center">
-        Choose a question from the sidebar to start solving. Each question has its
-        own 30-minute timer.
+        Choose a question from the sidebar to start solving. Practice timers stay off
+        until you enable them for a question.
       </div>
     );
   }
 
-  const difficulty = question.difficulty.toLowerCase().split("-")[0];
+  const difficulty = question.difficulty;
   const timeLimitMinutes = Math.round((question.timeLimitSeconds || 0) / 60);
+  const resolvedTimeSummary =
+    timeSummary || `Optional timer: ${timeLimitMinutes} min per question`;
 
   return (
     <section className="border-r border-border-main overflow-y-auto flex flex-col h-full">
       <div className="px-6 pt-[18px] pb-3.5 border-b border-border-subtle shrink-0">
         <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span
-            className={`text-[0.66rem] font-semibold tracking-[0.5px] px-2 py-0.5 rounded-xl border uppercase ${
-              question.section === "A"
-                ? "text-accent-blue border-accent-blue bg-[rgba(77,124,255,0.08)]"
-                : "text-accent-cyan border-accent-cyan bg-[rgba(15,240,200,0.08)]"
-            }`}
-          >
-            Section {question.section}
-          </span>
-
           <span className="text-[0.66rem] font-semibold tracking-[0.5px] px-2 py-0.5 rounded-xl border text-text-muted border-border-main bg-transparent uppercase">
             {question.topic}
           </span>
@@ -40,7 +34,7 @@ export default function ProblemPanel({ question, timer }) {
                 : "text-diff-hard bg-[rgba(255,77,106,0.12)]"
             }`}
           >
-            {question.difficulty}
+            {formatQuestionDifficulty(question.difficulty)}
           </span>
 
           {timer?.isExpired && (
@@ -55,9 +49,10 @@ export default function ProblemPanel({ question, timer }) {
         </h2>
 
         <div className="text-[0.72rem] text-text-muted mt-1.5">
-          Max Score: {question.maxScore} pts | Time Limit: {timeLimitMinutes} min per
-          question
+          Max Score: {question.maxScore} pts | {resolvedTimeSummary}
         </div>
+
+        {controls && <div className="mt-3">{controls}</div>}
       </div>
 
       <div className="px-6 py-5 flex-1">

@@ -1,12 +1,17 @@
 import questionsData from "@/data/questions.json";
 import {
+  buildExamConfig,
+  buildPracticeConfig,
+} from "@/lib/assessmentConfig.mjs";
+import { normalizeQuestions } from "@/lib/questionCatalog.mjs";
+import {
   PRACTICE_MODE,
   PRACTICE_SESSION_VERSION,
-  QUESTION_TIME_LIMIT_SECONDS,
   withQuestionTimeLimit,
 } from "@/lib/practiceSession.mjs";
 
 const PRACTICE_STORAGE_KEY = "codeassess_practice_session";
+const EXAM_STORAGE_KEY = "codeassess_exam_session";
 const LEGACY_SESSION_STORAGE_KEY = "codeassess_session";
 
 /**
@@ -14,7 +19,7 @@ const LEGACY_SESSION_STORAGE_KEY = "codeassess_session";
  * Future: Replace with a typed API client backed by NestJS.
  */
 export async function getQuestions() {
-  return withQuestionTimeLimit(questionsData);
+  return withQuestionTimeLimit(normalizeQuestions(questionsData));
 }
 
 /**
@@ -32,25 +37,12 @@ export async function getQuestionById(id) {
  */
 export async function getPracticeConfig() {
   const questions = await getQuestions();
-  const totalScore = questions.reduce(
-    (sum, question) => sum + question.maxScore,
-    0
-  );
-
-  return {
-    mode: PRACTICE_MODE,
-    sessionVersion: PRACTICE_SESSION_VERSION,
-    title: "Coding Practice Workspace",
-    subtitle: "Solve any question in any order",
-    totalQuestions: questions.length,
-    questionTimeLimitMinutes: QUESTION_TIME_LIMIT_SECONDS / 60,
-    totalScore,
-    language: "Python 3",
-  };
+  return buildPracticeConfig(questions);
 }
 
 export async function getExamConfig() {
-  return getPracticeConfig();
+  const questions = await getQuestions();
+  return buildExamConfig(questions);
 }
 
 /**
@@ -123,6 +115,35 @@ export function clearPracticeSession(
   localStorage.removeItem(legacyStorageKey);
 }
 
-export const loadSession = loadPracticeSession;
-export const saveSession = savePracticeSession;
-export const clearSession = clearPracticeSession;
+export function loadExamSession(storageKey = EXAM_STORAGE_KEY) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const raw = localStorage.getItem(storageKey);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveExamSession(state, storageKey = EXAM_STORAGE_KEY) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  } catch {
+    // Storage full or unavailable.
+  }
+}
+
+export function clearExamSession(storageKey = EXAM_STORAGE_KEY) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  localStorage.removeItem(storageKey);
+}

@@ -3,11 +3,13 @@ import assert from "node:assert/strict";
 import {
   QUESTION_TIME_LIMIT_SECONDS,
   buildPracticeSummary,
+  enableQuestionTimer,
   getQuestionTimerState,
   normalizePracticeSession,
   pauseQuestionTimer,
   resumeQuestionTimer,
   switchQuestionTimer,
+  unlockQuestionTimer,
 } from "../src/lib/practiceSession.mjs";
 
 const tests = [];
@@ -16,15 +18,28 @@ function test(name, fn) {
   tests.push({ name, fn });
 }
 
-test("resumeQuestionTimer starts an idle timer", () => {
+test("resumeQuestionTimer does not start a timer until it is explicitly enabled", () => {
   const now = Date.UTC(2026, 2, 28, 10, 0, 0);
 
   const timers = resumeQuestionTimer({}, 7, now);
   const timer = getQuestionTimerState(timers, 7, now);
 
+  assert.equal(timer.isEnabled, false);
+  assert.equal(timer.isRunning, false);
+  assert.equal(timer.hasStarted, false);
+  assert.equal(timer.spentSeconds, 0);
+  assert.equal(timer.remainingSeconds, QUESTION_TIME_LIMIT_SECONDS);
+});
+
+test("enableQuestionTimer starts the timer for the selected question", () => {
+  const now = Date.UTC(2026, 2, 28, 10, 0, 0);
+
+  const timers = enableQuestionTimer({}, 7, now);
+  const timer = getQuestionTimerState(timers, 7, now);
+
+  assert.equal(timer.isEnabled, true);
   assert.equal(timer.isRunning, true);
   assert.equal(timer.hasStarted, true);
-  assert.equal(timer.spentSeconds, 0);
   assert.equal(timer.remainingSeconds, QUESTION_TIME_LIMIT_SECONDS);
 });
 
@@ -32,21 +47,22 @@ test("pauseQuestionTimer accumulates elapsed time and clears the running flag", 
   const start = Date.UTC(2026, 2, 28, 10, 0, 0);
   const end = start + 5 * 60 * 1000;
 
-  const runningTimers = resumeQuestionTimer({}, 4, start);
+  const runningTimers = enableQuestionTimer({}, 4, start);
   const pausedTimers = pauseQuestionTimer(runningTimers, 4, end);
   const timer = getQuestionTimerState(pausedTimers, 4, end);
 
+  assert.equal(timer.isEnabled, true);
   assert.equal(timer.isRunning, false);
   assert.equal(timer.spentSeconds, 5 * 60);
   assert.equal(timer.remainingSeconds, 25 * 60);
   assert.equal(timer.isExpired, false);
 });
 
-test("switchQuestionTimer pauses the previous question and starts the next one", () => {
+test("switchQuestionTimer only resumes the next question if its timer was already enabled", () => {
   const firstStart = Date.UTC(2026, 2, 28, 10, 0, 0);
   const switchAt = firstStart + 2 * 60 * 1000;
 
-  const firstQuestion = resumeQuestionTimer({}, 1, firstStart);
+  const firstQuestion = enableQuestionTimer({}, 1, firstStart);
   const switched = switchQuestionTimer(firstQuestion, 1, 2, switchAt);
 
   const questionOne = getQuestionTimerState(switched, 1, switchAt);
@@ -54,7 +70,8 @@ test("switchQuestionTimer pauses the previous question and starts the next one",
 
   assert.equal(questionOne.isRunning, false);
   assert.equal(questionOne.spentSeconds, 2 * 60);
-  assert.equal(questionTwo.isRunning, true);
+  assert.equal(questionTwo.isEnabled, false);
+  assert.equal(questionTwo.isRunning, false);
   assert.equal(questionTwo.spentSeconds, 0);
 });
 
@@ -62,7 +79,7 @@ test("getQuestionTimerState marks a question as expired once the limit is reache
   const start = Date.UTC(2026, 2, 28, 10, 0, 0);
   const expiredAt = start + QUESTION_TIME_LIMIT_SECONDS * 1000;
 
-  const runningTimers = resumeQuestionTimer({}, 9, start);
+  const runningTimers = enableQuestionTimer({}, 9, start);
   const pausedTimers = pauseQuestionTimer(runningTimers, 9, expiredAt);
   const timer = getQuestionTimerState(pausedTimers, 9, expiredAt);
 
@@ -71,13 +88,28 @@ test("getQuestionTimerState marks a question as expired once the limit is reache
   assert.equal(timer.spentSeconds, QUESTION_TIME_LIMIT_SECONDS);
 });
 
+test("unlockQuestionTimer clears an expired timer back to the untimed state", () => {
+  const start = Date.UTC(2026, 2, 28, 10, 0, 0);
+  const expiredAt = start + QUESTION_TIME_LIMIT_SECONDS * 1000;
+
+  const runningTimers = enableQuestionTimer({}, 9, start);
+  const pausedTimers = pauseQuestionTimer(runningTimers, 9, expiredAt);
+  const unlockedTimers = unlockQuestionTimer(pausedTimers, 9);
+  const timer = getQuestionTimerState(unlockedTimers, 9, expiredAt);
+
+  assert.equal(timer.isEnabled, false);
+  assert.equal(timer.isExpired, false);
+  assert.equal(timer.isRunning, false);
+  assert.equal(timer.spentSeconds, 0);
+});
+
 test("buildPracticeSummary reports solved count, score, and time spent across questions", () => {
   const start = Date.UTC(2026, 2, 28, 10, 0, 0);
   const now = start + 8 * 60 * 1000;
 
   const questions = [
-    { id: 1, title: "One", section: "A", maxScore: 100 },
-    { id: 2, title: "Two", section: "B", maxScore: 100 },
+    { id: 1, title: "One", difficulty: "easy", maxScore: 100 },
+    { id: 2, title: "Two", difficulty: "medium", maxScore: 100 },
   ];
 
   const timers = {

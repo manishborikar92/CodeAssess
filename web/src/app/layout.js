@@ -21,10 +21,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "CodeAssess - Coding Practice Workspace",
+  title: "CodeAssess - Practice Workspace and Secure Coding Exams",
   description:
-    "Client-side coding practice workspace with per-question timers, an in-browser Python judge, and a future path to full exam sessions.",
-  keywords: ["coding", "practice", "online judge", "programming", "assessment"],
+    "Client-side coding practice and secure browser-based exam workspace with Pyodide, timed assessments, and reusable candidate flows.",
+  keywords: ["coding", "practice", "online judge", "programming", "assessment", "exam"],
   appleWebApp: {
     title: "CodeAssess",
   },
