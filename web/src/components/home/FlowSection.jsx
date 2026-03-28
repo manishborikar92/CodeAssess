@@ -10,7 +10,7 @@ function FlowStep({ index, summary, title }) {
   );
 }
 
-export default function HomeFlowSection() {
+export default function FlowSection() {
   return (
     <section className="px-6 py-8">
       <div className="mx-auto max-w-[1200px] rounded-[32px] border border-border-main bg-[linear-gradient(180deg,rgba(19,26,42,0.95),rgba(12,16,27,0.96))] p-8">

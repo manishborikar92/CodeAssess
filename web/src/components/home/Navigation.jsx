@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function HomeNavigation() {
+export default function Navigation() {
   return (
     <header className="sticky top-0 z-20 border-b border-white/8 bg-[rgba(10,13,20,0.78)] backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">

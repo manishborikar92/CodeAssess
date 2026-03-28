@@ -35,7 +35,7 @@ function ModeCard({ ctaHref, ctaLabel, eyebrow, summary, title, bullets, tone })
   );
 }
 
-export default function HomeModeSection() {
+export default function ModeSection() {
   return (
     <section className="px-6 py-8">
       <div className="mx-auto max-w-[1200px]">

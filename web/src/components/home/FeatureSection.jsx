@@ -10,7 +10,7 @@ function FeatureCard({ eyebrow, summary, title }) {
   );
 }
 
-export default function HomeFeatureSection() {
+export default function FeatureSection() {
   return (
     <section className="px-6 py-8">
       <div className="mx-auto max-w-[1200px]">

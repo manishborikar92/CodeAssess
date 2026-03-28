@@ -11,7 +11,7 @@ function MetricCard({ label, value }) {
   );
 }
 
-export default function HomeHeroSection({ examConfig, practiceConfig }) {
+export default function HeroSection({ examConfig, practiceConfig }) {
   return (
     <section className="relative overflow-hidden px-6 pb-16 pt-20">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.2),transparent_28%),radial-gradient(circle_at_top_right,rgba(15,240,200,0.14),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_40%)]" />
