@@ -1,16 +1,20 @@
-// ─────────────────────────────────────────────────────────────────────────────
-//  api.js — Data access abstraction layer
-//  Currently reads from local JSON; easily swappable to fetch() calls.
-// ─────────────────────────────────────────────────────────────────────────────
-
 import questionsData from "@/data/questions.json";
+import {
+  PRACTICE_MODE,
+  PRACTICE_SESSION_VERSION,
+  QUESTION_TIME_LIMIT_SECONDS,
+  withQuestionTimeLimit,
+} from "@/lib/practiceSession.mjs";
+
+const PRACTICE_STORAGE_KEY = "codeassess_practice_session";
+const LEGACY_SESSION_STORAGE_KEY = "codeassess_session";
 
 /**
- * Fetch all questions for the exam.
- * Future: Replace with fetch('/api/questions')
+ * Fetch all questions for the client-side practice workspace.
+ * Future: Replace with a typed API client backed by NestJS.
  */
 export async function getQuestions() {
-  return questionsData;
+  return withQuestionTimeLimit(questionsData);
 }
 
 /**
@@ -18,65 +22,107 @@ export async function getQuestions() {
  * Future: Replace with fetch(`/api/questions/${id}`)
  */
 export async function getQuestionById(id) {
-  return questionsData.find((q) => q.id === id) || null;
+  const questions = await getQuestions();
+  return questions.find((question) => question.id === id) || null;
 }
 
 /**
- * Get exam configuration.
- * Future: Replace with fetch('/api/exam/config')
+ * Get practice workspace configuration.
+ * Future: Replace with fetch('/api/practice/config')
  */
-export async function getExamConfig() {
+export async function getPracticeConfig() {
   const questions = await getQuestions();
-  const totalScore = questions.reduce((sum, q) => sum + q.maxScore, 0);
+  const totalScore = questions.reduce(
+    (sum, question) => sum + question.maxScore,
+    0
+  );
+
   return {
-    title: "Coding Assessment",
-    subtitle: "Programming Challenge Platform",
+    mode: PRACTICE_MODE,
+    sessionVersion: PRACTICE_SESSION_VERSION,
+    title: "Coding Practice Workspace",
+    subtitle: "Solve any question in any order",
     totalQuestions: questions.length,
-    durationMinutes: 90,
+    questionTimeLimitMinutes: QUESTION_TIME_LIMIT_SECONDS / 60,
     totalScore,
     language: "Python 3",
   };
+}
+
+export async function getExamConfig() {
+  return getPracticeConfig();
 }
 
 /**
  * Submit a solution (no-op for now, future: POST to backend).
  */
 export async function submitSolution(questionId, code, results) {
-  // Future: POST to /api/submissions
-  return { success: true, questionId, ...results };
+  return { success: true, questionId, code, ...results };
 }
 
 /**
- * Load exam session from persistence.
- * Future: GET /api/sessions/:id
+ * Load practice session state from persistence.
+ * Future: GET /api/practice/sessions/:id
  */
-export function loadSession(storageKey = "codeassess_session") {
-  if (typeof window === "undefined") return null;
+export function loadPracticeSession(
+  storageKey = PRACTICE_STORAGE_KEY,
+  legacyStorageKey = LEGACY_SESSION_STORAGE_KEY
+) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   try {
     const raw = localStorage.getItem(storageKey);
-    return raw ? JSON.parse(raw) : null;
+    if (raw) {
+      return JSON.parse(raw);
+    }
+
+    const legacyRaw = localStorage.getItem(legacyStorageKey);
+    return legacyRaw ? JSON.parse(legacyRaw) : null;
   } catch {
     return null;
   }
 }
 
 /**
- * Save exam session to persistence.
- * Future: PUT /api/sessions/:id
+ * Save practice session state to persistence.
+ * Future: PUT /api/practice/sessions/:id
  */
-export function saveSession(state, storageKey = "codeassess_session") {
-  if (typeof window === "undefined") return;
+export function savePracticeSession(state, storageKey = PRACTICE_STORAGE_KEY) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   try {
-    localStorage.setItem(storageKey, JSON.stringify(state));
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        ...state,
+        mode: PRACTICE_MODE,
+        sessionVersion: PRACTICE_SESSION_VERSION,
+      })
+    );
   } catch {
-    // Storage full or unavailable
+    // Storage full or unavailable.
   }
 }
 
 /**
- * Clear exam session.
+ * Clear the persisted practice session.
  */
-export function clearSession(storageKey = "codeassess_session") {
-  if (typeof window === "undefined") return;
+export function clearPracticeSession(
+  storageKey = PRACTICE_STORAGE_KEY,
+  legacyStorageKey = LEGACY_SESSION_STORAGE_KEY
+) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   localStorage.removeItem(storageKey);
+  localStorage.removeItem(legacyStorageKey);
 }
+
+export const loadSession = loadPracticeSession;
+export const saveSession = savePracticeSession;
+export const clearSession = clearPracticeSession;

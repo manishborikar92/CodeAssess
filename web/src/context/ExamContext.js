@@ -1,57 +1,76 @@
 "use client";
 
-import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from "react";
-import { saveSession, loadSession, clearSession as clearStoredSession } from "@/lib/api";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import {
+  clearPracticeSession,
+  loadPracticeSession,
+  savePracticeSession,
+} from "@/lib/api";
+import {
+  buildPracticeSummary,
+  clampQuestionIndex,
+  expireQuestionTimer,
+  getQuestionTimerState,
+  normalizePracticeSession,
+  PRACTICE_MODE,
+  PRACTICE_SESSION_VERSION,
+  switchQuestionTimer,
+} from "@/lib/practiceSession.mjs";
 
-// ── Action Types ─────────────────────────────────────────────────────────────
 const ACTIONS = {
   LOAD_QUESTIONS: "LOAD_QUESTIONS",
-  START_EXAM: "START_EXAM",
-  FINISH_EXAM: "FINISH_EXAM",
-  SET_QUESTION: "SET_QUESTION",
+  RESTORE_SESSION: "RESTORE_SESSION",
+  SELECT_QUESTION: "SELECT_QUESTION",
   SAVE_DRAFT: "SAVE_DRAFT",
   RECORD_SUBMISSION: "RECORD_SUBMISSION",
-  RESTORE_SESSION: "RESTORE_SESSION",
+  UPDATE_QUESTION_TIMERS: "UPDATE_QUESTION_TIMERS",
   CLEAR_SESSION: "CLEAR_SESSION",
 };
 
-// ── Initial State ────────────────────────────────────────────────────────────
 const initialState = {
-  status: "idle", // idle | active | finished
-  startTime: null,
-  currentQuestionIndex: 0,
+  mode: PRACTICE_MODE,
+  sessionVersion: PRACTICE_SESSION_VERSION,
+  currentQuestionIndex: null,
   questions: [],
-  submissions: {}, // questionId → { code, score, passed, total, results, submittedAt }
-  drafts: {}, // questionId → code string
-  totalDuration: 90 * 60, // 90 minutes in seconds
+  submissions: {},
+  drafts: {},
+  questionTimers: {},
 };
 
-// ── Reducer ──────────────────────────────────────────────────────────────────
-function examReducer(state, action) {
+function hasPersistableState(state) {
+  return (
+    state.currentQuestionIndex !== null ||
+    Object.keys(state.submissions).length > 0 ||
+    Object.keys(state.drafts).length > 0 ||
+    Object.keys(state.questionTimers).length > 0
+  );
+}
+
+function practiceReducer(state, action) {
   switch (action.type) {
     case ACTIONS.LOAD_QUESTIONS:
       return { ...state, questions: action.payload };
 
-    case ACTIONS.START_EXAM:
+    case ACTIONS.RESTORE_SESSION:
       return {
         ...state,
-        status: "active",
-        startTime: new Date().toISOString(),
-        currentQuestionIndex: 0,
-        submissions: {},
-        drafts: {},
+        ...action.payload,
       };
 
-    case ACTIONS.FINISH_EXAM:
-      return { ...state, status: "finished" };
-
-    case ACTIONS.SET_QUESTION:
+    case ACTIONS.SELECT_QUESTION:
       return {
         ...state,
-        currentQuestionIndex: Math.max(
-          0,
-          Math.min(state.questions.length - 1, action.payload)
-        ),
+        currentQuestionIndex: action.payload.index,
+        questionTimers: action.payload.questionTimers,
       };
 
     case ACTIONS.SAVE_DRAFT:
@@ -65,74 +84,127 @@ function examReducer(state, action) {
 
     case ACTIONS.RECORD_SUBMISSION: {
       const { questionId, code, result } = action.payload;
-      const existing = state.submissions[questionId];
-      // Keep best submission
-      if (!existing || result.score >= existing.score) {
-        return {
-          ...state,
-          submissions: {
-            ...state.submissions,
-            [questionId]: {
-              code,
-              score: result.score,
-              passed: result.passed,
-              total: result.total,
-              submittedAt: new Date().toISOString(),
-            },
-          },
-        };
+      const existingSubmission = state.submissions[questionId];
+
+      if (existingSubmission && result.score < existingSubmission.score) {
+        return state;
       }
-      return state;
+
+      return {
+        ...state,
+        submissions: {
+          ...state.submissions,
+          [questionId]: {
+            code,
+            score: result.score,
+            passed: result.passed,
+            total: result.total,
+            submittedAt: new Date().toISOString(),
+          },
+        },
+      };
     }
 
-    case ACTIONS.RESTORE_SESSION:
-      return { ...state, ...action.payload };
+    case ACTIONS.UPDATE_QUESTION_TIMERS:
+      return {
+        ...state,
+        questionTimers: action.payload,
+      };
 
     case ACTIONS.CLEAR_SESSION:
-      return { ...initialState, questions: state.questions };
+      return {
+        ...initialState,
+        questions: state.questions,
+      };
 
     default:
       return state;
   }
 }
 
-// ── Context ──────────────────────────────────────────────────────────────────
 const ExamContext = createContext(null);
 
 export function ExamProvider({ children }) {
-  const [state, dispatch] = useReducer(examReducer, initialState);
+  const [state, dispatch] = useReducer(practiceReducer, initialState);
+  const [persistenceReady, setPersistenceReady] = useState(false);
   const saveTimeoutRef = useRef(null);
 
-  // ── Auto-persist on state change (debounced) ──
   useEffect(() => {
-    if (state.status === "idle") return;
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    if (!persistenceReady) {
+      return undefined;
+    }
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    if (!hasPersistableState(state)) {
+      clearPracticeSession();
+      return undefined;
+    }
+
     saveTimeoutRef.current = setTimeout(() => {
       const { questions, ...sessionData } = state;
-      saveSession(sessionData);
+      savePracticeSession(sessionData);
     }, 300);
-    return () => {
-      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
-    };
-  }, [state]);
 
-  // ── Actions ──
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [persistenceReady, state]);
+
   const loadQuestions = useCallback((questions) => {
     dispatch({ type: ACTIONS.LOAD_QUESTIONS, payload: questions });
   }, []);
 
-  const startExam = useCallback(() => {
-    clearStoredSession();
-    dispatch({ type: ACTIONS.START_EXAM });
+  const restoreSession = useCallback((questionCount) => {
+    const savedSession = loadPracticeSession();
+    setPersistenceReady(true);
+
+    if (!savedSession) {
+      return false;
+    }
+
+    dispatch({
+      type: ACTIONS.RESTORE_SESSION,
+      payload: normalizePracticeSession(savedSession, questionCount),
+    });
+    return true;
   }, []);
 
-  const finishExam = useCallback(() => {
-    dispatch({ type: ACTIONS.FINISH_EXAM });
-  }, []);
+  const setQuestion = useCallback(
+    (index) => {
+      const nextIndex = clampQuestionIndex(index, state.questions.length);
+      if (nextIndex === null) {
+        return;
+      }
 
-  const setQuestion = useCallback((index) => {
-    dispatch({ type: ACTIONS.SET_QUESTION, payload: index });
-  }, []);
+      const previousQuestionId =
+        state.currentQuestionIndex !== null
+          ? state.questions[state.currentQuestionIndex]?.id ?? null
+          : null;
+      const nextQuestionId = state.questions[nextIndex]?.id;
+
+      if (!nextQuestionId) {
+        return;
+      }
+
+      dispatch({
+        type: ACTIONS.SELECT_QUESTION,
+        payload: {
+          index: nextIndex,
+          questionTimers: switchQuestionTimer(
+            state.questionTimers,
+            previousQuestionId,
+            nextQuestionId
+          ),
+        },
+      });
+    },
+    [state.currentQuestionIndex, state.questionTimers, state.questions]
+  );
 
   const saveDraft = useCallback((questionId, code) => {
     dispatch({
@@ -148,107 +220,133 @@ export function ExamProvider({ children }) {
     });
   }, []);
 
-  const restoreSession = useCallback(() => {
-    const saved = loadSession();
-    if (saved && saved.status === "active") {
-      // Check if time is expired
-      const elapsed = Math.floor(
-        (Date.now() - new Date(saved.startTime).getTime()) / 1000
-      );
-      if (elapsed >= (saved.totalDuration || 5400)) {
-        saved.status = "finished";
+  const expireQuestion = useCallback(
+    (questionId) => {
+      if (questionId === null || questionId === undefined) {
+        return;
       }
-      dispatch({ type: ACTIONS.RESTORE_SESSION, payload: saved });
-      return true;
-    }
-    return false;
-  }, []);
+
+      dispatch({
+        type: ACTIONS.UPDATE_QUESTION_TIMERS,
+        payload: expireQuestionTimer(state.questionTimers, questionId),
+      });
+    },
+    [state.questionTimers]
+  );
 
   const clearExamSession = useCallback(() => {
-    clearStoredSession();
+    clearPracticeSession();
     dispatch({ type: ACTIONS.CLEAR_SESSION });
   }, []);
 
-  // ── Computed values ──
-  const currentQuestion = state.questions[state.currentQuestionIndex] || null;
+  const currentQuestion =
+    state.currentQuestionIndex !== null
+      ? state.questions[state.currentQuestionIndex] || null
+      : null;
 
-  const totalScore = Object.values(state.submissions).reduce(
-    (sum, s) => sum + (s.score || 0),
-    0
+  const totalScore = useMemo(
+    () =>
+      Object.values(state.submissions).reduce(
+        (sum, submission) => sum + (submission.score || 0),
+        0
+      ),
+    [state.submissions]
   );
 
-  const maxPossibleScore = state.questions.reduce(
-    (sum, q) => sum + q.maxScore,
-    0
+  const maxPossibleScore = useMemo(
+    () =>
+      state.questions.reduce(
+        (sum, question) => sum + (question.maxScore || 0),
+        0
+      ),
+    [state.questions]
   );
 
   const getDraft = useCallback(
-    (questionId, fallbackStarter) => {
-      return state.drafts[questionId] !== undefined
+    (questionId, fallbackStarter) =>
+      state.drafts[questionId] !== undefined
         ? state.drafts[questionId]
-        : fallbackStarter || "";
-    },
+        : fallbackStarter || "",
     [state.drafts]
   );
 
   const getSubmissionStatus = useCallback(
     (questionId) => {
-      const sub = state.submissions[questionId];
-      if (!sub) return null;
-      return { score: sub.score, passed: sub.passed, total: sub.total };
+      const submission = state.submissions[questionId];
+      if (!submission) {
+        return null;
+      }
+
+      return {
+        score: submission.score,
+        passed: submission.passed,
+        total: submission.total,
+      };
     },
     [state.submissions]
   );
 
-  const getSummary = useCallback(() => {
-    const attempted = Object.keys(state.submissions).length;
-    const elapsed = state.startTime
-      ? Math.floor((Date.now() - new Date(state.startTime).getTime()) / 1000)
-      : 0;
+  const getQuestionTimerStatus = useCallback(
+    (questionId) => {
+      const question = state.questions.find((item) => item.id === questionId);
+      return getQuestionTimerState(
+        state.questionTimers,
+        questionId,
+        Date.now(),
+        question?.timeLimitSeconds
+      );
+    },
+    [state.questionTimers, state.questions]
+  );
 
-    const breakdown = state.questions.map((q) => ({
-      id: q.id,
-      title: q.title,
-      section: q.section,
-      score: state.submissions[q.id] ? state.submissions[q.id].score : 0,
-      maxScore: q.maxScore,
-      attempted: !!state.submissions[q.id],
-      status: getSubmissionStatus(q.id),
-    }));
+  const isQuestionLocked = useCallback(
+    (questionId) => getQuestionTimerStatus(questionId).isExpired,
+    [getQuestionTimerStatus]
+  );
 
-    return { attempted, totalScore, maxPossibleScore, elapsed, breakdown };
-  }, [state, totalScore, maxPossibleScore, getSubmissionStatus]);
+  const getSummary = useCallback(
+    () =>
+      buildPracticeSummary({
+        questions: state.questions,
+        questionTimers: state.questionTimers,
+        submissions: state.submissions,
+      }),
+    [state.questionTimers, state.questions, state.submissions]
+  );
 
   const value = {
-    // State
     ...state,
     currentQuestion,
+    currentQuestionTimer: currentQuestion
+      ? getQuestionTimerStatus(currentQuestion.id)
+      : null,
     totalScore,
     maxPossibleScore,
-
-    // Actions
     loadQuestions,
-    startExam,
-    finishExam,
+    restoreSession,
     setQuestion,
     saveDraft,
     recordSubmission,
-    restoreSession,
+    expireQuestion,
     clearExamSession,
-
-    // Getters
     getDraft,
     getSubmissionStatus,
+    getQuestionTimerStatus,
+    isQuestionLocked,
     getSummary,
   };
 
   return <ExamContext.Provider value={value}>{children}</ExamContext.Provider>;
 }
 
+export const PracticeProvider = ExamProvider;
+
 export function useExam() {
   const context = useContext(ExamContext);
+
   if (!context) {
     throw new Error("useExam must be used within an ExamProvider");
   }
+
   return context;
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import { useExam } from "@/context/ExamContext";
 import { usePyodide } from "@/hooks/usePyodide";
 import { getQuestions } from "@/lib/api";
@@ -14,41 +15,46 @@ import ResultsScreen from "./ResultsScreen";
 import Modal from "@/components/ui/Modal";
 import Toast, { showToast } from "@/components/ui/Toast";
 import Spinner from "@/components/ui/Spinner";
-import { Panel, Group, Separator } from "react-resizable-panels";
-
-// ─── Constants ────────────────────────────────────────────────────────────────
 
 const SIDEBAR_CLOSE_ANIMATION_MS = 250;
 
 const TOAST = {
-  pyodideLoading: { message: "Loading Python runtime… this may take a moment.", variant: "default", duration: 5000 },
-  pyodideReady:   { message: "✓ Python runtime ready!", variant: "success", duration: 2500 },
-  examEnded:      { message: "Exam ended. View your results.", variant: "default", duration: 4000 },
+  pyodideLoading: {
+    message: "Loading Python runtime. This may take a moment.",
+    variant: "default",
+    duration: 5000,
+  },
+  pyodideReady: {
+    message: "Python runtime ready.",
+    variant: "success",
+    duration: 2500,
+  },
 };
-
-// ─── Isolated Sub-components ──────────────────────────────────────────────────
 
 function ResizeHandle({ orientation = "horizontal" }) {
   const isHorizontal = orientation === "horizontal";
+
   return (
     <Separator
-      className={`relative flex items-center justify-center bg-[#0a0a0a] transition-colors z-10
-        ${isHorizontal ? "w-2 cursor-col-resize" : "h-2 cursor-row-resize"}`}
+      className={`relative flex items-center justify-center bg-[#0a0a0a] transition-colors z-10 ${
+        isHorizontal ? "w-2 cursor-col-resize" : "h-2 cursor-row-resize"
+      }`}
     >
       <div
         className={`flex items-center justify-center rounded-full bg-border-main
-          hover:bg-border-bright transition-colors
-          ${isHorizontal ? "h-6 w-1" : "w-6 h-1"}`}
+          hover:bg-border-bright transition-colors ${
+            isHorizontal ? "h-6 w-1" : "w-6 h-1"
+          }`}
       />
     </Separator>
   );
 }
 
-function ExamLoadingScreen() {
+function PracticeLoadingScreen() {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-bg-primary gap-4">
       <Spinner size="lg" />
-      <p className="text-text-secondary text-sm">Loading exam data…</p>
+      <p className="text-text-secondary text-sm">Loading practice workspace...</p>
     </div>
   );
 }
@@ -57,177 +63,244 @@ function PyodideLoadingOverlay() {
   return (
     <div className="fixed inset-0 z-[200] bg-[rgba(10,13,20,0.94)] flex flex-col items-center justify-center gap-4">
       <div className="w-12 h-12 border-[3px] border-border-main border-t-accent-cyan rounded-full animate-spin" />
-      <p className="text-base font-semibold text-text-primary">Loading Python Runtime…</p>
-      <p className="text-[0.8rem] text-text-muted">Initializing Pyodide WebAssembly engine</p>
+      <p className="text-base font-semibold text-text-primary">Loading Python Runtime...</p>
+      <p className="text-[0.8rem] text-text-muted">
+        Initializing the in-browser judge engine
+      </p>
     </div>
   );
 }
 
-// ─── Custom Hooks ─────────────────────────────────────────────────────────────
-
-/**
- * Manages sidebar visibility with an animated close sequence.
- */
 function useSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const closeTimerRef = useRef(null);
 
-  const open = useCallback(() => setIsOpen(true), []);
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
+
+  const open = useCallback(() => {
+    clearCloseTimer();
+    setIsClosing(false);
+    setIsOpen(true);
+  }, [clearCloseTimer]);
 
   const close = useCallback(() => {
+    if (!isOpen && !isClosing) {
+      return;
+    }
+
+    clearCloseTimer();
     setIsClosing(true);
     closeTimerRef.current = setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
+      closeTimerRef.current = null;
     }, SIDEBAR_CLOSE_ANIMATION_MS);
-  }, []);
+  }, [clearCloseTimer, isClosing, isOpen]);
 
   const toggle = useCallback(() => {
-    if (isOpen) close();
-    else open();
-  }, [isOpen, open, close]);
+    if (isOpen) {
+      close();
+    } else {
+      open();
+    }
+  }, [close, isOpen, open]);
 
-  // Clean up any pending timer on unmount
-  useEffect(() => () => clearTimeout(closeTimerRef.current), []);
+  useEffect(() => () => clearCloseTimer(), [clearCloseTimer]);
 
   return { isOpen, isClosing, open, close, toggle };
 }
 
-/**
- * Returns open/close state and handlers for a named set of confirmation modals.
- */
-function useModals(...names) {
-  const [openModal, setOpenModal] = useState(null);
+function useResetModal() {
+  const [isOpen, setIsOpen] = useState(false);
+  const open = useCallback(() => setIsOpen(true), []);
+  const close = useCallback(() => setIsOpen(false), []);
 
-  return Object.fromEntries(
-    names.map((name) => [
-      name,
-      {
-        isOpen: openModal === name,
-        open:   () => setOpenModal(name),
-        close:  () => setOpenModal(null),
-      },
-    ])
-  );
+  return {
+    isOpen,
+    open,
+    close,
+  };
 }
 
-/**
- * Fetches questions, seeds the exam context, and starts the timer once ready.
- */
-function useExamInitializer(exam) {
+function usePracticeInitializer({ loadQuestions, restoreSession }) {
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load questions exactly once on mount
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       const questions = await getQuestions();
-      if (!cancelled) {
-        exam.loadQuestions(questions);
-        setIsLoading(false);
+      if (cancelled) {
+        return;
       }
+
+      loadQuestions(questions);
+      restoreSession(questions.length);
+      setIsLoading(false);
     })();
-    return () => { cancelled = true; };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps — intentionally mount-only
 
-  // Start exam once questions are available; use a ref for startExam to avoid
-  // re-running if the context reference changes without semantic change.
-  const startExamRef = useRef(exam.startExam);
-  useEffect(() => { startExamRef.current = exam.startExam; });
-
-  useEffect(() => {
-    if (!isLoading && exam.questions.length > 0 && exam.status === "idle") {
-      startExamRef.current();
-    }
-  }, [isLoading, exam.questions.length, exam.status]);
+    return () => {
+      cancelled = true;
+    };
+  }, [loadQuestions, restoreSession]);
 
   return { isLoading };
 }
 
-/**
- * Initializes Pyodide after exam data has loaded. Fires a toast on each state change.
- */
-function usePyodideInitializer(pyodide, isExamLoading) {
+function usePyodideInitializer(pyodide, isWorkspaceLoading) {
   const [isPyodideLoading, setIsPyodideLoading] = useState(true);
-
-  // Stable ref to avoid re-running when pyodide object reference changes
   const initializeRef = useRef(pyodide.initialize);
-  useEffect(() => { initializeRef.current = pyodide.initialize; });
 
   useEffect(() => {
-    if (isExamLoading) return;
+    initializeRef.current = pyodide.initialize;
+  }, [pyodide.initialize]);
+
+  useEffect(() => {
+    if (isWorkspaceLoading) {
+      return undefined;
+    }
+
     let cancelled = false;
+
     (async () => {
-      showToast(TOAST.pyodideLoading.message, TOAST.pyodideLoading.variant, TOAST.pyodideLoading.duration);
+      showToast(
+        TOAST.pyodideLoading.message,
+        TOAST.pyodideLoading.variant,
+        TOAST.pyodideLoading.duration
+      );
+
       await initializeRef.current();
+
       if (!cancelled) {
-        showToast(TOAST.pyodideReady.message, TOAST.pyodideReady.variant, TOAST.pyodideReady.duration);
+        showToast(
+          TOAST.pyodideReady.message,
+          TOAST.pyodideReady.variant,
+          TOAST.pyodideReady.duration
+        );
         setIsPyodideLoading(false);
       }
     })();
-    return () => { cancelled = true; };
-  }, [isExamLoading]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isWorkspaceLoading]);
 
   return { isPyodideLoading };
 }
 
-/**
- * Keeps the editor in sync with the current question's saved draft,
- * and persists every keystroke back to the draft store.
- */
 function useCodeEditor(exam) {
-  const [code, setCode] = useState("");
-  const [results, setResults] = useState(null);
-  const [resultMode, setResultMode] = useState(null);
+  const [questionResults, setQuestionResults] = useState({});
+  const currentQuestionId = exam.currentQuestion?.id ?? null;
 
-  useEffect(() => {
-    if (!exam.currentQuestion) return;
-    setCode(exam.getDraft(exam.currentQuestion.id, exam.currentQuestion.starterCode));
-    setResults(null);
-    setResultMode(null);
-  }, [exam.currentQuestionIndex, exam.currentQuestion]);
-  //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  //  Both are needed:
-  //  - currentQuestion: triggers on initial load (index stays 0, question goes null → object)
-  //  - currentQuestionIndex: triggers when navigating between questions
+  const code =
+    exam.currentQuestion && currentQuestionId !== null
+      ? exam.getDraft(currentQuestionId, exam.currentQuestion.starterCode)
+      : "";
+  const results =
+    currentQuestionId !== null
+      ? questionResults[currentQuestionId]?.results || null
+      : null;
+  const resultMode =
+    currentQuestionId !== null
+      ? questionResults[currentQuestionId]?.resultMode || null
+      : null;
+
+  const setResults = useCallback(
+    (nextResults) => {
+      if (currentQuestionId === null) {
+        return;
+      }
+
+      setQuestionResults((previous) => ({
+        ...previous,
+        [currentQuestionId]: {
+          ...previous[currentQuestionId],
+          results: nextResults,
+        },
+      }));
+    },
+    [currentQuestionId]
+  );
+
+  const setResultMode = useCallback(
+    (nextResultMode) => {
+      if (currentQuestionId === null) {
+        return;
+      }
+
+      setQuestionResults((previous) => ({
+        ...previous,
+        [currentQuestionId]: {
+          ...previous[currentQuestionId],
+          resultMode: nextResultMode,
+        },
+      }));
+    },
+    [currentQuestionId]
+  );
 
   const handleCodeChange = useCallback(
-    (newCode) => {
-      setCode(newCode);
-      if (exam.currentQuestion) {
-        exam.saveDraft(exam.currentQuestion.id, newCode);
+    (nextCode) => {
+      if (exam.currentQuestion && currentQuestionId !== null) {
+        exam.saveDraft(currentQuestionId, nextCode);
       }
     },
-    [exam]
+    [currentQuestionId, exam]
   );
 
   const resetToStarter = useCallback(() => {
-    if (!exam.currentQuestion) return;
-    const starter = exam.currentQuestion.starterCode;
-    setCode(starter);
-    exam.saveDraft(exam.currentQuestion.id, starter);
-  }, [exam]);
+    if (!exam.currentQuestion || currentQuestionId === null) {
+      return;
+    }
 
-  return { code, results, setResults, resultMode, setResultMode, handleCodeChange, resetToStarter };
+    const starterCode = exam.currentQuestion.starterCode;
+    exam.saveDraft(currentQuestionId, starterCode);
+  }, [currentQuestionId, exam]);
+
+  return {
+    code,
+    results,
+    setResults,
+    resultMode,
+    setResultMode,
+    handleCodeChange,
+    resetToStarter,
+  };
 }
 
-/**
- * Provides run / submit / custom-input execution with shared loading state.
- */
-function useCodeExecution({ code, exam, pyodide, setResults, setResultMode }) {
+function useCodeExecution({
+  code,
+  exam,
+  pyodide,
+  setResults,
+  setResultMode,
+  isInteractionDisabled,
+  disableReason,
+}) {
   const [isRunning, setIsRunning] = useState(false);
   const [runningMode, setRunningMode] = useState(null);
 
-  /**
-   * Wraps an async execution function with shared isRunning / runningMode guards.
-   * Returns early if already running or no question is selected.
-   */
   const execute = useCallback(
     async (mode, fn) => {
-      if (!exam.currentQuestion || isRunning) return;
+      if (!exam.currentQuestion || isRunning) {
+        return;
+      }
+
+      if (isInteractionDisabled) {
+        showToast(disableReason, "error", 3500);
+        return;
+      }
+
       setIsRunning(true);
       setRunningMode(mode);
+
       try {
         await fn();
       } finally {
@@ -235,7 +308,7 @@ function useCodeExecution({ code, exam, pyodide, setResults, setResultMode }) {
         setRunningMode(null);
       }
     },
-    [exam.currentQuestion, isRunning]
+    [disableReason, exam.currentQuestion, isInteractionDisabled, isRunning]
   );
 
   const handleRun = useCallback(
@@ -245,11 +318,11 @@ function useCodeExecution({ code, exam, pyodide, setResults, setResultMode }) {
           const result = await pyodide.runSampleCases(code, exam.currentQuestion);
           setResults(result);
           setResultMode("run");
-        } catch (e) {
-          showToast(`Execution error: ${e.message}`, "error");
+        } catch (error) {
+          showToast(`Execution error: ${error.message}`, "error");
         }
       }),
-    [execute, pyodide, code, exam.currentQuestion, setResults, setResultMode]
+    [code, exam.currentQuestion, execute, pyodide, setResultMode, setResults]
   );
 
   const handleSubmit = useCallback(
@@ -261,135 +334,242 @@ function useCodeExecution({ code, exam, pyodide, setResults, setResultMode }) {
           setResultMode("submit");
           exam.recordSubmission(exam.currentQuestion.id, code, result);
 
-          const { id, maxScore } = exam.currentQuestion;
           showToast(
-            `Q${id}: ${result.passed}/${result.total} passed · Score: ${result.score}/${maxScore}`,
+            `Q${exam.currentQuestion.id}: ${result.passed}/${result.total} passed | Score: ${result.score}/${exam.currentQuestion.maxScore}`,
             result.passed === result.total ? "success" : "default"
           );
-        } catch (e) {
-          showToast(`Submission error: ${e.message}`, "error");
+        } catch (error) {
+          showToast(`Submission error: ${error.message}`, "error");
         }
       }),
-    [execute, pyodide, code, exam, setResults, setResultMode]
+    [code, exam, execute, pyodide, setResultMode, setResults]
   );
 
   const handleRunCustom = useCallback(
-    (input) => pyodide.runCustomInput(code, input),
-    [pyodide, code]
+    async (input) => {
+      if (!exam.currentQuestion) {
+        return { error: "Choose a question before running custom input." };
+      }
+
+      if (isInteractionDisabled) {
+        return { error: disableReason };
+      }
+
+      return pyodide.runCustomInput(code, input);
+    },
+    [code, disableReason, exam.currentQuestion, isInteractionDisabled, pyodide]
   );
 
   return { isRunning, runningMode, handleRun, handleSubmit, handleRunCustom };
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
-
 export default function ExamShell() {
-  const exam   = useExam();
+  const exam = useExam();
   const pyodide = usePyodide();
 
   const sidebar = useSidebar();
-  const modals  = useModals("endExam", "resetCode");
+  const {
+    close: closeSidebar,
+    isClosing: isSidebarClosing,
+    isOpen: isSidebarOpen,
+    open: openSidebar,
+    toggle: toggleSidebar,
+  } = sidebar;
+  const resetModal = useResetModal();
+  const {
+    close: closeResetModal,
+    isOpen: isResetModalOpen,
+    open: openResetModal,
+  } = resetModal;
   const [showResults, setShowResults] = useState(false);
 
-  const { isLoading }        = useExamInitializer(exam);
+  const { isLoading } = usePracticeInitializer({
+    loadQuestions: exam.loadQuestions,
+    restoreSession: exam.restoreSession,
+  });
   const { isPyodideLoading } = usePyodideInitializer(pyodide, isLoading);
 
   const {
-    code, results, setResults, resultMode, setResultMode,
-    handleCodeChange, resetToStarter,
+    code,
+    results,
+    setResults,
+    resultMode,
+    setResultMode,
+    handleCodeChange,
+    resetToStarter,
   } = useCodeEditor(exam);
 
-  const { isRunning, runningMode, handleRun, handleSubmit, handleRunCustom } =
-    useCodeExecution({ code, exam, pyodide, setResults, setResultMode });
+  const hasSelectedQuestion = Boolean(exam.currentQuestion);
+  const isQuestionExpired = Boolean(exam.currentQuestionTimer?.isExpired);
 
-  const handleEndExamConfirm = useCallback(() => {
-    exam.finishExam();
-    modals.endExam.close();
-    setShowResults(true);
-    showToast(TOAST.examEnded.message, TOAST.examEnded.variant, TOAST.examEnded.duration);
-  }, [exam, modals.endExam]);
+  const interactionDisabledMessage = !hasSelectedQuestion
+    ? "Choose a question from the sidebar to start coding."
+    : isQuestionExpired
+    ? "The 30-minute limit for this question has ended. You can review your work, but editing and judging are disabled."
+    : "";
 
-  const handleResetConfirm = useCallback(() => {
+  const customInputDisabledMessage = !hasSelectedQuestion
+    ? "Choose a question from the sidebar before using custom input."
+    : isQuestionExpired
+    ? "Custom input is disabled after the question timer expires."
+    : "";
+
+  const {
+    isRunning,
+    runningMode,
+    handleRun,
+    handleSubmit,
+    handleRunCustom,
+  } = useCodeExecution({
+    code,
+    exam,
+    pyodide,
+    setResults,
+    setResultMode,
+    isInteractionDisabled: !hasSelectedQuestion || isQuestionExpired,
+    disableReason: interactionDisabledMessage,
+  });
+
+  const autoOpenSidebarRef = useRef(false);
+  useEffect(() => {
+    if (
+      isLoading ||
+      autoOpenSidebarRef.current ||
+      exam.questions.length === 0 ||
+      exam.currentQuestion
+    ) {
+      return;
+    }
+
+    autoOpenSidebarRef.current = true;
+    openSidebar();
+  }, [exam.currentQuestion, exam.questions.length, isLoading, openSidebar]);
+
+  const expiredQuestionToastRef = useRef(null);
+  const notifyQuestionExpired = useCallback(
+    (questionId) => {
+      if (!questionId || expiredQuestionToastRef.current === questionId) {
+        return;
+      }
+
+      expiredQuestionToastRef.current = questionId;
+      exam.expireQuestion(questionId);
+      openSidebar();
+      showToast(
+        `Q${questionId}: the 30-minute limit has ended. Choose another question to keep practicing.`,
+        "error",
+        5000
+      );
+    },
+    [exam, openSidebar]
+  );
+
+  useEffect(() => {
+    if (!exam.currentQuestion || !exam.currentQuestionTimer?.isExpired) {
+      return;
+    }
+
+    notifyQuestionExpired(exam.currentQuestion.id);
+  }, [
+    exam.currentQuestion,
+    exam.currentQuestionTimer?.isExpired,
+    notifyQuestionExpired,
+  ]);
+
+  const handleCurrentQuestionTimeUp = useCallback(() => {
+    if (exam.currentQuestion) {
+      notifyQuestionExpired(exam.currentQuestion.id);
+    }
+  }, [exam.currentQuestion, notifyQuestionExpired]);
+
+  const handleSelectQuestion = (index) => {
+    exam.setQuestion(index);
+    closeSidebar();
+  };
+
+  const handleResetConfirm = () => {
     resetToStarter();
-    modals.resetCode.close();
-  }, [resetToStarter, modals.resetCode]);
+    closeResetModal();
+  };
 
-  if (isLoading) return <ExamLoadingScreen />;
+  if (isLoading) {
+    return <PracticeLoadingScreen />;
+  }
 
-  const isSidebarVisible = sidebar.isOpen || sidebar.isClosing;
+  const isSidebarVisible = isSidebarOpen || isSidebarClosing;
 
   return (
     <>
       {isPyodideLoading && <PyodideLoadingOverlay />}
 
       <div className="h-screen flex flex-col bg-[#0a0a0a] overflow-hidden">
-
-        {/* ── Header ── */}
         <div className="shrink-0">
           <Header
-            onFinishExam={modals.endExam.open}
+            key={exam.currentQuestion?.id || "no-question"}
             onViewResults={() => setShowResults(true)}
+            onQuestionTimeUp={handleCurrentQuestionTimeUp}
             pyodideReady={pyodide.isReady}
-            onToggleSidebar={sidebar.toggle}
-            isSidebarOpen={sidebar.isOpen}
+            onToggleSidebar={toggleSidebar}
+            isSidebarOpen={isSidebarOpen}
           />
         </div>
 
-        {/* ── Main content area ── */}
         <div className="flex-1 overflow-hidden p-2 min-h-0 relative">
-
-          {/* Sidebar drawer + backdrop */}
           {isSidebarVisible && (
             <>
               <div
                 aria-hidden="true"
-                className={`absolute inset-0 bg-black/50 z-40
-                  ${sidebar.isClosing ? "animate-fade-out" : "animate-fade-in"}`}
-                onClick={sidebar.close}
+                className={`absolute inset-0 bg-black/50 z-40 ${
+                  isSidebarClosing ? "animate-fade-out" : "animate-fade-in"
+                }`}
+                onClick={closeSidebar}
               />
               <div
                 className={`absolute left-2 top-2 bottom-2 w-[420px] z-50 rounded-lg
                   overflow-hidden bg-bg-secondary border border-border-main shadow-2xl
-                  ${sidebar.isClosing ? "animate-slide-out-left" : "animate-slide-in-left"}`}
+                  ${
+                    isSidebarClosing
+                      ? "animate-slide-out-left"
+                      : "animate-slide-in-left"
+                  }`}
               >
-                <Sidebar />
+                <Sidebar onSelectQuestion={handleSelectQuestion} />
               </div>
             </>
           )}
 
-          {/* Resizable panel layout */}
           <Group orientation="horizontal" className="h-full">
-
-            {/* Problem description */}
             <Panel
               defaultSize={50}
               minSize={20}
               className="rounded-lg overflow-hidden bg-bg-secondary border border-border-main flex flex-col"
             >
-              <ProblemPanel question={exam.currentQuestion} />
+              <ProblemPanel
+                question={exam.currentQuestion}
+                timer={exam.currentQuestionTimer}
+              />
             </Panel>
 
             <ResizeHandle orientation="horizontal" />
 
-            {/* Code editor + output stacked vertically */}
             <Panel defaultSize={50} minSize={30}>
               <Group orientation="vertical" className="h-full">
-
                 <Panel
                   defaultSize={65}
                   minSize={30}
                   className="rounded-lg overflow-hidden bg-bg-secondary border border-border-main flex flex-col"
                 >
                   <CodePanel
-                    question={exam.currentQuestion}
                     code={code}
                     onCodeChange={handleCodeChange}
                     onRun={handleRun}
                     onSubmit={handleSubmit}
-                    onReset={modals.resetCode.open}
+                    onReset={openResetModal}
                     isRunning={isRunning}
                     runningMode={runningMode}
                     pyodideReady={pyodide.isReady}
+                    isDisabled={!hasSelectedQuestion || isQuestionExpired}
+                    disabledMessage={interactionDisabledMessage}
                   />
                 </Panel>
 
@@ -406,40 +586,27 @@ export default function ExamShell() {
                     question={exam.currentQuestion}
                     onRunCustom={handleRunCustom}
                     isRunning={isRunning}
+                    isInteractionDisabled={!hasSelectedQuestion || isQuestionExpired}
+                    disableReason={customInputDisabledMessage}
                   />
                 </Panel>
-
               </Group>
             </Panel>
-
           </Group>
         </div>
       </div>
 
-      {/* Results overlay */}
       {showResults && <ResultsScreen onClose={() => setShowResults(false)} />}
 
-      {/* Confirmation modals */}
       <Modal
-        isOpen={modals.endExam.isOpen}
-        title="End Exam"
-        message="Are you sure you want to end the exam now? This action cannot be undone. Your current submissions will be saved."
-        confirmText="End Exam"
-        cancelText="Continue"
-        variant="danger"
-        onConfirm={handleEndExamConfirm}
-        onCancel={modals.endExam.close}
-      />
-
-      <Modal
-        isOpen={modals.resetCode.isOpen}
+        isOpen={isResetModalOpen}
         title="Reset Code"
-        message="Reset to starter code? Your current code for this question will be lost."
+        message="Reset to starter code? Your current draft for this question will be lost."
         confirmText="Reset"
         cancelText="Cancel"
         variant="danger"
         onConfirm={handleResetConfirm}
-        onCancel={modals.resetCode.close}
+        onCancel={closeResetModal}
       />
 
       <Toast />

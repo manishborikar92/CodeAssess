@@ -1,55 +1,81 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 /**
- * Hook for countdown timer with 1-second resolution.
- * Uses real-time elapsed calculation from startTime for accuracy.
+ * Countdown timer based on an existing elapsed duration.
+ * The caller owns the source of truth; this hook only provides live ticks.
  */
-export function useTimer({ startTime, totalSeconds, isRunning, onTick, onTimeUp }) {
+export function useTimer({
+  durationSeconds = 0,
+  elapsedSeconds = 0,
+  isRunning,
+  onTick,
+  onTimeUp,
+}) {
   const intervalRef = useRef(null);
   const timeUpCalledRef = useRef(false);
 
   const formatTime = useCallback((seconds) => {
-    const s = Math.max(0, seconds);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sc = s % 60;
-    if (h > 0)
-      return `${h}:${String(m).padStart(2, "0")}:${String(sc).padStart(2, "0")}`;
-    return `${String(m).padStart(2, "0")}:${String(sc).padStart(2, "0")}`;
+    const safeSeconds = Math.max(0, seconds);
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const remainingSeconds = safeSeconds % 60;
+
+    if (hours > 0) {
+      return `${hours}:${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+      ).padStart(2, "0")}`;
+    }
+
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
   }, []);
 
   useEffect(() => {
-    if (!isRunning || !startTime) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      return;
-    }
+    const tick = (currentElapsedSeconds) => {
+      const normalizedElapsed = Math.min(durationSeconds, currentElapsedSeconds);
+      const remaining = Math.max(0, durationSeconds - normalizedElapsed);
 
-    timeUpCalledRef.current = false;
+      onTick?.({
+        elapsed: normalizedElapsed,
+        remaining,
+      });
 
-    const tick = () => {
-      const elapsed = Math.floor(
-        (Date.now() - new Date(startTime).getTime()) / 1000
-      );
-      const remaining = Math.max(0, totalSeconds - elapsed);
-
-      if (onTick) onTick({ remaining, elapsed });
-
-      if (remaining <= 0 && !timeUpCalledRef.current) {
+      if (remaining === 0 && !timeUpCalledRef.current) {
         timeUpCalledRef.current = true;
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        if (onTimeUp) onTimeUp();
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        onTimeUp?.();
       }
     };
 
-    tick(); // Initial tick
-    intervalRef.current = setInterval(tick, 1000);
+    timeUpCalledRef.current = false;
+
+    if (!isRunning) {
+      tick(elapsedSeconds);
+      return undefined;
+    }
+
+    const startedAt = Date.now();
+
+    const liveTick = () => {
+      const liveElapsedSeconds =
+        elapsedSeconds + Math.floor((Date.now() - startedAt) / 1000);
+      tick(liveElapsedSeconds);
+    };
+
+    liveTick();
+    intervalRef.current = setInterval(liveTick, 1000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
-  }, [isRunning, startTime, totalSeconds, onTick, onTimeUp]);
+  }, [durationSeconds, elapsedSeconds, isRunning, onTick, onTimeUp]);
 
   return { formatTime };
 }

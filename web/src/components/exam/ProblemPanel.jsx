@@ -1,124 +1,118 @@
 "use client";
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-export default function ProblemPanel({ question }) {
+export default function ProblemPanel({ question, timer }) {
   if (!question) {
     return (
-      <div className="flex items-center justify-center h-full text-text-muted text-sm">
-        Select a question to begin
+      <div className="flex items-center justify-center h-full text-text-muted text-sm px-6 text-center">
+        Choose a question from the sidebar to start solving. Each question has its
+        own 30-minute timer.
       </div>
     );
   }
 
-  const q = question;
-  const diffClass = q.difficulty.toLowerCase().split("-")[0];
+  const difficulty = question.difficulty.toLowerCase().split("-")[0];
+  const timeLimitMinutes = Math.round((question.timeLimitSeconds || 0) / 60);
 
   return (
     <section className="border-r border-border-main overflow-y-auto flex flex-col h-full">
-      {/* Header */}
       <div className="px-6 pt-[18px] pb-3.5 border-b border-border-subtle shrink-0">
-        {/* Meta tags */}
         <div className="flex items-center gap-2 mb-2 flex-wrap">
           <span
             className={`text-[0.66rem] font-semibold tracking-[0.5px] px-2 py-0.5 rounded-xl border uppercase ${
-              q.section === "A"
+              question.section === "A"
                 ? "text-accent-blue border-accent-blue bg-[rgba(77,124,255,0.08)]"
                 : "text-accent-cyan border-accent-cyan bg-[rgba(15,240,200,0.08)]"
             }`}
           >
-            Section {q.section}
+            Section {question.section}
           </span>
+
           <span className="text-[0.66rem] font-semibold tracking-[0.5px] px-2 py-0.5 rounded-xl border text-text-muted border-border-main bg-transparent uppercase">
-            {q.topic}
+            {question.topic}
           </span>
+
           <span
             className={`text-[0.66rem] font-bold px-2 py-0.5 rounded-xl uppercase tracking-[0.5px] ${
-              diffClass === "easy"
+              difficulty === "easy"
                 ? "text-diff-easy bg-[rgba(46,204,143,0.12)]"
-                : diffClass === "medium"
+                : difficulty === "medium"
                 ? "text-diff-medium bg-[rgba(240,192,64,0.12)]"
                 : "text-diff-hard bg-[rgba(255,77,106,0.12)]"
             }`}
           >
-            {q.difficulty}
+            {question.difficulty}
           </span>
+
+          {timer?.isExpired && (
+            <span className="text-[0.66rem] font-bold px-2 py-0.5 rounded-xl uppercase tracking-[0.5px] text-accent-red bg-[rgba(255,77,106,0.12)]">
+              Locked
+            </span>
+          )}
         </div>
 
         <h2 className="text-[1.15rem] font-bold leading-tight text-text-primary">
-          Q{q.id}. {q.title}
+          Q{question.id}. {question.title}
         </h2>
+
         <div className="text-[0.72rem] text-text-muted mt-1.5">
-          Max Score: {q.maxScore} pts · Time Limit: Shared
+          Max Score: {question.maxScore} pts | Time Limit: {timeLimitMinutes} min per
+          question
         </div>
       </div>
 
-      {/* Body */}
       <div className="px-6 py-5 flex-1">
-        {/* Scenario */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mb-1.5">
           Problem Scenario
         </h4>
         <div className="bg-bg-card border border-border-subtle border-l-[3px] border-l-accent-blue rounded-lg p-3.5 text-[0.85rem] text-text-secondary leading-relaxed mb-4">
-          {q.scenario}
+          {question.scenario}
         </div>
 
-        {/* Statement */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Problem Statement
         </h4>
         <p className="text-[0.88rem] text-text-secondary leading-relaxed mb-4">
-          {q.statement}
+          {question.statement}
         </p>
 
-        {/* Constraints */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Constraints
         </h4>
         <ul className="flex flex-col gap-0.5 mb-4">
-          {q.constraints.map((c, i) => (
+          {question.constraints.map((constraint, index) => (
             <li
-              key={i}
-              className="font-mono text-[0.8rem] text-accent-gold py-0.5 before:content-['▸_'] before:text-accent-blue before:text-[0.75rem]"
+              key={index}
+              className="font-mono text-[0.8rem] text-accent-gold py-0.5 before:content-['>_'] before:text-accent-blue before:text-[0.75rem]"
             >
-              {c}
+              {constraint}
             </li>
           ))}
         </ul>
 
-        {/* Input Format */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Input Format
         </h4>
         <div className="bg-bg-tertiary border border-border-subtle rounded-lg p-3 font-mono text-[0.8rem] text-text-primary whitespace-pre-wrap break-all leading-relaxed mb-4">
-          {q.inputFormat}
+          {question.inputFormat}
         </div>
 
-        {/* Output Format */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Output Format
         </h4>
         <div className="bg-bg-tertiary border border-border-subtle rounded-lg p-3 font-mono text-[0.8rem] text-text-primary whitespace-pre-wrap break-all leading-relaxed mb-4">
-          {q.outputFormat}
+          {question.outputFormat}
         </div>
 
-        {/* Sample Test Cases */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Sample Test Cases
         </h4>
-        {q.sampleCases.map((sc, i) => (
+        {question.sampleCases.map((sampleCase, index) => (
           <div
-            key={i}
+            key={index}
             className="bg-bg-card border border-border-main rounded-lg overflow-hidden mb-2.5"
           >
             <div className="bg-bg-tertiary px-3 py-1.5 text-[0.68rem] uppercase tracking-[1px] text-text-muted font-semibold">
-              Sample {i + 1}
+              Sample {index + 1}
             </div>
             <div className="grid grid-cols-2">
               <div className="p-3 border-r border-border-subtle">
@@ -126,7 +120,7 @@ export default function ProblemPanel({ question }) {
                   Input
                 </label>
                 <pre className="font-mono text-[0.8rem] text-text-primary whitespace-pre-wrap">
-                  {sc.input}
+                  {sampleCase.input}
                 </pre>
               </div>
               <div className="p-3">
@@ -134,24 +128,23 @@ export default function ProblemPanel({ question }) {
                   Output
                 </label>
                 <pre className="font-mono text-[0.8rem] text-text-primary whitespace-pre-wrap">
-                  {sc.output}
+                  {sampleCase.output}
                 </pre>
               </div>
             </div>
-            {sc.explanation && (
+            {sampleCase.explanation && (
               <div className="px-3 py-2 border-t border-border-subtle text-[0.78rem] text-text-muted leading-normal">
-                💡 {sc.explanation}
+                Hint: {sampleCase.explanation}
               </div>
             )}
           </div>
         ))}
 
-        {/* Hint */}
         <h4 className="text-[0.7rem] uppercase tracking-[1.5px] text-accent-blue font-semibold mt-4 mb-1.5">
           Approach / Hint
         </h4>
         <div className="bg-[rgba(77,124,255,0.06)] border border-[rgba(77,124,255,0.2)] rounded-lg p-3.5 text-[0.8rem] text-text-secondary leading-relaxed">
-          {q.hint}
+          {question.hint}
         </div>
       </div>
     </section>
