@@ -11,10 +11,15 @@ import {
 import {
   clearExamSession,
   getExamConfig,
-  getExamQuestions,
+  getQuestions,
   loadExamSession,
   saveExamSession,
 } from "@/lib/api";
+import {
+  EXAM_QUESTION_COUNT,
+  getOrderedQuestionSubset,
+  selectRandomQuestionSubset,
+} from "@/lib/assessmentConfig.mjs";
 import {
   EXAM_DURATION_SECONDS,
   finishExamSession,
@@ -43,10 +48,27 @@ const ACTIONS = {
 
 const initialState = {
   config: null,
+  questionPool: [],
   questions: [],
   session: normalizeExamSession(null, 0),
   isLoading: true,
 };
+
+function getLegacyExamQuestionIds(questionPool, questionCount) {
+  return questionPool.slice(0, questionCount).map((question) => question.id);
+}
+
+function resolvePersistedQuestionIds(savedSession, questionPool, questionCount) {
+  if (Array.isArray(savedSession?.questionIds) && savedSession.questionIds.length > 0) {
+    return savedSession.questionIds.filter(Number.isInteger);
+  }
+
+  if (savedSession?.status && savedSession.status !== "ready") {
+    return getLegacyExamQuestionIds(questionPool, questionCount);
+  }
+
+  return [];
+}
 
 function isFinalExamStatus(status) {
   return (
@@ -62,6 +84,7 @@ function examReducer(state, action) {
       return {
         ...state,
         config: action.payload.config,
+        questionPool: action.payload.questionPool,
         questions: action.payload.questions,
         session: action.payload.session,
         isLoading: false,
@@ -83,7 +106,15 @@ function examReducer(state, action) {
 
       return {
         ...state,
-        session: startExamSession(state.session, action.payload.startedAt),
+        questions: action.payload.questions,
+        session: startExamSession(
+          {
+            ...state.session,
+            currentQuestionIndex: 0,
+            questionIds: action.payload.questionIds,
+          },
+          action.payload.startedAt
+        ),
       };
 
     case ACTIONS.SET_QUESTION:
@@ -165,7 +196,8 @@ function examReducer(state, action) {
     case ACTIONS.RESET_EXAM:
       return {
         ...state,
-        session: normalizeExamSession(null, state.questions.length),
+        questions: [],
+        session: normalizeExamSession(null, 0),
       };
 
     default:
@@ -182,12 +214,23 @@ export function ExamProvider({ children }) {
     let cancelled = false;
 
     (async () => {
-      const [config, questions] = await Promise.all([
+      const [config, questionPool] = await Promise.all([
         getExamConfig(),
-        getExamQuestions(),
+        getQuestions(),
       ]);
       const savedSession = loadExamSession();
-      const session = normalizeExamSession(savedSession, questions.length);
+      const questionCount =
+        config?.questionSelection?.count ?? Math.min(EXAM_QUESTION_COUNT, questionPool.length);
+      const persistedQuestionIds = resolvePersistedQuestionIds(
+        savedSession,
+        questionPool,
+        questionCount
+      );
+      const questions = getOrderedQuestionSubset(questionPool, persistedQuestionIds);
+      const session = normalizeExamSession(
+        { ...savedSession, questionIds: persistedQuestionIds },
+        questions.length
+      );
 
       if (cancelled) {
         return;
@@ -195,7 +238,7 @@ export function ExamProvider({ children }) {
 
       dispatch({
         type: ACTIONS.LOAD_SUCCESS,
-        payload: { config, questions, session },
+        payload: { config, questionPool, questions, session },
       });
     })();
 
@@ -217,11 +260,25 @@ export function ExamProvider({ children }) {
   }, []);
 
   const startExam = useCallback((startedAt = Date.now()) => {
+    const selectionCount =
+      state.config?.questionSelection?.count ??
+      Math.min(EXAM_QUESTION_COUNT, state.questionPool.length);
+    const selectedQuestions = selectRandomQuestionSubset(
+      state.questionPool,
+      selectionCount
+    );
+    const questionIds = selectedQuestions.map((question) => question.id);
+
+    if (selectedQuestions.length === 0) {
+      return false;
+    }
+
     dispatch({
       type: ACTIONS.START_EXAM,
-      payload: { startedAt },
+      payload: { startedAt, questionIds, questions: selectedQuestions },
     });
-  }, []);
+    return true;
+  }, [state.config?.questionSelection?.count, state.questionPool]);
 
   const setQuestion = useCallback(
     (index) => {

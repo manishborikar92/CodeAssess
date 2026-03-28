@@ -2,8 +2,8 @@ import questionsData from "@/data/questions.json";
 import {
   buildExamConfig,
   buildPracticeConfig,
-  getOrderedQuestionSubset,
 } from "@/lib/assessmentConfig.mjs";
+import { normalizeQuestions } from "@/lib/questionCatalog.mjs";
 import {
   PRACTICE_MODE,
   PRACTICE_SESSION_VERSION,
@@ -19,13 +19,7 @@ const LEGACY_SESSION_STORAGE_KEY = "codeassess_session";
  * Future: Replace with a typed API client backed by NestJS.
  */
 export async function getQuestions() {
-  return withQuestionTimeLimit(questionsData);
-}
-
-export async function getExamQuestions() {
-  const questions = await getQuestions();
-  const config = await getExamConfig();
-  return getOrderedQuestionSubset(questions, config.questionIds);
+  return withQuestionTimeLimit(normalizeQuestions(questionsData));
 }
 
 /**

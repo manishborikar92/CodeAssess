@@ -13,6 +13,9 @@ export function normalizeExamSession(savedSession, questionCount) {
       Number.isInteger(savedSession?.currentQuestionIndex) && questionCount > 0
         ? Math.max(0, Math.min(questionCount - 1, savedSession.currentQuestionIndex))
         : 0,
+    questionIds: Array.isArray(savedSession?.questionIds)
+      ? savedSession.questionIds.filter(Number.isInteger)
+      : [],
     durationSeconds: EXAM_DURATION_SECONDS,
     startedAt: savedSession?.startedAt || null,
     finishedAt: savedSession?.finishedAt || null,

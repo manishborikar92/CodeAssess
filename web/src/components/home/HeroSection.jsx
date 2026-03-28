@@ -52,8 +52,11 @@ export default function HeroSection({ examConfig, practiceConfig }) {
         <div className="relative rounded-[30px] border border-border-main bg-[linear-gradient(180deg,rgba(20,27,44,0.95),rgba(12,16,27,0.96))] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
           <div className="grid gap-3 sm:grid-cols-2">
             <MetricCard label="Practice Problems" value={practiceConfig.totalQuestions} />
-            <MetricCard label="Practice Timer" value={`${practiceConfig.questionTimeLimitMinutes} min`} />
-            <MetricCard label="Exam Problems" value={examConfig.totalQuestions} />
+            <MetricCard
+              label="Optional Practice Timer"
+              value={`${practiceConfig.questionTimeLimitMinutes} min`}
+            />
+            <MetricCard label="Random Exam Problems" value={examConfig.totalQuestions} />
             <MetricCard label="Exam Duration" value={`${examConfig.durationMinutes} min`} />
           </div>
 
@@ -67,8 +70,8 @@ export default function HeroSection({ examConfig, practiceConfig }) {
                   Practice
                 </div>
                 <div className="mt-2 text-[0.92rem] leading-7 text-text-secondary">
-                  Pick any problem, shuffle to a random question, and manage a separate
-                  30-minute timer per question.
+                  Pick any problem, shuffle to a random question, and optionally
+                  start a separate 30-minute timer whenever you want a timed rep.
                 </div>
               </div>
               <div className="rounded-2xl border border-accent-blue/20 bg-[rgba(77,124,255,0.08)] px-4 py-4">
@@ -76,8 +79,8 @@ export default function HeroSection({ examConfig, practiceConfig }) {
                   Exam
                 </div>
                 <div className="mt-2 text-[0.92rem] leading-7 text-text-secondary">
-                  Work through a curated set of problems inside a guarded 90-minute
-                  session with integrity warnings and persistent recovery on refresh.
+                  Work through a randomly assigned set of problems revealed only at
+                  launch inside a guarded 90-minute session with persistent recovery.
                 </div>
               </div>
             </div>

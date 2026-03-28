@@ -120,6 +120,7 @@ export default function ExamModeShell() {
   const [isStarting, setIsStarting] = useState(false);
   const [isFullscreenActive, setIsFullscreenActive] = useState(false);
   const [requiresFullscreenResume, setRequiresFullscreenResume] = useState(false);
+  const questionCount = questions.length;
 
   const { isPyodideLoading } = usePyodideInitializer(pyodide, isLoading);
 
@@ -158,16 +159,10 @@ export default function ExamModeShell() {
     [finishDialog, finishExam]
   );
 
-  const [remainingTime, setRemainingTime] = useState(durationSeconds);
-  useEffect(() => {
-    setRemainingTime(timerState.remainingSeconds);
-  }, [timerState.remainingSeconds]);
-
-  const { formatTime } = useTimer({
+  const { formatTime, remainingSeconds: remainingTime } = useTimer({
     durationSeconds,
     elapsedSeconds: timerState.elapsedSeconds,
     isRunning: timerState.isRunning,
-    onTick: ({ remaining }) => setRemainingTime(remaining),
     onTimeUp: () => handleFinishExam("time-limit"),
   });
 
@@ -294,7 +289,13 @@ export default function ExamModeShell() {
 
       setIsFullscreenActive(Boolean(document.fullscreenElement));
       setRequiresFullscreenResume(false);
-      startExam();
+      const didStart = startExam();
+
+      if (!didStart) {
+        showToast("No questions are available for this exam right now.", "error", 4500);
+        return;
+      }
+
       sidebar.close();
     } catch {
       showToast("The browser blocked fullscreen mode. Try again to start the exam.", "error");
@@ -323,12 +324,11 @@ export default function ExamModeShell() {
     resetExam();
     setIsFullscreenActive(false);
     setRequiresFullscreenResume(false);
-    setRemainingTime(durationSeconds);
 
     if (typeof document !== "undefined" && document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
-  }, [durationSeconds, resetExam]);
+  }, [resetExam]);
 
   const handleResetCodeConfirm = useCallback(() => {
     resetToStarter();
@@ -342,11 +342,11 @@ export default function ExamModeShell() {
   const activeQuestionIndex = session.currentQuestionIndex ?? 0;
   const sidebarVisible = sidebar.isOpen || sidebar.isClosing;
   const handlePreviousQuestion = useCallback(() => {
-    setQuestion(getPreviousQuestionIndex(activeQuestionIndex, questions.length));
-  }, [activeQuestionIndex, questions.length, setQuestion]);
+    setQuestion(getPreviousQuestionIndex(activeQuestionIndex, questionCount));
+  }, [activeQuestionIndex, questionCount, setQuestion]);
   const handleNextQuestion = useCallback(() => {
-    setQuestion(getNextQuestionIndex(activeQuestionIndex, questions.length));
-  }, [activeQuestionIndex, questions.length, setQuestion]);
+    setQuestion(getNextQuestionIndex(activeQuestionIndex, questionCount));
+  }, [activeQuestionIndex, questionCount, setQuestion]);
   const handleSelectQuestion = useCallback(
     (index) => {
       setQuestion(index);
@@ -385,7 +385,6 @@ export default function ExamModeShell() {
           isStarting={isStarting}
           onAcceptRulesChange={acceptRules}
           onStart={handleStartExam}
-          questions={questions}
           rulesAccepted={session.acceptedRules}
         />
         <WorkspaceToastHost />
@@ -400,9 +399,9 @@ export default function ExamModeShell() {
       <WorkspaceChrome
         header={
           <WorkspaceHeader
-            canGoNext={activeQuestionIndex < questions.length - 1}
+            canGoNext={activeQuestionIndex < questionCount - 1}
             canGoPrevious={activeQuestionIndex > 0}
-            currentQuestionLabel={`Exam Session - Question ${activeQuestionIndex + 1} of ${questions.length}`}
+            currentQuestionLabel={`Exam Session - Question ${activeQuestionIndex + 1} of ${questionCount}`}
             currentQuestionTitle={currentQuestion?.title || "Loading question"}
             integrityCount={session.integrityViolations.length}
             onNextQuestion={handleNextQuestion}

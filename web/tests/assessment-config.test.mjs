@@ -5,6 +5,7 @@ import {
   buildExamConfig,
   buildPracticeConfig,
   getOrderedQuestionSubset,
+  selectRandomQuestionSubset,
 } from "../src/lib/assessmentConfig.mjs";
 import {
   EXAM_DURATION_SECONDS,
@@ -39,9 +40,9 @@ test("buildExamConfig selects a focused exam set with secure-mode rules", () => 
 
   assert.equal(config.mode, EXAM_MODE);
   assert.equal(config.totalQuestions, EXAM_QUESTION_COUNT);
-  assert.deepEqual(config.questionIds, [11, 12]);
   assert.equal(config.durationMinutes, EXAM_DURATION_SECONDS / 60);
-  assert.equal(config.totalScore, 250);
+  assert.equal(config.questionSelection.mode, "random");
+  assert.equal(config.questionSelection.hiddenUntilStart, true);
   assert.equal(config.integrityPolicy.maxViolations, EXAM_VIOLATION_LIMIT);
   assert.equal(config.integrityPolicy.requireFullscreen, true);
   assert.equal(config.integrityPolicy.blockClipboard, true);
@@ -52,6 +53,20 @@ test("getOrderedQuestionSubset preserves the configured exam order", () => {
   assert.deepEqual(
     subset.map((question) => question.id),
     [13, 11]
+  );
+});
+
+test("selectRandomQuestionSubset samples unique questions without replacement", () => {
+  const randomValues = [2, 0];
+  const subset = selectRandomQuestionSubset(
+    questionPool,
+    2,
+    () => randomValues.shift()
+  );
+
+  assert.deepEqual(
+    subset.map((question) => question.id),
+    [13, 12]
   );
 });
 

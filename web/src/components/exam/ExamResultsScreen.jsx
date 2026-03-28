@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { formatQuestionDifficulty } from "@/lib/questionCatalog.mjs";
 
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
@@ -155,7 +156,7 @@ export default function ExamResultsScreen({
                   <div>
                     <div className="font-semibold text-text-primary">{question.title}</div>
                     <div className="text-[0.74rem] text-text-muted">
-                      Section {question.section} | {question.topic}
+                      {formatQuestionDifficulty(question.difficulty)} | {question.topic}
                     </div>
                   </div>
                   <div className="font-mono text-text-secondary">

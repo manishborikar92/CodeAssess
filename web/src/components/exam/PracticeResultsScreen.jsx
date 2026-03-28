@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { usePractice } from "@/context/PracticeContext";
+import { formatQuestionDifficulty } from "@/lib/questionCatalog.mjs";
 
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
@@ -104,10 +105,10 @@ export default function PracticeResultsScreen({ onClose }) {
         </div>
 
         <div className="overflow-hidden rounded-lg border border-border-main bg-bg-secondary">
-          <div className="grid grid-cols-[40px_1fr_80px_100px_110px_100px] gap-3 bg-bg-tertiary px-4 py-2.5 text-[0.68rem] font-semibold uppercase tracking-[1.5px] text-text-muted">
+          <div className="grid grid-cols-[40px_1fr_90px_100px_110px_100px] gap-3 bg-bg-tertiary px-4 py-2.5 text-[0.68rem] font-semibold uppercase tracking-[1.5px] text-text-muted">
             <div>#</div>
             <div>Question</div>
-            <div>Section</div>
+            <div>Difficulty</div>
             <div>Score</div>
             <div>Timer</div>
             <div>Status</div>
@@ -135,6 +136,9 @@ export default function PracticeResultsScreen({ onClose }) {
             } else if (question.timer.isExpired) {
               statusLabel = "Locked";
               statusClass = "text-accent-red";
+            } else if (!question.timer.isEnabled) {
+              statusLabel = "Timer off";
+              statusClass = "text-text-muted";
             } else if (question.timer.hasStarted) {
               statusLabel = "In progress";
               statusClass = "text-accent-blue";
@@ -142,18 +146,22 @@ export default function PracticeResultsScreen({ onClose }) {
 
             const timerLabel = question.timer.isExpired
               ? "Time up"
+              : !question.timer.isEnabled
+              ? "Off"
               : formatTime(question.timer.remainingSeconds);
 
             return (
               <div
                 key={question.id}
-                className="grid grid-cols-[40px_1fr_80px_100px_110px_100px] items-center gap-3 border-t border-border-subtle px-4 py-2.5 text-[0.82rem] transition-colors duration-200 hover:bg-bg-hover"
+                className="grid grid-cols-[40px_1fr_90px_100px_110px_100px] items-center gap-3 border-t border-border-subtle px-4 py-2.5 text-[0.82rem] transition-colors duration-200 hover:bg-bg-hover"
               >
                 <div className="font-mono text-text-muted">{question.id}</div>
                 <div className="overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] text-text-secondary">
                   {question.title}
                 </div>
-                <div className="text-[0.75rem] text-text-muted">S{question.section}</div>
+                <div className="text-[0.75rem] text-text-muted">
+                  {formatQuestionDifficulty(question.difficulty)}
+                </div>
                 <div className={`font-mono font-semibold ${scoreClass}`}>
                   {question.score}/{question.maxScore}
                 </div>

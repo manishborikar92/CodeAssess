@@ -6,6 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const testFiles = [
+  "question-catalog.test.mjs",
   "practice-session.test.mjs",
   "exam-session.test.mjs",
   "assessment-config.test.mjs",

@@ -18,9 +18,11 @@ export default function ExamStartScreen({
   isStarting = false,
   onAcceptRulesChange,
   onStart,
-  questions,
   rulesAccepted,
 }) {
+  const randomQuestionCount =
+    config.questionSelection?.count ?? config.totalQuestions;
+
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
       <div className="mx-auto grid max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
@@ -55,7 +57,7 @@ export default function ExamStartScreen({
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             <StatCard label="Duration" value={`${config.durationMinutes} min`} />
-            <StatCard label="Problems" value={config.totalQuestions} />
+            <StatCard label="Random Problems" value={randomQuestionCount} />
             <StatCard
               label="Warnings Before Auto-End"
               value={config.integrityPolicy.maxViolations}
@@ -77,25 +79,20 @@ export default function ExamStartScreen({
 
             <div className="rounded-2xl border border-border-main bg-black/20 p-5">
               <div className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
-                Exam Problems
+                Question Assignment
               </div>
-              <div className="mt-4 space-y-3">
-                {questions.map((question, index) => (
-                  <div
-                    key={question.id}
-                    className="rounded-2xl border border-border-subtle bg-bg-secondary/70 px-4 py-3"
-                  >
-                    <div className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-text-muted">
-                      Question {index + 1}
-                    </div>
-                    <div className="mt-1 text-base font-semibold text-text-primary">
-                      {question.title}
-                    </div>
-                    <div className="mt-1 text-[0.82rem] text-text-secondary">
-                      Section {question.section} | {question.topic}
-                    </div>
-                  </div>
-                ))}
+              <div className="mt-4 rounded-2xl border border-border-subtle bg-bg-secondary/70 px-4 py-4">
+                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                  Hidden Until Start
+                </div>
+                <div className="mt-2 text-base font-semibold text-text-primary">
+                  {randomQuestionCount} questions will be assigned at launch
+                </div>
+                <p className="mt-2 text-[0.84rem] leading-6 text-text-secondary">
+                  Problem titles, topics, and ordering stay hidden until the exam
+                  begins. Once the secure session starts, the assigned questions are
+                  revealed and remain fixed for the full attempt.
+                </p>
               </div>
             </div>
           </div>
@@ -121,7 +118,7 @@ export default function ExamStartScreen({
               <li>Close unrelated tabs and apps before starting.</li>
               <li>Keep a single display connected for the duration of the exam.</li>
               <li>Use the problem list or arrow buttons to move between questions.</li>
-              <li>Submit each question whenever you want to lock in your best score.</li>
+              <li>Your random question set is revealed only after the timer starts.</li>
             </ul>
           </div>
 

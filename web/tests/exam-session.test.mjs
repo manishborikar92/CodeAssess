@@ -29,6 +29,7 @@ test("normalizeExamSession creates an idle exam session shape", () => {
   assert.equal(session.mode, EXAM_MODE);
   assert.equal(session.durationSeconds, EXAM_DURATION_SECONDS);
   assert.equal(session.currentQuestionIndex, 0);
+  assert.deepEqual(session.questionIds, []);
   assert.equal(session.status, "ready");
   assert.deepEqual(session.integrityViolations, []);
 });

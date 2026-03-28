@@ -17,12 +17,14 @@ import {
 } from "@/lib/api";
 import {
   buildPracticeSummary,
+  enableQuestionTimer,
   expireQuestionTimer,
   getQuestionTimerState,
   normalizePracticeSession,
   PRACTICE_MODE,
   PRACTICE_SESSION_VERSION,
   switchQuestionTimer,
+  unlockQuestionTimer,
 } from "@/lib/practiceSession.mjs";
 import { clampQuestionIndex } from "@/lib/workspaceNavigation.mjs";
 import {
@@ -225,6 +227,34 @@ export function PracticeProvider({ children }) {
     [state.questionTimers]
   );
 
+  const startQuestionTimer = useCallback(
+    (questionId) => {
+      if (questionId === null || questionId === undefined) {
+        return;
+      }
+
+      dispatch({
+        type: ACTIONS.UPDATE_QUESTION_TIMERS,
+        payload: enableQuestionTimer(state.questionTimers, questionId),
+      });
+    },
+    [state.questionTimers]
+  );
+
+  const unlockQuestion = useCallback(
+    (questionId) => {
+      if (questionId === null || questionId === undefined) {
+        return;
+      }
+
+      dispatch({
+        type: ACTIONS.UPDATE_QUESTION_TIMERS,
+        payload: unlockQuestionTimer(state.questionTimers, questionId),
+      });
+    },
+    [state.questionTimers]
+  );
+
   const currentQuestion =
     state.currentQuestionIndex !== null
       ? state.questions[state.currentQuestionIndex] || null
@@ -306,6 +336,8 @@ export function PracticeProvider({ children }) {
       saveDraft,
       recordSubmission,
       expireQuestion,
+      startQuestionTimer,
+      unlockQuestion,
       getDraft,
       getSubmissionStatus,
       getQuestionTimerStatus,
@@ -324,8 +356,10 @@ export function PracticeProvider({ children }) {
       restoreSession,
       saveDraft,
       setQuestion,
+      startQuestionTimer,
       state,
       totalScore,
+      unlockQuestion,
     ]
   );
 

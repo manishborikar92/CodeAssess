@@ -1,5 +1,7 @@
 "use client";
 
+import { formatQuestionDifficulty } from "@/lib/questionCatalog.mjs";
+
 function getStatusClasses(status) {
   switch (status) {
     case "completed":
@@ -35,20 +37,11 @@ export default function QuestionSidebar({
 
       <div className="flex-1 overflow-y-auto py-1">
         {questions.map((question, index) => {
-          const previousQuestion = questions[index - 1];
-          const showSectionLabel =
-            index === 0 || previousQuestion.section !== question.section;
-          const difficulty = question.difficulty.toLowerCase().split("-")[0];
+          const difficulty = question.difficulty;
           const isActive = index === currentQuestionIndex;
 
           return (
             <div key={question.id}>
-              {showSectionLabel && (
-                <div className="px-4 pt-2.5 pb-1 text-[0.66rem] font-semibold uppercase tracking-[1.5px] text-accent-blue">
-                  Section {question.section}
-                </div>
-              )}
-
               <button
                 type="button"
                 onClick={() => onSelectQuestion(index)}
@@ -84,7 +77,7 @@ export default function QuestionSidebar({
                         : "bg-[rgba(255,77,106,0.12)] text-diff-hard"
                     }`}
                   >
-                    {difficulty === "easy" ? "E" : difficulty === "medium" ? "M" : "H"}
+                    {formatQuestionDifficulty(difficulty)}
                   </span>
 
                   <span

@@ -146,12 +146,10 @@ export default function PracticeWorkspaceShell() {
     [practice, sidebar]
   );
 
-  const [questionTimeRemaining, setQuestionTimeRemaining] = useState(null);
-  const { formatTime } = useTimer({
+  const { formatTime, remainingSeconds: liveQuestionTimeRemaining } = useTimer({
     durationSeconds: practice.currentQuestion?.timeLimitSeconds || 0,
     elapsedSeconds: practice.currentQuestionTimer?.spentSeconds || 0,
     isRunning: practice.currentQuestionTimer?.isRunning || false,
-    onTick: ({ remaining }) => setQuestionTimeRemaining(remaining),
     onTimeUp: () => {
       if (practice.currentQuestion) {
         notifyQuestionExpired(practice.currentQuestion.id);
@@ -229,6 +227,29 @@ export default function PracticeWorkspaceShell() {
     [practice, sidebar]
   );
 
+  const handleStartQuestionTimer = useCallback(() => {
+    const questionId = practice.currentQuestion?.id;
+    if (!questionId) {
+      return;
+    }
+
+    practice.startQuestionTimer(questionId);
+    showToast(`Q${questionId}: 30-minute timer started.`, "success", 2500);
+  }, [practice]);
+
+  const handleUnlockQuestion = useCallback(() => {
+    const questionId = practice.currentQuestion?.id;
+    if (!questionId) {
+      return;
+    }
+
+    practice.unlockQuestion(questionId);
+    if (expiredQuestionToastRef.current === questionId) {
+      expiredQuestionToastRef.current = null;
+    }
+    showToast(`Q${questionId}: question unlocked and timer reset.`, "success", 2500);
+  }, [practice]);
+
   const handleResetConfirm = useCallback(() => {
     resetToStarter();
     resetDialog.close();
@@ -272,7 +293,50 @@ export default function PracticeWorkspaceShell() {
 
   const sidebarVisible = sidebar.isOpen || sidebar.isClosing;
   const currentTimerSeconds =
-    questionTimeRemaining ?? practice.currentQuestionTimer?.remainingSeconds ?? 0;
+    liveQuestionTimeRemaining ?? practice.currentQuestionTimer?.remainingSeconds ?? 0;
+  const isTimerEnabled = Boolean(practice.currentQuestionTimer?.isEnabled);
+  const practiceTimeSummary = !hasSelectedQuestion
+    ? undefined
+    : isQuestionExpired
+    ? "Timer expired: question locked until unlocked"
+    : isTimerEnabled
+    ? "Timer active: 30 min per question"
+    : "Optional timer: 30 min per question";
+
+  const practiceProblemControls = !hasSelectedQuestion ? null : isQuestionExpired ? (
+    <div className="flex flex-col gap-3 rounded-xl border border-accent-red/30 bg-[rgba(255,77,106,0.08)] p-3">
+      <p className="text-[0.8rem] leading-6 text-text-secondary">
+        This timed attempt has ended. Unlock the question to continue editing and
+        start fresh with the timer turned off again.
+      </p>
+      <button
+        type="button"
+        onClick={handleUnlockQuestion}
+        className="inline-flex w-fit items-center justify-center rounded-xl border border-accent-red/40 px-3 py-2 text-[0.78rem] font-semibold text-text-primary transition-colors duration-200 hover:bg-[rgba(255,77,106,0.12)]"
+      >
+        Unlock Question
+      </button>
+    </div>
+  ) : !isTimerEnabled ? (
+    <div className="flex flex-col gap-3 rounded-xl border border-border-main bg-bg-card p-3">
+      <p className="text-[0.8rem] leading-6 text-text-secondary">
+        Practice stays untimed until you opt in. Start the 30-minute timer when you
+        want this question to behave like a timed attempt.
+      </p>
+      <button
+        type="button"
+        onClick={handleStartQuestionTimer}
+        className="inline-flex w-fit items-center justify-center rounded-xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-3 py-2 text-[0.78rem] font-semibold text-white transition-opacity duration-200 hover:opacity-90"
+      >
+        Start 30-Min Timer
+      </button>
+    </div>
+  ) : (
+    <div className="rounded-xl border border-border-main bg-bg-card px-3 py-2.5 text-[0.8rem] leading-6 text-text-secondary">
+      Timer is active for this question and pauses automatically whenever you switch
+      to another problem.
+    </div>
+  );
 
   return (
     <>
@@ -301,10 +365,16 @@ export default function PracticeWorkspaceShell() {
             scoreLabel={`Score ${practice.totalScore}/${practice.maxPossibleScore}`}
             showShuffleButton
             timerLabel={
-              hasSelectedQuestion ? `Timer ${formatTime(currentTimerSeconds)}` : "Select a problem"
+              !hasSelectedQuestion
+                ? "Select a problem"
+                : isQuestionExpired
+                ? "Question locked"
+                : !isTimerEnabled
+                ? "Timer off"
+                : `Timer ${formatTime(currentTimerSeconds)}`
             }
             timerTone={
-              !hasSelectedQuestion
+              !hasSelectedQuestion || !isTimerEnabled
                 ? "neutral"
                 : isQuestionExpired || currentTimerSeconds <= 5 * 60
                 ? "critical"
@@ -329,6 +399,8 @@ export default function PracticeWorkspaceShell() {
           <ProblemPanel
             question={practice.currentQuestion}
             timer={practice.currentQuestionTimer}
+            timeSummary={practiceTimeSummary}
+            controls={practiceProblemControls}
           />
         }
         codePanel={

@@ -54,10 +54,10 @@ export default function ModeSection() {
             ctaLabel="Go to Practice"
             eyebrow="Practice Workspace"
             title="Open problem solving, built for deliberate reps"
-            summary="Practice mode behaves like a flexible coding workspace. Candidates can open any question, switch freely, and track independent timers per problem."
+            summary="Practice mode behaves like a flexible coding workspace. Candidates can open any question, switch freely, and opt into a per-question timer only when they want timed pressure."
             bullets={[
               "Question list and random problem button for free exploration.",
-              "Per-question 30-minute limits that pause when you switch away.",
+              "Per-question 30-minute timers that start only when enabled and pause when you switch away.",
               "Progress snapshots, stored drafts, and per-problem score tracking.",
             ]}
             tone="practice"
@@ -68,11 +68,12 @@ export default function ModeSection() {
             ctaLabel="Open Exam Mode"
             eyebrow="Secure Exam"
             title="A serious browser-based exam flow for realistic screenings"
-            summary="Exam mode launches as a dedicated session with a shared 90-minute timer, focused navigation across assigned questions, and enforced integrity guards."
+            summary="Exam mode launches as a dedicated session with a shared 90-minute timer, random question assignment at start, and enforced integrity guards."
             bullets={[
+              "Random questions stay hidden until the secure session begins.",
               "Fullscreen requirement, unload prompts, and visibility tracking.",
               "Clipboard and context-menu blocking across the whole session.",
-              "Question switching stays available so candidates can manage time strategically.",
+              "Question switching stays available after launch so candidates can manage time strategically.",
             ]}
             tone="exam"
           />
