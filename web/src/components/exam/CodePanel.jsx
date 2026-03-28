@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { python } from "@codemirror/lang-python";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -17,8 +17,6 @@ export default function CodePanel({
   runningMode,
   pyodideReady,
 }) {
-  const editorRef = useRef(null);
-
   // Keyboard shortcuts
   useEffect(() => {
     const handler = (e) => {
@@ -104,26 +102,25 @@ export default function CodePanel({
       </div>
 
       {/* Editor */}
-      <div className="flex-1 overflow-hidden min-h-0" ref={editorRef}>
-        <CodeMirror
-          value={code}
-          onChange={handleChange}
-          theme={oneDark}
-          extensions={[python()]}
-          height="100%"
-          basicSetup={{
-            lineNumbers: true,
-            highlightActiveLine: true,
-            highlightActiveLineGutter: true,
-            bracketMatching: true,
-            closeBrackets: true,
-            autocompletion: true,
-            indentOnInput: true,
-            foldGutter: false,
-            tabSize: 4,
-          }}
-        />
-      </div>
+      <CodeMirror
+        className="flex-1 overflow-hidden min-h-0 flex flex-col text-[13.5px]"
+        value={code}
+        onChange={handleChange}
+        theme={oneDark}
+        extensions={[python()]}
+        height="100%"
+        basicSetup={{
+          lineNumbers: true,
+          highlightActiveLine: true,
+          highlightActiveLineGutter: true,
+          bracketMatching: true,
+          closeBrackets: true,
+          autocompletion: true,
+          indentOnInput: true,
+          foldGutter: false,
+          tabSize: 4,
+        }}
+      />
     </div>
   );
 }
