@@ -115,6 +115,31 @@ export default function ExamResultsScreen({
               </div>
             </div>
           </div>
+
+          <div className="mt-6 grid gap-4 rounded-2xl border border-border-main bg-bg-card p-5 text-[0.86rem] leading-6 text-text-secondary sm:grid-cols-3">
+            <div>
+              <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
+                Started
+              </div>
+              <div className="mt-1">{startedAt}</div>
+            </div>
+            <div>
+              <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
+                Finished
+              </div>
+              <div className="mt-1">{finishedAt}</div>
+            </div>
+            <div>
+              <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
+                Integrity Notes
+              </div>
+              <div className="mt-1">
+                {session.integrityViolations.length === 0
+                  ? "No warnings recorded during this session."
+                  : `${session.integrityViolations.length} warning(s) recorded.`}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -171,56 +196,26 @@ export default function ExamResultsScreen({
             })}
           </section>
 
-          <aside className="rounded-[24px] border border-border-main bg-bg-secondary p-5">
-            <div className="text-[0.72rem] uppercase tracking-[0.12em] text-text-muted">
-              Session Timeline
-            </div>
-            <div className="mt-4 space-y-4 text-[0.86rem] leading-6 text-text-secondary">
-              <div>
-                <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
-                  Started
-                </div>
-                <div className="mt-1">{startedAt}</div>
-              </div>
-              <div>
-                <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
-                  Finished
-                </div>
-                <div className="mt-1">{finishedAt}</div>
-              </div>
-              <div>
-                <div className="text-[0.68rem] uppercase tracking-[0.12em] text-text-muted">
-                  Integrity Notes
-                </div>
-                <div className="mt-1">
-                  {session.integrityViolations.length === 0
-                    ? "No warnings recorded during this session."
-                    : `${session.integrityViolations.length} warning(s) recorded.`}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={onReset}
-                className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90"
-              >
-                Start Fresh Exam
-              </button>
-              <Link
-                href="/practice"
-                className="inline-flex items-center justify-center rounded-2xl border border-border-main px-4 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-              >
-                Open Practice Workspace
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center rounded-2xl border border-border-main px-4 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-              >
-                Return Home
-              </Link>
-            </div>
+          <aside className="flex flex-col gap-3 rounded-[24px] border border-border-main bg-bg-secondary p-5">
+            <button
+              type="button"
+              onClick={onReset}
+              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90"
+            >
+              Start Fresh Exam
+            </button>
+            <Link
+              href="/practice"
+              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-4 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
+            >
+              Open Practice Workspace
+            </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-4 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
+            >
+              Return Home
+            </Link>
           </aside>
         </div>
       </div>

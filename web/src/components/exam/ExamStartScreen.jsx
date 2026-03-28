@@ -64,36 +64,22 @@ export default function ExamStartScreen({
             />
           </div>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
-            <div className="rounded-2xl border border-border-main bg-black/20 p-5">
-              <div className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
-                Integrity Rules
-              </div>
-              <ul className="mt-4 space-y-3 text-[0.9rem] leading-6 text-text-secondary">
-                <li>Stay on this page for the full exam. Tab switches are logged as warnings.</li>
-                <li>Fullscreen is required while the exam is active. Exit events trigger warnings.</li>
-                <li>Copy, cut, paste, and context-menu actions are blocked during the session.</li>
-                <li>Reload and close attempts trigger a browser confirmation before leaving.</li>
-              </ul>
+          <div className="mt-8 rounded-2xl border border-border-main bg-black/20 p-5">
+            <div className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
+              Question Assignment
             </div>
-
-            <div className="rounded-2xl border border-border-main bg-black/20 p-5">
-              <div className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
-                Question Assignment
+            <div className="mt-4 rounded-2xl border border-border-subtle bg-bg-secondary/70 px-4 py-4">
+              <div className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-text-muted">
+                Hidden Until Start
               </div>
-              <div className="mt-4 rounded-2xl border border-border-subtle bg-bg-secondary/70 px-4 py-4">
-                <div className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-text-muted">
-                  Hidden Until Start
-                </div>
-                <div className="mt-2 text-base font-semibold text-text-primary">
-                  {randomQuestionCount} questions will be assigned at launch
-                </div>
-                <p className="mt-2 text-[0.84rem] leading-6 text-text-secondary">
-                  Problem titles, topics, and ordering stay hidden until the exam
-                  begins. Once the secure session starts, the assigned questions are
-                  revealed and remain fixed for the full attempt.
-                </p>
+              <div className="mt-2 text-base font-semibold text-text-primary">
+                {randomQuestionCount} questions will be assigned at launch
               </div>
+              <p className="mt-2 text-[0.84rem] leading-6 text-text-secondary">
+                Problem titles, topics, and ordering stay hidden until the exam
+                begins. Once the secure session starts, the assigned questions are
+                revealed and remain fixed for the full attempt.
+              </p>
             </div>
           </div>
         </section>
@@ -105,10 +91,17 @@ export default function ExamStartScreen({
           <h2 className="mt-3 text-[1.8rem] font-bold text-text-primary">
             Confirm the exam rules
           </h2>
-          <p className="mt-3 text-[0.92rem] leading-7 text-text-secondary">
-            Starting the assessment requests fullscreen mode and begins the
-            non-pausing 90-minute timer immediately.
-          </p>
+
+          <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
+            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-blue">
+              Integrity Rules
+            </div>
+            <ul className="mt-3 space-y-2 text-[0.88rem] leading-6 text-text-secondary">
+              <li>Stay on this page for the full exam. Tab switches are logged as warnings.</li>
+              <li>Fullscreen is required while the exam is active. Exit events trigger warnings.</li>
+              <li>Copy, cut, paste, and context-menu actions are blocked during the session.</li>
+            </ul>
+          </div>
 
           <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
             <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-gold">
