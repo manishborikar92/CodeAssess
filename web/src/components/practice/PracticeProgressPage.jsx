@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 
 import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";

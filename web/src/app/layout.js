@@ -27,7 +27,20 @@ export const metadata = {
   appleWebApp: {
     title: "CodeAssess",
   },
-  manifest: "/manifest.json",
+  openGraph: {
+    title: "CodeAssess - Practice Workspace and Secure Coding Exams",
+    description:
+      "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
+    type: "website",
+    locale: "en_US",
+    siteName: "CodeAssess",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CodeAssess - Practice Workspace and Secure Coding Exams",
+    description:
+      "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
+  },
 };
 
 export default function RootLayout({ children }) {
