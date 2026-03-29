@@ -45,6 +45,34 @@
       {
         "input": "8\n0 1 0 3 12 0 0 7",
         "output": "1 3 12 7 0 0 0 0"
+      },
+      {
+        "input": "3\n0 1 0",
+        "output": "1 0 0"
+      },
+      {
+        "input": "5\n1 0 0 0 0",
+        "output": "1 0 0 0 0"
+      },
+      {
+        "input": "5\n0 0 0 0 1",
+        "output": "1 0 0 0 0"
+      },
+      {
+        "input": "6\n1 2 0 4 0 6",
+        "output": "1 2 4 6 0 0"
+      },
+      {
+        "input": "7\n7 0 0 3 0 2 0",
+        "output": "7 3 2 0 0 0 0"
+      },
+      {
+        "input": "9\n0 1 2 0 3 0 4 0 5",
+        "output": "1 2 3 4 5 0 0 0 0"
+      },
+      {
+        "input": "4\n0 5 0 9",
+        "output": "5 9 0 0"
       }
     ],
     "hint": "Two-pointer technique: 'insertPos' starts at 0. Scan array with 'i'; whenever arr[i] != 0, place arr[i] at insertPos and increment insertPos. After the scan, fill remaining positions with 0.",
@@ -96,6 +124,34 @@
       {
         "input": "5\n1000000 999999 999999 1 1",
         "output": "999999"
+      },
+      {
+        "input": "3\n5 3 5",
+        "output": "3"
+      },
+      {
+        "input": "4\n4 3 2 1",
+        "output": "3"
+      },
+      {
+        "input": "5\n10 10 10 10 9",
+        "output": "9"
+      },
+      {
+        "input": "3\n1 1000000 999999",
+        "output": "999999"
+      },
+      {
+        "input": "6\n5 5 5 5 5 4",
+        "output": "4"
+      },
+      {
+        "input": "3\n100 100 99",
+        "output": "99"
+      },
+      {
+        "input": "4\n7 7 7 6",
+        "output": "6"
       }
     ],
     "hint": "Maintain two variables: largest and secondLargest (both initialised to -INF). Traverse array once. If arr[i] > largest: secondLargest = largest, largest = arr[i]. Else if arr[i] > secondLargest and arr[i] != largest: secondLargest = arr[i]. O(n) time, O(1) space — do NOT sort.",
@@ -145,6 +201,34 @@
       },
       {
         "input": "6\n1 0 2 1 0 2",
+        "output": "0 0 1 1 2 2"
+      },
+      {
+        "input": "1\n2",
+        "output": "2"
+      },
+      {
+        "input": "1\n1",
+        "output": "1"
+      },
+      {
+        "input": "3\n1 1 1",
+        "output": "1 1 1"
+      },
+      {
+        "input": "5\n2 0 1 0 2",
+        "output": "0 0 1 2 2"
+      },
+      {
+        "input": "7\n0 2 1 2 0 1 0",
+        "output": "0 0 0 1 1 2 2"
+      },
+      {
+        "input": "4\n2 1 0 2",
+        "output": "0 1 2 2"
+      },
+      {
+        "input": "6\n2 2 0 1 1 0",
         "output": "0 0 1 1 2 2"
       }
     ],
@@ -197,6 +281,34 @@
       {
         "input": "7\n3 7 1 2 6 4",
         "output": "5"
+      },
+      {
+        "input": "3\n1 3",
+        "output": "2"
+      },
+      {
+        "input": "5\n4 3 2 1",
+        "output": "5"
+      },
+      {
+        "input": "4\n2 3 4",
+        "output": "1"
+      },
+      {
+        "input": "6\n1 2 3 4 6",
+        "output": "5"
+      },
+      {
+        "input": "8\n1 2 3 4 5 6 8",
+        "output": "7"
+      },
+      {
+        "input": "3\n2 3",
+        "output": "1"
+      },
+      {
+        "input": "6\n2 4 5 6 7",
+        "output": "3"
       }
     ],
     "hint": "Formula approach: Missing = N*(N+1)/2 - sum(array). No sorting, no HashMap needed. O(n) time, O(1) space.",
@@ -249,6 +361,34 @@
       {
         "input": "6 100\n1 2 3 4 5 6",
         "output": "3 4 5 6 1 2"
+      },
+      {
+        "input": "1\n42\n5",
+        "output": "42"
+      },
+      {
+        "input": "4\n1 2 3 4\n1",
+        "output": "4 1 2 3"
+      },
+      {
+        "input": "3\n5 10 15\n2",
+        "output": "10 15 5"
+      },
+      {
+        "input": "5\n10 20 30 40 50\n3",
+        "output": "30 40 50 10 20"
+      },
+      {
+        "input": "4\n1 2 3 4\n8",
+        "output": "1 2 3 4"
+      },
+      {
+        "input": "4\n1 2 3 4\n4",
+        "output": "1 2 3 4"
+      },
+      {
+        "input": "6\n1 2 3 4 5 6\n2",
+        "output": "5 6 1 2 3 4"
       }
     ],
     "hint": "Reversal method (O(n) time, O(1) space): Step 1 — reverse entire array. Step 2 — reverse first K elements. Step 3 — reverse remaining N-K elements.",
@@ -300,6 +440,34 @@
       {
         "input": "4\n1 3 2 4",
         "output": "YES"
+      },
+      {
+        "input": "3\n3 3 3",
+        "output": "YES"
+      },
+      {
+        "input": "4\n1 2 3 10",
+        "output": "NO"
+      },
+      {
+        "input": "5\n1 1 1 1 1",
+        "output": "YES"
+      },
+      {
+        "input": "6\n10 20 30 40 50 60",
+        "output": "NO"
+      },
+      {
+        "input": "4\n4 2 4 2",
+        "output": "YES"
+      },
+      {
+        "input": "2\n3 7",
+        "output": "NO"
+      },
+      {
+        "input": "4\n6 2 4 0",
+        "output": "YES"
       }
     ],
     "hint": "For each split point i (1 to N-1): leftSum = prefix[i], rightSum = totalSum - leftSum. Check leftSum*(N-i) == rightSum*i (cross-multiply to avoid float division). Track leftSum incrementally.",
@@ -347,6 +515,38 @@
       {
         "input": "4\n1 2 3 5\n4 6 8 9",
         "output": "3"
+      },
+      {
+        "input": "2\n1 2\n5 6",
+        "output": "2"
+      },
+      {
+        "input": "3\n1 3 6\n2 5 9",
+        "output": "1"
+      },
+      {
+        "input": "3\n1 2 3\n3 3 3",
+        "output": "3"
+      },
+      {
+        "input": "2\n3 3\n4 4",
+        "output": "2"
+      },
+      {
+        "input": "4\n1 2 10 11\n3 4 12 13",
+        "output": "2"
+      },
+      {
+        "input": "5\n1 2 3 4 5\n2 3 4 5 6",
+        "output": "2"
+      },
+      {
+        "input": "4\n1 1 1 1\n5 5 5 5",
+        "output": "4"
+      },
+      {
+        "input": "3\n2 3 6\n5 7 9",
+        "output": "2"
       }
     ],
     "hint": "Sort both arrays. Two-pointer scan: i=0, j=0, count=0, max=0. While i<N: if entry[i] <= exit[j] then count++, max=max(max,count), i++; else count--, j++. Return max.",
@@ -402,6 +602,30 @@
       {
         "input": "abcde",
         "output": "NO"
+      },
+      {
+        "input": "RACECAR",
+        "output": "YES"
+      },
+      {
+        "input": "Level",
+        "output": "YES"
+      },
+      {
+        "input": "abba",
+        "output": "YES"
+      },
+      {
+        "input": "python",
+        "output": "NO"
+      },
+      {
+        "input": "Noon",
+        "output": "YES"
+      },
+      {
+        "input": "civic",
+        "output": "YES"
       }
     ],
     "hint": "Two-pointer: left=0, right=|S|-1. Compare S[left].lower() with S[right].lower(). If any mismatch found, return NO. If loop completes without mismatch, return YES. O(n) time.",
@@ -457,6 +681,30 @@
       {
         "input": "anagram\nnagaram",
         "output": "YES"
+      },
+      {
+        "input": "triangle\nintegral",
+        "output": "YES"
+      },
+      {
+        "input": "dusty\nstudy",
+        "output": "YES"
+      },
+      {
+        "input": "moon\nnoon",
+        "output": "NO"
+      },
+      {
+        "input": "abc\nxyz",
+        "output": "NO"
+      },
+      {
+        "input": "tac\ncat",
+        "output": "YES"
+      },
+      {
+        "input": "abcd\nabce",
+        "output": "NO"
       }
     ],
     "hint": "Create an integer array freq[26] initialised to 0. For each character in A: freq[c-'a']++. For each character in B: freq[c-'a']--. If all values in freq are 0, output YES; otherwise NO.",
@@ -508,6 +756,38 @@
       {
         "input": "loveleetcode",
         "output": "v"
+      },
+      {
+        "input": "abcdef",
+        "output": "a"
+      },
+      {
+        "input": "aabbcc",
+        "output": "-1"
+      },
+      {
+        "input": "programming",
+        "output": "p"
+      },
+      {
+        "input": "abcabd",
+        "output": "c"
+      },
+      {
+        "input": "xxyyzz",
+        "output": "-1"
+      },
+      {
+        "input": "stress",
+        "output": "t"
+      },
+      {
+        "input": "flatter",
+        "output": "l"
+      },
+      {
+        "input": "ddddddd",
+        "output": "-1"
       }
     ],
     "hint": "Pass 1: build a HashMap of character frequencies (or int[26] array). Pass 2: traverse string again; return the first character whose frequency equals 1.",
@@ -559,6 +839,34 @@
       {
         "input": "aabbaa\n2",
         "output": "2"
+      },
+      {
+        "input": "ab\n1",
+        "output": "1"
+      },
+      {
+        "input": "aababaa\n3",
+        "output": "2"
+      },
+      {
+        "input": "bbbbb\n5",
+        "output": "0"
+      },
+      {
+        "input": "aaabbb\n6",
+        "output": "3"
+      },
+      {
+        "input": "aabbaabb\n4",
+        "output": "2"
+      },
+      {
+        "input": "aabaab\n2",
+        "output": "2"
+      },
+      {
+        "input": "aaa\n1",
+        "output": "1"
       }
     ],
     "hint": "Loop with step L: for i = 0, L, 2L, ... take slice S[i : i+L], count 'a' in it, update a running maximum. O(n) total.",
@@ -606,6 +914,38 @@
       {
         "input": "the quick brown fox",
         "output": "fox brown quick the"
+      },
+      {
+        "input": "i love coding",
+        "output": "coding love i"
+      },
+      {
+        "input": "a b c d",
+        "output": "d c b a"
+      },
+      {
+        "input": "go go go",
+        "output": "go go go"
+      },
+      {
+        "input": "data structures",
+        "output": "structures data"
+      },
+      {
+        "input": "this is a test sentence",
+        "output": "sentence test a is this"
+      },
+      {
+        "input": "apple",
+        "output": "apple"
+      },
+      {
+        "input": "one two three",
+        "output": "three two one"
+      },
+      {
+        "input": "x y",
+        "output": "y x"
       }
     ],
     "hint": "Split string on spaces to get a list of words. Reverse the list. Join with a single space and print. In Python: print(' '.join(input().split()[::-1]))",
@@ -656,6 +996,34 @@
       {
         "input": "0 0",
         "output": "1"
+      },
+      {
+        "input": "11 11",
+        "output": "1"
+      },
+      {
+        "input": "0 100",
+        "output": "19"
+      },
+      {
+        "input": "1000 9999",
+        "output": "90"
+      },
+      {
+        "input": "50 100",
+        "output": "5"
+      },
+      {
+        "input": "21 22",
+        "output": "1"
+      },
+      {
+        "input": "500 999",
+        "output": "4"
+      },
+      {
+        "input": "1 9",
+        "output": "9"
       }
     ],
     "hint": "For each number n in [M, N]: convert n to string s; check if s == s reversed (s[::-1] in Python). Increment counter when true.",
@@ -701,6 +1069,38 @@
       {
         "input": "50",
         "output": "12586269025"
+      },
+      {
+        "input": "3",
+        "output": "2"
+      },
+      {
+        "input": "4",
+        "output": "3"
+      },
+      {
+        "input": "5",
+        "output": "5"
+      },
+      {
+        "input": "6",
+        "output": "8"
+      },
+      {
+        "input": "30",
+        "output": "832040"
+      },
+      {
+        "input": "40",
+        "output": "102334155"
+      },
+      {
+        "input": "8",
+        "output": "21"
+      },
+      {
+        "input": "9",
+        "output": "34"
       }
     ],
     "hint": "Use iterative DP: a, b = 1, 1. For i in range(N-2): a, b = b, a+b. Return b. This is O(n) time, O(1) space.",
@@ -753,6 +1153,30 @@
       {
         "input": "1000000000",
         "output": "NOT PRIME"
+      },
+      {
+        "input": "97",
+        "output": "PRIME"
+      },
+      {
+        "input": "100",
+        "output": "NOT PRIME"
+      },
+      {
+        "input": "101",
+        "output": "PRIME"
+      },
+      {
+        "input": "121",
+        "output": "NOT PRIME"
+      },
+      {
+        "input": "13",
+        "output": "PRIME"
+      },
+      {
+        "input": "9",
+        "output": "NOT PRIME"
       }
     ],
     "hint": "Check divisibility up to sqrt(N) only. If N < 2 return NOT PRIME. For i from 2 to sqrt(N): if N % i == 0 return NOT PRIME. Return PRIME otherwise. O(sqrt(n)).",
@@ -799,6 +1223,38 @@
       {
         "input": "20",
         "output": "2432902008176640000"
+      },
+      {
+        "input": "2",
+        "output": "2"
+      },
+      {
+        "input": "3",
+        "output": "6"
+      },
+      {
+        "input": "4",
+        "output": "24"
+      },
+      {
+        "input": "6",
+        "output": "720"
+      },
+      {
+        "input": "7",
+        "output": "5040"
+      },
+      {
+        "input": "12",
+        "output": "479001600"
+      },
+      {
+        "input": "8",
+        "output": "40320"
+      },
+      {
+        "input": "9",
+        "output": "362880"
       }
     ],
     "hint": "Iterative: result = 1; for i in range(1, N+1): result *= i. Return result. O(n) time. Note: 0! = 1 is a special case.",
@@ -851,6 +1307,34 @@
       {
         "input": "6\n-3 -1 0 2 5 8\n-1",
         "output": "1"
+      },
+      {
+        "input": "3\n10 20 30\n20",
+        "output": "1"
+      },
+      {
+        "input": "4\n-10 -5 0 5\n0",
+        "output": "2"
+      },
+      {
+        "input": "6\n1 3 5 7 9 11\n11",
+        "output": "5"
+      },
+      {
+        "input": "5\n2 4 6 8 10\n2",
+        "output": "0"
+      },
+      {
+        "input": "5\n2 4 6 8 10\n3",
+        "output": "-1"
+      },
+      {
+        "input": "3\n1 2 3\n3",
+        "output": "2"
+      },
+      {
+        "input": "4\n1 3 5 7\n6",
+        "output": "-1"
       }
     ],
     "hint": "Set low=0, high=N-1. While low<=high: mid = (low+high)//2. If arr[mid]==T return mid. If arr[mid]<T set low=mid+1 else set high=mid-1. Return -1 if loop ends without finding T.",
@@ -887,6 +1371,46 @@
       {
         "input": "5",
         "output": "*\n* *\n* * *\n* * * *\n* * * * *"
+      },
+      {
+        "input": "3",
+        "output": "*\n* *\n* * *"
+      },
+      {
+        "input": "6",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *"
+      },
+      {
+        "input": "7",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *"
+      },
+      {
+        "input": "8",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *"
+      },
+      {
+        "input": "9",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *"
+      },
+      {
+        "input": "10",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *\n* * * * * * * * * *"
+      },
+      {
+        "input": "11",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *\n* * * * * * * * * *\n* * * * * * * * * * *"
+      },
+      {
+        "input": "12",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *\n* * * * * * * * * *\n* * * * * * * * * * *\n* * * * * * * * * * * *"
+      },
+      {
+        "input": "13",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *\n* * * * * * * * * *\n* * * * * * * * * * *\n* * * * * * * * * * * *\n* * * * * * * * * * * * *"
+      },
+      {
+        "input": "14",
+        "output": "*\n* *\n* * *\n* * * *\n* * * * *\n* * * * * *\n* * * * * * *\n* * * * * * * *\n* * * * * * * * *\n* * * * * * * * * *\n* * * * * * * * * * *\n* * * * * * * * * * * *\n* * * * * * * * * * * * *\n* * * * * * * * * * * * * *"
       }
     ],
     "hint": "Outer loop i from 1 to N: print ' '.join(['*']*i)",
@@ -928,6 +1452,42 @@
       {
         "input": "6\n100 200 300 400 500 600",
         "output": "600 500 400 300 200 100"
+      },
+      {
+        "input": "4\n1 2 3 4",
+        "output": "4 3 2 1"
+      },
+      {
+        "input": "7\n7 6 5 4 3 2 1",
+        "output": "1 2 3 4 5 6 7"
+      },
+      {
+        "input": "3\n5 10 15",
+        "output": "15 10 5"
+      },
+      {
+        "input": "5\n9999 1 2 3 4",
+        "output": "4 3 2 1 9999"
+      },
+      {
+        "input": "2\n100 200",
+        "output": "200 100"
+      },
+      {
+        "input": "4\n1000 2000 3000 4000",
+        "output": "4000 3000 2000 1000"
+      },
+      {
+        "input": "3\n1 1 1",
+        "output": "1 1 1"
+      },
+      {
+        "input": "8\n8 7 6 5 4 3 2 1",
+        "output": "1 2 3 4 5 6 7 8"
+      },
+      {
+        "input": "6\n10 20 30 40 50 60",
+        "output": "60 50 40 30 20 10"
       }
     ],
     "hint": "Read values into an array, reverse it, print. Alternatively use two pointers to reverse in-place: swap arr[left] and arr[right] while left < right.",
@@ -965,6 +1525,46 @@
       {
         "input": "4\nPUSH 10\nPOP\nPOP\nPUSH 20",
         "output": "10\nEMPTY\n20"
+      },
+      {
+        "input": "1\nPUSH 5",
+        "output": "5"
+      },
+      {
+        "input": "1\nPOP",
+        "output": "EMPTY\nStack is empty"
+      },
+      {
+        "input": "4\nPUSH 1\nPUSH 2\nPOP\nPOP",
+        "output": "2\n1\nStack is empty"
+      },
+      {
+        "input": "5\nPUSH 10\nPUSH 20\nPUSH 30\nPOP\nPOP",
+        "output": "30\n20\n10"
+      },
+      {
+        "input": "3\nPUSH 7\nPOP\nPUSH 8",
+        "output": "7\n8"
+      },
+      {
+        "input": "6\nPUSH 1\nPUSH 2\nPUSH 3\nPOP\nPOP\nPOP",
+        "output": "3\n2\n1\nStack is empty"
+      },
+      {
+        "input": "4\nPUSH 100\nPUSH 200\nPUSH 300\nPOP",
+        "output": "300\n200\n100"
+      },
+      {
+        "input": "3\nPOP\nPUSH 5\nPOP",
+        "output": "EMPTY\n5\nStack is empty"
+      },
+      {
+        "input": "5\nPUSH 1\nPUSH 2\nPUSH 3\nPUSH 4\nPOP",
+        "output": "4\n3\n2\n1"
+      },
+      {
+        "input": "2\nPUSH 99\nPUSH 100",
+        "output": "100\n99"
       }
     ],
     "hint": "Use a Python list as a stack: list.append(x) for PUSH, list.pop() for POP. After all operations, print the remaining elements in reverse (top first).",
@@ -1014,6 +1614,34 @@
       {
         "input": "12345",
         "output": "6"
+      },
+      {
+        "input": "1",
+        "output": "1"
+      },
+      {
+        "input": "18",
+        "output": "9"
+      },
+      {
+        "input": "123",
+        "output": "6"
+      },
+      {
+        "input": "987654321",
+        "output": "9"
+      },
+      {
+        "input": "100",
+        "output": "1"
+      },
+      {
+        "input": "19",
+        "output": "1"
+      },
+      {
+        "input": "38",
+        "output": "2"
       }
     ],
     "hint": "Mathematical formula: if N==0 return 0; else return 1 + (N-1) % 9. OR loop: while N >= 10: N = sum of its digits.",
@@ -1065,6 +1693,34 @@
       {
         "input": "5\n2 0 0 0 0",
         "output": "NO"
+      },
+      {
+        "input": "3\n2 1 0",
+        "output": "YES"
+      },
+      {
+        "input": "4\n1 1 1 0",
+        "output": "YES"
+      },
+      {
+        "input": "5\n4 0 0 0 0",
+        "output": "YES"
+      },
+      {
+        "input": "6\n1 0 0 2 0 0",
+        "output": "NO"
+      },
+      {
+        "input": "5\n1 1 0 1 0",
+        "output": "NO"
+      },
+      {
+        "input": "2\n1 0",
+        "output": "YES"
+      },
+      {
+        "input": "6\n2 0 1 0 0 0",
+        "output": "NO"
       }
     ],
     "hint": "Greedy: maintain maxReach = 0. For each index i: if i > maxReach, return NO (stuck). Update maxReach = max(maxReach, i + arr[i]). If maxReach >= N-1, return YES.",
@@ -1112,6 +1768,38 @@
       {
         "input": "test123",
         "output": "Invalid Input"
+      },
+      {
+        "input": "cat",
+        "output": "cat: 1"
+      },
+      {
+        "input": "the the the",
+        "output": "the: 3"
+      },
+      {
+        "input": "one two one three two one",
+        "output": "one: 3\ntwo: 2\nthree: 1"
+      },
+      {
+        "input": "abc123",
+        "output": "Invalid Input"
+      },
+      {
+        "input": "red blue red green blue red",
+        "output": "red: 3\nblue: 2\ngreen: 1"
+      },
+      {
+        "input": "0abc",
+        "output": "Invalid Input"
+      },
+      {
+        "input": "hello world",
+        "output": "hello: 1\nworld: 1"
+      },
+      {
+        "input": "a a b b c",
+        "output": "a: 2\nb: 2\nc: 1"
       }
     ],
     "hint": "First, scan the entire input for any digit character — if found, print Invalid Input and stop. Otherwise, use an OrderedDict (Python) or LinkedHashMap (Java) to map each word to its count while preserving insertion order.",
@@ -1155,6 +1843,42 @@
       {
         "input": "10 20 30 40 50 60 71",
         "output": "Total: 281 minutes\nAverage: 40.14 minutes/day"
+      },
+      {
+        "input": "30 30 30 30 30 30 30",
+        "output": "Total: 210 minutes\nAverage: 30.00 minutes/day"
+      },
+      {
+        "input": "1440 1440 1440 1440 1440 1440 1440",
+        "output": "Total: 10080 minutes\nAverage: 1440.00 minutes/day"
+      },
+      {
+        "input": "10 10 10 10 10 10 11",
+        "output": "Total: 71 minutes\nAverage: 10.14 minutes/day"
+      },
+      {
+        "input": "100 100 100 100 100 100 101",
+        "output": "Total: 701 minutes\nAverage: 100.14 minutes/day"
+      },
+      {
+        "input": "60 90 45 120 30 75 60",
+        "output": "Total: 480 minutes\nAverage: 68.57 minutes/day"
+      },
+      {
+        "input": "1 1 1 1 1 1 8",
+        "output": "Total: 14 minutes\nAverage: 2.00 minutes/day"
+      },
+      {
+        "input": "5 10 15 20 25 30 35",
+        "output": "Total: 140 minutes\nAverage: 20.00 minutes/day"
+      },
+      {
+        "input": "20 40 60 80 100 120 140",
+        "output": "Total: 560 minutes\nAverage: 80.00 minutes/day"
+      },
+      {
+        "input": "15 25 35 45 55 65 75",
+        "output": "Total: 315 minutes\nAverage: 45.00 minutes/day"
       }
     ],
     "hint": "Sum all 7 values. Divide by 7.0 for float. Use f'{avg:.2f}' to format with exactly 2 decimal places. Watch out: 280/7 = 40.0 must print as 40.00.",
@@ -1198,6 +1922,42 @@
       {
         "input": "cd",
         "output": "cd\ndc"
+      },
+      {
+        "input": "c",
+        "output": "c"
+      },
+      {
+        "input": "dc",
+        "output": "cd\ndc"
+      },
+      {
+        "input": "xyz",
+        "output": "xyz\nxzy\nyxz\nyzx\nzxy\nzyx"
+      },
+      {
+        "input": "bca",
+        "output": "abc\nacb\nbac\nbca\ncab\ncba"
+      },
+      {
+        "input": "acd",
+        "output": "acd\nadc\ncad\ncda\ndac\ndca"
+      },
+      {
+        "input": "efg",
+        "output": "efg\negf\nfeg\nfge\ngef\ngfe"
+      },
+      {
+        "input": "hi",
+        "output": "hi\nih"
+      },
+      {
+        "input": "de",
+        "output": "de\ned"
+      },
+      {
+        "input": "zb",
+        "output": "bz\nzb"
       }
     ],
     "hint": "Sort the string first. Use itertools.permutations or backtracking. Collect all results in a list, sort it, then print each. For |S| ≤ 8, at most 8! = 40,320 operations.",
@@ -1244,6 +2004,38 @@
       {
         "input": "4 2\n10 5 2 7",
         "output": "10 5 7"
+      },
+      {
+        "input": "3 1\n4 3 2",
+        "output": "4 3 2"
+      },
+      {
+        "input": "4 4\n1 3 5 2",
+        "output": "5"
+      },
+      {
+        "input": "6 2\n2 1 5 3 6 4",
+        "output": "2 5 5 6 6"
+      },
+      {
+        "input": "5 3\n-5 -3 -1 -4 -2",
+        "output": "-1 -1 -1"
+      },
+      {
+        "input": "4 2\n3 3 3 3",
+        "output": "3 3 3"
+      },
+      {
+        "input": "3 3\n-2 -3 -1",
+        "output": "-1"
+      },
+      {
+        "input": "6 3\n1 2 3 4 5 6",
+        "output": "3 4 5 6"
+      },
+      {
+        "input": "5 2\n9 8 7 6 5",
+        "output": "9 8 7 6"
       }
     ],
     "hint": "Use a deque of indices (decreasing order of values). For each element i: remove indices outside the window (< i-K+1) from front. Remove indices from back while arr[deque.back()] <= arr[i]. Add i to back. Record arr[deque.front()] for each window after processing first K elements.",
@@ -1291,6 +2083,38 @@
       {
         "input": "5\n5 4 3 2 1\n-1",
         "output": "No Cycle"
+      },
+      {
+        "input": "2\n1 2\n-1",
+        "output": "No Cycle"
+      },
+      {
+        "input": "2\n1 2\n0",
+        "output": "Cycle Detected"
+      },
+      {
+        "input": "4\n1 2 3 4\n2",
+        "output": "Cycle Detected"
+      },
+      {
+        "input": "3\n1 2 3\n-1",
+        "output": "No Cycle"
+      },
+      {
+        "input": "5\n1 2 3 4 5\n4",
+        "output": "Cycle Detected"
+      },
+      {
+        "input": "6\n1 2 3 4 5 6\n-1",
+        "output": "No Cycle"
+      },
+      {
+        "input": "3\n10 20 30\n1",
+        "output": "Cycle Detected"
+      },
+      {
+        "input": "4\n5 6 7 8\n3",
+        "output": "Cycle Detected"
       }
     ],
     "hint": "If P == -1, it's No Cycle immediately. Otherwise, Cycle Detected. (In the simulation, P != -1 always means a cycle since the tail always points back to some node.) Floyd's algorithm: slow and fast pointers — if they meet, cycle exists.",
@@ -1342,6 +2166,34 @@
       {
         "input": "mzjawxu\nxmjyauz",
         "output": "4"
+      },
+      {
+        "input": "ab\nab",
+        "output": "2"
+      },
+      {
+        "input": "abc\nac",
+        "output": "2"
+      },
+      {
+        "input": "abcdf\nabdf",
+        "output": "4"
+      },
+      {
+        "input": "xyz\nabc",
+        "output": "0"
+      },
+      {
+        "input": "aab\nbba",
+        "output": "1"
+      },
+      {
+        "input": "abcbdab\nbdcaba",
+        "output": "4"
+      },
+      {
+        "input": "aa\naa",
+        "output": "2"
       }
     ],
     "hint": "2D DP: dp[i][j] = LCS of A[0..i-1] and B[0..j-1]. If A[i-1]==B[j-1]: dp[i][j]=dp[i-1][j-1]+1. Else dp[i][j]=max(dp[i-1][j], dp[i][j-1]). Answer = dp[|A|][|B|].",
@@ -1390,6 +2242,38 @@
       {
         "input": "TCS\n5",
         "output": "YHX"
+      },
+      {
+        "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1",
+        "output": "BCDEFGHIJKLMNOPQRSTUVWXYZA"
+      },
+      {
+        "input": "PYTHON\n10",
+        "output": "ZIDRYX"
+      },
+      {
+        "input": "HELLO\n13",
+        "output": "URYYB"
+      },
+      {
+        "input": "ABCZ\n25",
+        "output": "ZABY"
+      },
+      {
+        "input": "WXYZ\n5",
+        "output": "BCDE"
+      },
+      {
+        "input": "A\n25",
+        "output": "Z"
+      },
+      {
+        "input": "ZZZ\n2",
+        "output": "BBB"
+      },
+      {
+        "input": "ATTACK\n7",
+        "output": "HAHHRL"
       }
     ],
     "hint": "For each character c: encrypted_char = chr((ord(c) - ord('A') + K) % 26 + ord('A')). The modulo 26 handles the wrap-around from Z back to A automatically.",
@@ -1436,6 +2320,38 @@
       {
         "input": "2 2\n1 2\n3 4",
         "output": "1 2 4 3"
+      },
+      {
+        "input": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12",
+        "output": "1 2 3 4 8 12 11 10 9 5 6 7"
+      },
+      {
+        "input": "2 3\n1 2 3\n4 5 6",
+        "output": "1 2 3 6 5 4"
+      },
+      {
+        "input": "4 4\n1 2 3 4\n5 6 7 8\n9 10 11 12\n13 14 15 16",
+        "output": "1 2 3 4 8 12 16 15 14 13 9 5 6 7 11 10"
+      },
+      {
+        "input": "1 5\n1 2 3 4 5",
+        "output": "1 2 3 4 5"
+      },
+      {
+        "input": "5 1\n1\n2\n3\n4\n5",
+        "output": "1 2 3 4 5"
+      },
+      {
+        "input": "3 2\n1 2\n3 4\n5 6",
+        "output": "1 2 4 6 5 3"
+      },
+      {
+        "input": "2 2\n5 6\n7 8",
+        "output": "5 6 8 7"
+      },
+      {
+        "input": "3 3\n0 1 2\n3 4 5\n6 7 8",
+        "output": "0 1 2 5 8 7 6 3 4"
       }
     ],
     "hint": "Four boundary pointers: top=0, bottom=M-1, left=0, right=N-1. Traverse top row (left→right, top++); right col (top→bottom, right--); bottom row (right→left, bottom--); left col (bottom→top, left++). Repeat while top<=bottom and left<=right.",
@@ -1487,6 +2403,34 @@
       {
         "input": "5\n5 4 3 2 1",
         "output": "0"
+      },
+      {
+        "input": "4\n1 0 1 0",
+        "output": "1"
+      },
+      {
+        "input": "6\n0 1 0 0 1 0",
+        "output": "2"
+      },
+      {
+        "input": "5\n1 2 3 2 1",
+        "output": "0"
+      },
+      {
+        "input": "7\n3 0 2 0 4 0 3",
+        "output": "10"
+      },
+      {
+        "input": "4\n2 1 3 1",
+        "output": "1"
+      },
+      {
+        "input": "6\n0 2 0 3 0 4",
+        "output": "0"
+      },
+      {
+        "input": "8\n3 1 2 4 0 1 3 2",
+        "output": "8"
       }
     ],
     "hint": "Two-pointer: left=0, right=N-1, leftMax=0, rightMax=0, result=0. While left < right: if height[left] <= height[right]: update leftMax or add leftMax-height[left] to result; left++. Else mirror logic from right. O(n), O(1).",
@@ -1538,6 +2482,34 @@
       {
         "input": "3\n5 -3 5",
         "output": "7"
+      },
+      {
+        "input": "3\n-1 -2 -3",
+        "output": "-1"
+      },
+      {
+        "input": "4\n2 -1 2 -1",
+        "output": "3"
+      },
+      {
+        "input": "6\n-2 1 -3 4 -1 2",
+        "output": "5"
+      },
+      {
+        "input": "3\n100 -200 100",
+        "output": "100"
+      },
+      {
+        "input": "5\n-10 5 -3 5 -10",
+        "output": "7"
+      },
+      {
+        "input": "4\n3 -1 -1 3",
+        "output": "4"
+      },
+      {
+        "input": "5\n-5 4 -3 4 -5",
+        "output": "5"
       }
     ],
     "hint": "Kadane's: maxSoFar = maxEndingHere = arr[0]. For i from 1 to N-1: maxEndingHere = max(arr[i], maxEndingHere + arr[i]); maxSoFar = max(maxSoFar, maxEndingHere). Return maxSoFar.",
@@ -1593,6 +2565,30 @@
       {
         "input": "([{)]}",
         "output": "Invalid"
+      },
+      {
+        "input": "[[]]",
+        "output": "Valid"
+      },
+      {
+        "input": "(){}",
+        "output": "Valid"
+      },
+      {
+        "input": "(]",
+        "output": "Invalid"
+      },
+      {
+        "input": "([)",
+        "output": "Invalid"
+      },
+      {
+        "input": "{{}[]}",
+        "output": "Valid"
+      },
+      {
+        "input": "[",
+        "output": "Invalid"
       }
     ],
     "hint": "Stack: for each character c: if c is an open bracket push it. If c is a closing bracket: if stack is empty or top doesn't match, return Invalid; else pop. At end: if stack is empty return Valid, else Invalid.",
@@ -1644,6 +2640,34 @@
       {
         "input": "3\n1000000 999999 999998",
         "output": "1"
+      },
+      {
+        "input": "2\n6 9",
+        "output": "3"
+      },
+      {
+        "input": "3\n12 15 21",
+        "output": "3"
+      },
+      {
+        "input": "4\n100 200 300 400",
+        "output": "100"
+      },
+      {
+        "input": "2\n7 11",
+        "output": "1"
+      },
+      {
+        "input": "5\n36 48 60 72 84",
+        "output": "12"
+      },
+      {
+        "input": "2\n1000000 500000",
+        "output": "500000"
+      },
+      {
+        "input": "3\n5 10 25",
+        "output": "5"
       }
     ],
     "hint": "Euclidean GCD: gcd(a, b) = gcd(b, a % b) until b == 0. Apply iteratively: result = arr[0]; for i from 1 to N-1: result = gcd(result, arr[i]). Final result is the GCD of all elements.",
@@ -1696,6 +2720,34 @@
       {
         "input": "1\n2\n3",
         "output": "-1"
+      },
+      {
+        "input": "2\n4 5\n3",
+        "output": "-1"
+      },
+      {
+        "input": "3\n1 5 10\n30",
+        "output": "3"
+      },
+      {
+        "input": "2\n1 10\n11",
+        "output": "2"
+      },
+      {
+        "input": "1\n5\n25",
+        "output": "5"
+      },
+      {
+        "input": "3\n2 5 7\n14",
+        "output": "2"
+      },
+      {
+        "input": "3\n1 3 4\n6",
+        "output": "2"
+      },
+      {
+        "input": "2\n10 25\n35",
+        "output": "2"
       }
     ],
     "hint": "1D DP: dp[0]=0; dp[i]=infinity for i>0. For each amount i from 1 to T: for each coin c<=i: dp[i]=min(dp[i], dp[i-c]+1). If dp[T] is still infinity, print -1.",
@@ -1743,6 +2795,38 @@
       {
         "input": "4\n100000 0 50000 25000",
         "output": "100000 50000 25000 0"
+      },
+      {
+        "input": "5\n1 3 5 7 9",
+        "output": "9 7 5 3 1"
+      },
+      {
+        "input": "3\n3 1 2",
+        "output": "3 2 1"
+      },
+      {
+        "input": "4\n10 10 10 10",
+        "output": "10 10 10 10"
+      },
+      {
+        "input": "6\n6 5 4 3 2 1",
+        "output": "6 5 4 3 2 1"
+      },
+      {
+        "input": "3\n0 50000 25000",
+        "output": "50000 25000 0"
+      },
+      {
+        "input": "5\n3 1 4 1 5",
+        "output": "5 4 3 1 1"
+      },
+      {
+        "input": "4\n0 0 0 1",
+        "output": "1 0 0 0"
+      },
+      {
+        "input": "2\n100 99",
+        "output": "100 99"
       }
     ],
     "hint": "Same as ascending Bubble Sort but change the swap condition: swap arr[j] and arr[j+1] when arr[j] < arr[j+1] (instead of >). This bubbles the largest values to the front.",
@@ -1791,9 +2875,1066 @@
       {
         "input": "3 3\n0 1 0\n0 1 0\n0 0 0",
         "output": "4"
+      },
+      {
+        "input": "1 2\n0 0",
+        "output": "1"
+      },
+      {
+        "input": "2 2\n0 0\n0 0",
+        "output": "2"
+      },
+      {
+        "input": "3 3\n0 0 1\n0 1 0\n1 0 0",
+        "output": "-1"
+      },
+      {
+        "input": "4 4\n0 0 0 0\n0 1 1 0\n0 1 1 0\n0 0 0 0",
+        "output": "6"
+      },
+      {
+        "input": "2 3\n0 0 0\n0 0 0",
+        "output": "3"
+      },
+      {
+        "input": "3 3\n0 1 0\n1 0 1\n0 1 0",
+        "output": "-1"
+      },
+      {
+        "input": "3 4\n0 0 0 0\n0 1 1 0\n0 0 0 0",
+        "output": "5"
+      },
+      {
+        "input": "4 4\n0 0 0 0\n1 1 1 0\n0 0 0 0\n0 1 1 0",
+        "output": "9"
       }
     ],
     "hint": "BFS from (0,0): use a queue with entries (row, col, steps). Mark cells visited when enqueued. For each cell dequeued, check all 4 neighbours. Return steps when (M-1, N-1) is reached; return -1 if queue empties.",
     "starterCode": "# Find minimum steps from top-left to bottom-right using BFS\n\nfrom collections import deque\n\ndef solve():\n    line1 = input().split()\n    m, n = int(line1[0]), int(line1[1])\n    grid = []\n    for _ in range(m):\n        grid.append(list(map(int, input().split())))\n    \n    if m == 1 and n == 1:\n        print(0)\n        return\n    \n    # Write your BFS solution here\n    # Use a queue: (row, col, steps)\n    # Mark visited cells\n    \n    # print minimum steps or -1\n\nsolve()"
+  },
+  {
+    "id": 38,
+    "title": "Longest Increasing Subsequence",
+    "topic": "Dynamic Programming / Binary Search",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "A supply chain analyst tracks daily inventory levels and wants to find the longest sequence of days where stock strictly increases — a key metric for demand surges.",
+    "statement": "Given an array of N integers, find the length of the Longest Strictly Increasing Subsequence (LIS). A subsequence preserves relative order but need not be contiguous.",
+    "constraints": [
+      "1 ≤ N ≤ 100000",
+      "-10^9 ≤ arr[i] ≤ 10^9"
+    ],
+    "inputFormat": "Line 1: integer N\nLine 2: N space-separated integers",
+    "outputFormat": "Print the length of the LIS as a single integer.",
+    "sampleCases": [
+      {
+        "input": "8\n10 9 2 5 3 7 101 18",
+        "output": "4",
+        "explanation": "LIS is [2, 3, 7, 101] — length 4."
+      },
+      {
+        "input": "5\n0 1 0 3 2",
+        "output": "3",
+        "explanation": "LIS is [0, 1, 3] — length 3."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1\n5",
+        "output": "1"
+      },
+      {
+        "input": "5\n5 4 3 2 1",
+        "output": "1"
+      },
+      {
+        "input": "5\n1 2 3 4 5",
+        "output": "5"
+      },
+      {
+        "input": "6\n3 1 4 1 5 9",
+        "output": "4"
+      },
+      {
+        "input": "4\n2 2 2 2",
+        "output": "1"
+      },
+      {
+        "input": "7\n1 3 2 5 4 7 6",
+        "output": "4"
+      },
+      {
+        "input": "6\n4 2 4 5 3 7",
+        "output": "4"
+      },
+      {
+        "input": "8\n1 5 2 3 6 4 7 8",
+        "output": "6"
+      },
+      {
+        "input": "9\n9 1 7 3 5 8 2 6 4",
+        "output": "4"
+      },
+      {
+        "input": "10\n1 2 3 1 2 3 1 2 3 4",
+        "output": "4"
+      },
+      {
+        "input": "3\n1 2 3",
+        "output": "3"
+      },
+      {
+        "input": "5\n5 1 4 2 3",
+        "output": "3"
+      }
+    ],
+    "hint": "O(n log n) patience-sorting approach: maintain a 'tails' list. For each element x: if x > tails.back(), append x; else replace the leftmost tail >= x (binary search). Length of tails is the answer.",
+    "starterCode": "# Find the length of the Longest Increasing Subsequence\n# O(n log n) using binary search (patience sort approach)\n\nimport bisect\n\ndef solve():\n    n = int(input())\n    arr = list(map(int, input().split()))\n    \n    tails = []\n    for x in arr:\n        # Use bisect_left to find insertion point\n        # Write your logic here\n        pass\n    \n    print(len(tails))\n\nsolve()"
+  },
+  {
+    "id": 39,
+    "title": "Word Break Problem",
+    "topic": "Dynamic Programming / String",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "A spell-checker engine receives a continuous string with no spaces and must decide whether it can be segmented entirely into words from its dictionary.",
+    "statement": "Given a string S and a dictionary of N words, determine if S can be segmented into one or more dictionary words. Print YES or NO.",
+    "constraints": [
+      "1 ≤ |S| ≤ 300",
+      "1 ≤ N ≤ 500",
+      "All characters are lowercase English letters"
+    ],
+    "inputFormat": "Line 1: string S\nLine 2: integer N\nNext N lines: one dictionary word per line",
+    "outputFormat": "Print YES if S can be segmented, else NO.",
+    "sampleCases": [
+      {
+        "input": "leetcode\n2\nleet\ncode",
+        "output": "YES",
+        "explanation": "'leet' + 'code' = 'leetcode'."
+      },
+      {
+        "input": "catsandog\n5\ncats\ndog\nsand\nand\ncat",
+        "output": "NO",
+        "explanation": "No valid segmentation covers the full string."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "a\n1\na",
+        "output": "YES"
+      },
+      {
+        "input": "b\n1\na",
+        "output": "NO"
+      },
+      {
+        "input": "applepenapple\n3\napple\npen\napple",
+        "output": "YES"
+      },
+      {
+        "input": "catsandog\n4\ncat\ncats\nand\nsand",
+        "output": "NO"
+      },
+      {
+        "input": "aaaaaaa\n2\naaaa\naaa",
+        "output": "YES"
+      },
+      {
+        "input": "abcd\n3\na\nab\nabc",
+        "output": "NO"
+      },
+      {
+        "input": "goalspecial\n3\ngo\ngoal\nspecial",
+        "output": "YES"
+      },
+      {
+        "input": "cars\n3\ncar\nca\nrs",
+        "output": "YES"
+      },
+      {
+        "input": "hello\n2\nhell\nworld",
+        "output": "NO"
+      },
+      {
+        "input": "ilikecoding\n4\ni\nlike\ncoding\ncode",
+        "output": "YES"
+      },
+      {
+        "input": "pineapplepenapple\n4\npine\napple\npen\npineapple",
+        "output": "YES"
+      },
+      {
+        "input": "abcdef\n3\nabc\nab\ncdef",
+        "output": "YES"
+      }
+    ],
+    "hint": "DP: dp[i] = True if s[0..i-1] can be segmented. dp[0]=True. For each i from 1 to |S|: for each j from 0 to i: if dp[j] and s[j..i-1] in word_set: dp[i]=True. Return dp[|S|].",
+    "starterCode": "# Determine if string S can be split into dictionary words\n# Dynamic Programming approach\n\ndef solve():\n    s = input()\n    n = int(input())\n    word_set = set()\n    for _ in range(n):\n        word_set.add(input())\n    \n    size = len(s)\n    dp = [False] * (size + 1)\n    dp[0] = True\n    \n    # Write your DP recurrence here\n    \n    print('YES' if dp[size] else 'NO')\n\nsolve()"
+  },
+  {
+    "id": 40,
+    "title": "N-Queens Problem",
+    "topic": "Recursion / Backtracking",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "A chess tournament organiser needs to place N queens on an N×N board so that no two queens attack each other. Count the total number of distinct valid placements.",
+    "statement": "Given an integer N, count the number of ways to place N non-attacking queens on an N×N chessboard. Two queens attack each other if they share a row, column, or diagonal.",
+    "constraints": [
+      "1 ≤ N ≤ 12"
+    ],
+    "inputFormat": "A single integer N",
+    "outputFormat": "Print the number of distinct solutions.",
+    "sampleCases": [
+      {
+        "input": "4",
+        "output": "2",
+        "explanation": "There are exactly 2 ways to place 4 non-attacking queens on a 4×4 board."
+      },
+      {
+        "input": "8",
+        "output": "92",
+        "explanation": "The classic 8-queens problem has 92 solutions."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1",
+        "output": "1"
+      },
+      {
+        "input": "2",
+        "output": "0"
+      },
+      {
+        "input": "3",
+        "output": "0"
+      },
+      {
+        "input": "5",
+        "output": "10"
+      },
+      {
+        "input": "6",
+        "output": "4"
+      },
+      {
+        "input": "7",
+        "output": "40"
+      },
+      {
+        "input": "9",
+        "output": "352"
+      },
+      {
+        "input": "10",
+        "output": "724"
+      },
+      {
+        "input": "11",
+        "output": "2680"
+      },
+      {
+        "input": "12",
+        "output": "14200"
+      },
+      {
+        "input": "4",
+        "output": "2"
+      },
+      {
+        "input": "8",
+        "output": "92"
+      }
+    ],
+    "hint": "Backtrack row by row. For each row, try placing the queen in every column. Check three sets: occupied columns, occupied diagonals (row-col), occupied anti-diagonals (row+col). If safe, recurse to next row. Backtrack by removing from sets. Count completions at row == N.",
+    "starterCode": "# Count N-Queens solutions using backtracking\n\ndef solve():\n    n = int(input())\n    count = 0\n    cols = set()\n    diag1 = set()   # row - col\n    diag2 = set()   # row + col\n    \n    def backtrack(row):\n        nonlocal count\n        if row == n:\n            count += 1\n            return\n        for col in range(n):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            # Place queen and recurse\n            # Write your placement and backtracking here\n            pass\n    \n    backtrack(0)\n    print(count)\n\nsolve()"
+  },
+  {
+    "id": 41,
+    "title": "Minimum Spanning Tree — Kruskal's Algorithm",
+    "topic": "Graphs / Union-Find / Greedy",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "A telecom company needs to lay cables between N cities using the minimum total cable length. Find the cost of the minimum spanning tree.",
+    "statement": "Given N nodes and M undirected weighted edges, find the total weight of the Minimum Spanning Tree (MST). If the graph is disconnected, print -1.",
+    "constraints": [
+      "1 ≤ N ≤ 1000",
+      "0 ≤ M ≤ N*(N-1)/2",
+      "1 ≤ weight ≤ 100000"
+    ],
+    "inputFormat": "Line 1: two integers N and M\nNext M lines: three integers u v w (edge between u and v with weight w, 1-indexed)",
+    "outputFormat": "Print the total MST weight, or -1 if the graph is disconnected.",
+    "sampleCases": [
+      {
+        "input": "4 5\n1 2 10\n1 3 6\n1 4 5\n2 4 15\n3 4 4",
+        "output": "19",
+        "explanation": "MST edges: (3,4,4), (1,4,5), (1,3,6) → wait recalc: edges (3,4)=4, (1,4)=5, (1,2)=10 → total=19."
+      },
+      {
+        "input": "3 2\n1 2 1\n2 3 2",
+        "output": "3"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1 0",
+        "output": "0"
+      },
+      {
+        "input": "2 1\n1 2 7",
+        "output": "7"
+      },
+      {
+        "input": "3 3\n1 2 5\n2 3 3\n1 3 4",
+        "output": "7"
+      },
+      {
+        "input": "4 0",
+        "output": "-1"
+      },
+      {
+        "input": "4 4\n1 2 1\n2 3 2\n3 4 3\n1 4 10",
+        "output": "6"
+      },
+      {
+        "input": "5 6\n1 2 2\n1 3 3\n1 4 1\n2 4 5\n3 4 4\n4 5 6",
+        "output": "12"
+      },
+      {
+        "input": "3 1\n1 2 10",
+        "output": "-1"
+      },
+      {
+        "input": "4 6\n1 2 3\n1 3 1\n1 4 4\n2 3 2\n2 4 5\n3 4 6",
+        "output": "6"
+      },
+      {
+        "input": "5 5\n1 2 3\n2 3 4\n3 4 5\n4 5 6\n1 5 2",
+        "output": "14"
+      },
+      {
+        "input": "2 2\n1 2 5\n1 2 3",
+        "output": "3"
+      },
+      {
+        "input": "3 3\n1 2 4\n2 3 4\n1 3 4",
+        "output": "8"
+      },
+      {
+        "input": "5 7\n1 2 1\n1 3 2\n1 4 3\n1 5 4\n2 3 5\n3 4 6\n4 5 7",
+        "output": "10"
+      }
+    ],
+    "hint": "Sort edges by weight. Use Union-Find (DSU) with path compression and union by rank. Greedily add the smallest-weight edge if it doesn't form a cycle. Stop when N-1 edges are added. If fewer edges added, graph is disconnected.",
+    "starterCode": "# Minimum Spanning Tree using Kruskal's + Union-Find\n\ndef solve():\n    line = input().split()\n    n, m = int(line[0]), int(line[1])\n    edges = []\n    for _ in range(m):\n        parts = input().split()\n        u, v, w = int(parts[0]), int(parts[1]), int(parts[2])\n        edges.append((w, u, v))\n    edges.sort()\n    \n    parent = list(range(n + 1))\n    rank = [0] * (n + 1)\n    \n    def find(x):\n        # Implement path-compressed find here\n        pass\n    \n    def union(a, b):\n        # Implement union by rank here\n        pass\n    \n    total, count = 0, 0\n    for w, u, v in edges:\n        if find(u) != find(v):\n            union(u, v)\n            total += w\n            count += 1\n    \n    print(total if count == n - 1 else -1)\n\nsolve()"
+  },
+  {
+    "id": 42,
+    "title": "Largest Rectangle in Histogram",
+    "topic": "Stack / Arrays",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "An architect is analysing a histogram of building heights and wants to find the largest rectangular billboard that can be placed within the histogram outline.",
+    "statement": "Given an array of N non-negative integers representing bar heights in a histogram (each bar has width 1), find the area of the largest rectangle that can be formed within the histogram.",
+    "constraints": [
+      "1 ≤ N ≤ 100000",
+      "0 ≤ height[i] ≤ 10000"
+    ],
+    "inputFormat": "Line 1: integer N\nLine 2: N space-separated integers representing bar heights",
+    "outputFormat": "Print the area of the largest rectangle as a single integer.",
+    "sampleCases": [
+      {
+        "input": "6\n2 1 5 6 2 3",
+        "output": "10",
+        "explanation": "Rectangle spanning bars 3–4 (heights 5,6) with height 5: area = 5×2 = 10."
+      },
+      {
+        "input": "5\n2 4 2 1 10",
+        "output": "8",
+        "explanation": "Rectangle spanning bars 1–2 (heights 2,4) with height 2: area = 2×3? No — bars 0–2 height 2 = 6, bars 1 height 4 = 4, bar 4 height 10 = 10? Actually bars 0-2 min=2 → 2×3=6; bar 1 alone=4; bar 4=10; max=10... recalculated: [2,4,2,1,10] → 4×2=8 (bars 0-1)."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1\n5",
+        "output": "5"
+      },
+      {
+        "input": "1\n0",
+        "output": "0"
+      },
+      {
+        "input": "3\n3 3 3",
+        "output": "9"
+      },
+      {
+        "input": "5\n1 1 1 1 1",
+        "output": "5"
+      },
+      {
+        "input": "4\n4 3 2 1",
+        "output": "6"
+      },
+      {
+        "input": "4\n1 2 3 4",
+        "output": "6"
+      },
+      {
+        "input": "5\n0 0 0 0 0",
+        "output": "0"
+      },
+      {
+        "input": "6\n6 2 5 4 5 1",
+        "output": "12"
+      },
+      {
+        "input": "7\n2 1 2 3 1 1 2",
+        "output": "7"
+      },
+      {
+        "input": "3\n5 5 5",
+        "output": "15"
+      },
+      {
+        "input": "4\n2 0 2 0",
+        "output": "2"
+      },
+      {
+        "input": "5\n1 2 1 2 1",
+        "output": "5"
+      }
+    ],
+    "hint": "Use a monotonic stack. Push bar indices while heights are increasing. When a shorter bar is found, pop and compute area using popped bar's height × width (current_index - stack_top - 1). Add a sentinel 0 at the end to flush the stack.",
+    "starterCode": "# Find the largest rectangle area in a histogram\n# Monotonic stack O(n) approach\n\ndef solve():\n    n = int(input())\n    heights = list(map(int, input().split()))\n    heights.append(0)  # sentinel\n    \n    stack = [-1]  # index stack\n    max_area = 0\n    \n    for i in range(n + 1):\n        while stack[-1] != -1 and heights[stack[-1]] >= heights[i]:\n            # Pop and compute area — write your logic here\n            pass\n        stack.append(i)\n    \n    print(max_area)\n\nsolve()"
+  },
+  {
+    "id": 43,
+    "title": "Dijkstra's Shortest Path",
+    "topic": "Graphs / Priority Queue",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "A GPS system in a city needs to find the shortest road distance from the starting intersection to every other intersection in the city road network.",
+    "statement": "Given a weighted directed graph with N nodes (1-indexed) and M edges, find the shortest distances from source node 1 to all other nodes. If a node is unreachable, print -1 for it.",
+    "constraints": [
+      "1 ≤ N ≤ 10000",
+      "0 ≤ M ≤ 200000",
+      "1 ≤ weight ≤ 100000"
+    ],
+    "inputFormat": "Line 1: two integers N and M\nNext M lines: three integers u v w (directed edge from u to v with weight w)\nLine N+2: integer S (source node)",
+    "outputFormat": "Print N space-separated shortest distances (from node 1 to nodes 1..N). Use -1 for unreachable nodes.",
+    "sampleCases": [
+      {
+        "input": "5 6\n1 2 2\n1 3 4\n2 3 1\n2 4 7\n3 5 3\n4 5 1\n1",
+        "output": "0 2 3 9 6",
+        "explanation": "1→2=2, 1→3=3 (via 2), 1→4=9 (via 2,4), 1→5=6 (via 2,3,5)."
+      },
+      {
+        "input": "3 2\n1 2 5\n2 3 3\n1",
+        "output": "0 5 8"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1 0\n1",
+        "output": "0"
+      },
+      {
+        "input": "2 1\n1 2 10\n1",
+        "output": "0 10"
+      },
+      {
+        "input": "3 0\n1",
+        "output": "0 -1 -1"
+      },
+      {
+        "input": "4 4\n1 2 1\n2 3 1\n3 4 1\n1 4 10\n1",
+        "output": "0 1 2 3"
+      },
+      {
+        "input": "3 3\n1 2 4\n1 3 2\n2 3 1\n1",
+        "output": "0 4 2"
+      },
+      {
+        "input": "4 3\n1 2 5\n2 3 5\n3 4 5\n1",
+        "output": "0 5 10 15"
+      },
+      {
+        "input": "5 4\n1 2 3\n1 3 1\n3 4 2\n4 5 1\n1",
+        "output": "0 3 1 3 4"
+      },
+      {
+        "input": "4 2\n1 2 1\n3 4 1\n1",
+        "output": "0 1 -1 -1"
+      },
+      {
+        "input": "3 3\n1 2 2\n2 3 3\n1 3 10\n1",
+        "output": "0 2 5"
+      },
+      {
+        "input": "2 2\n1 2 5\n1 2 3\n1",
+        "output": "0 3"
+      },
+      {
+        "input": "4 4\n1 2 3\n2 3 1\n3 1 1\n1 4 100\n1",
+        "output": "0 3 4 100"
+      },
+      {
+        "input": "5 5\n1 2 1\n2 3 1\n3 5 1\n1 4 10\n4 5 2\n1",
+        "output": "0 1 2 10 3"
+      }
+    ],
+    "hint": "Use a min-heap (priority queue). Start with dist[source]=0, all others=infinity. Push (0, source). While heap non-empty: pop (d, u); if d > dist[u] skip; else relax all outgoing edges (v,w): if dist[u]+w < dist[v]: update dist[v], push (dist[v], v).",
+    "starterCode": "# Dijkstra's shortest path from source node 1\n# Use heapq for O((N+M) log N)\n\nimport heapq\n\ndef solve():\n    line = input().split()\n    n, m = int(line[0]), int(line[1])\n    adj = [[] for _ in range(n + 1)]\n    for _ in range(m):\n        parts = input().split()\n        u, v, w = int(parts[0]), int(parts[1]), int(parts[2])\n        adj[u].append((v, w))\n    src = int(input())\n    \n    INF = float('inf')\n    dist = [INF] * (n + 1)\n    dist[src] = 0\n    heap = [(0, src)]\n    \n    # Write Dijkstra's loop here\n    \n    ans = [dist[i] if dist[i] != INF else -1 for i in range(1, n + 1)]\n    print(' '.join(map(str, ans)))\n\nsolve()"
+  },
+  {
+    "id": 44,
+    "title": "Edit Distance (Levenshtein)",
+    "topic": "Dynamic Programming / Strings",
+    "difficulty": "hard",
+    "maxScore": 100,
+    "scenario": "An autocorrect engine needs to measure how 'far apart' two words are — the minimum number of single-character edits (insert, delete, or replace) to transform one word into another.",
+    "statement": "Given two strings A and B, find the minimum number of operations (insert, delete, or replace a single character) needed to convert A into B.",
+    "constraints": [
+      "0 ≤ |A|, |B| ≤ 1000",
+      "Both strings contain only lowercase English letters"
+    ],
+    "inputFormat": "Line 1: string A (may be empty — given as an empty line)\nLine 2: string B (may be empty)",
+    "outputFormat": "Print the edit distance as a single integer.",
+    "sampleCases": [
+      {
+        "input": "horse\nros",
+        "output": "3",
+        "explanation": "horse→rorse(replace h→r)→rose(delete r)→ros(delete e): 3 ops."
+      },
+      {
+        "input": "intention\nexecution",
+        "output": "5"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "a\na",
+        "output": "0"
+      },
+      {
+        "input": "a\nb",
+        "output": "1"
+      },
+      {
+        "input": "abc\nabc",
+        "output": "0"
+      },
+      {
+        "input": "abc\n",
+        "output": "3"
+      },
+      {
+        "input": "\nabc",
+        "output": "3"
+      },
+      {
+        "input": "\n",
+        "output": "0"
+      },
+      {
+        "input": "kitten\nsitting",
+        "output": "3"
+      },
+      {
+        "input": "abcdef\nfedcba",
+        "output": "4"
+      },
+      {
+        "input": "sunday\nsaturday",
+        "output": "3"
+      },
+      {
+        "input": "plasma\nplasma",
+        "output": "0"
+      },
+      {
+        "input": "food\nmoney",
+        "output": "4"
+      },
+      {
+        "input": "ab\nbc",
+        "output": "2"
+      }
+    ],
+    "hint": "2D DP: dp[i][j] = edit distance of A[0..i-1] and B[0..j-1]. Base: dp[i][0]=i, dp[0][j]=j. Transition: if A[i-1]==B[j-1]: dp[i][j]=dp[i-1][j-1]; else dp[i][j]=1+min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]).",
+    "starterCode": "# Find minimum edit distance between two strings\n# Dynamic Programming — O(|A| × |B|)\n\nimport sys\n\ndef solve():\n    a = sys.stdin.readline().rstrip('\\n')\n    b = sys.stdin.readline().rstrip('\\n')\n    \n    m, n = len(a), len(b)\n    dp = [[0] * (n + 1) for _ in range(m + 1)]\n    \n    for i in range(m + 1):\n        dp[i][0] = i\n    for j in range(n + 1):\n        dp[0][j] = j\n    \n    # Write your DP recurrence here\n    \n    print(dp[m][n])\n\nsolve()"
+  },
+  {
+    "id": 45,
+    "title": "Subarray Sum Equals K",
+    "topic": "Arrays / HashMap / Prefix Sum",
+    "difficulty": "medium",
+    "maxScore": 100,
+    "scenario": "A bank auditor reviews daily cash-flow records and wants to find how many consecutive-day windows produced a net balance of exactly K.",
+    "statement": "Given an array of N integers (positive and negative) and an integer K, count the total number of contiguous subarrays whose sum equals K.",
+    "constraints": [
+      "1 ≤ N ≤ 100000",
+      "-10000 ≤ arr[i] ≤ 10000",
+      "-10^9 ≤ K ≤ 10^9"
+    ],
+    "inputFormat": "Line 1: two integers N and K\nLine 2: N space-separated integers",
+    "outputFormat": "Print the count of subarrays with sum equal to K.",
+    "sampleCases": [
+      {
+        "input": "5 2\n1 1 1 1 1",
+        "output": "4",
+        "explanation": "Subarrays [1,1] starting at indices 0,1,2,3 all sum to 2."
+      },
+      {
+        "input": "4 3\n1 2 3 4",
+        "output": "2",
+        "explanation": "[1,2] and [3] both sum to 3."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1 5\n5",
+        "output": "1"
+      },
+      {
+        "input": "1 5\n4",
+        "output": "0"
+      },
+      {
+        "input": "3 0\n1 -1 0",
+        "output": "3"
+      },
+      {
+        "input": "4 0\n0 0 0 0",
+        "output": "10"
+      },
+      {
+        "input": "5 5\n1 2 3 -3 3",
+        "output": "3"
+      },
+      {
+        "input": "6 3\n3 0 3 -3 3 3",
+        "output": "6"
+      },
+      {
+        "input": "3 -1\n1 -1 -1",
+        "output": "2"
+      },
+      {
+        "input": "4 1\n1 1 1 1",
+        "output": "4"
+      },
+      {
+        "input": "5 10\n2 3 5 1 4",
+        "output": "3"
+      },
+      {
+        "input": "2 100\n1 99",
+        "output": "1"
+      },
+      {
+        "input": "3 6\n1 2 3",
+        "output": "2"
+      },
+      {
+        "input": "4 4\n4 -4 4 -4",
+        "output": "2"
+      }
+    ],
+    "hint": "Prefix sum + HashMap: preSum=0, count=0, freq={0:1}. For each element: preSum += arr[i]; count += freq.get(preSum - K, 0); freq[preSum] = freq.get(preSum, 0) + 1. O(n) time, O(n) space.",
+    "starterCode": "# Count subarrays with sum equal to K\n# Prefix sum + HashMap — O(n)\n\nfrom collections import defaultdict\n\ndef solve():\n    parts = input().split()\n    n, k = int(parts[0]), int(parts[1])\n    arr = list(map(int, input().split()))\n    \n    freq = defaultdict(int)\n    freq[0] = 1\n    pre_sum = 0\n    count = 0\n    \n    # Write your prefix sum logic here\n    \n    print(count)\n\nsolve()"
+  },
+  {
+    "id": 46,
+    "title": "Level Order Traversal of Binary Tree",
+    "topic": "Trees / BFS",
+    "difficulty": "medium",
+    "maxScore": 100,
+    "scenario": "An organisation hierarchy is stored as a binary tree. The HR manager wants to list all employees level by level, from CEO down to interns.",
+    "statement": "Given a binary tree in level-order input (use -1 for NULL nodes), perform a level-order (BFS) traversal and print each level's values separated by spaces on its own line.",
+    "constraints": [
+      "1 ≤ N ≤ 1000 (number of non-null nodes)",
+      "1 ≤ node value ≤ 10000"
+    ],
+    "inputFormat": "Line 1: integer N (total nodes in level-order input including -1 for nulls)\nLine 2: N space-separated integers (-1 denotes NULL)",
+    "outputFormat": "Print each level on a separate line, values separated by spaces.",
+    "sampleCases": [
+      {
+        "input": "7\n1 2 3 4 5 6 7",
+        "output": "1\n2 3\n4 5 6 7",
+        "explanation": "Level 0: [1], Level 1: [2,3], Level 2: [4,5,6,7]."
+      },
+      {
+        "input": "5\n1 2 3 -1 4",
+        "output": "1\n2 3\n4",
+        "explanation": "Node 2's left child is NULL; right child is 4."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "1\n5",
+        "output": "5"
+      },
+      {
+        "input": "3\n1 2 3",
+        "output": "1\n2 3"
+      },
+      {
+        "input": "3\n10 -1 20",
+        "output": "10\n20"
+      },
+      {
+        "input": "5\n1 2 -1 3 4",
+        "output": "1\n2\n3 4"
+      },
+      {
+        "input": "7\n4 2 6 1 3 5 7",
+        "output": "4\n2 6\n1 3 5 7"
+      },
+      {
+        "input": "9\n1 2 3 4 5 -1 7 -1 -1",
+        "output": "1\n2 3\n4 5 7"
+      },
+      {
+        "input": "5\n5 4 -1 3 -1",
+        "output": "5\n4\n3"
+      },
+      {
+        "input": "11\n1 2 3 4 5 6 7 8 9 10 11",
+        "output": "1\n2 3\n4 5 6 7\n8 9 10 11"
+      },
+      {
+        "input": "3\n7 -1 8",
+        "output": "7\n8"
+      },
+      {
+        "input": "5\n10 20 30 40 50",
+        "output": "10\n20 30\n40 50"
+      },
+      {
+        "input": "1\n1",
+        "output": "1"
+      },
+      {
+        "input": "7\n1 -1 2 -1 -1 -1 3",
+        "output": "1\n2\n3"
+      }
+    ],
+    "hint": "Build tree from level-order array. Use a queue for BFS. For each level, process all current-level nodes, collect their values, then enqueue non-null children. Print each level's values on a new line.",
+    "starterCode": "# Level-order traversal of binary tree\n\nfrom collections import deque\n\nclass Node:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\ndef build_tree(vals):\n    if not vals or vals[0] == -1:\n        return None\n    root = Node(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] != -1:\n            node.left = Node(vals[i])\n            queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] != -1:\n            node.right = Node(vals[i])\n            queue.append(node.right)\n        i += 1\n    return root\n\ndef solve():\n    n = int(input())\n    vals = list(map(int, input().split()))\n    root = build_tree(vals)\n    \n    if not root:\n        return\n    \n    # Write your BFS level-order traversal here\n    # Print each level on a separate line\n\nsolve()"
+  },
+  {
+    "id": 47,
+    "title": "Two Sum — All Pairs",
+    "topic": "Arrays / HashMap",
+    "difficulty": "medium",
+    "maxScore": 100,
+    "scenario": "A forensic accountant is looking for all pairs of transactions that together total a suspicious amount K. Find every such pair of indices.",
+    "statement": "Given an array of N integers and a target K, find all unique index pairs (i, j) with i < j such that arr[i] + arr[j] == K. Print them in ascending order of i, then j.",
+    "constraints": [
+      "1 ≤ N ≤ 100000",
+      "-10^9 ≤ arr[i] ≤ 10^9",
+      "-10^9 ≤ K ≤ 10^9"
+    ],
+    "inputFormat": "Line 1: two integers N and K\nLine 2: N space-separated integers",
+    "outputFormat": "Print one pair per line as 'i j'. If no pairs exist, print 'No pairs found'.",
+    "sampleCases": [
+      {
+        "input": "6 9\n1 8 4 5 3 6",
+        "output": "0 1\n2 3\n4 5",
+        "explanation": "arr[0]+arr[1]=1+8=9, arr[2]+arr[3]=4+5=9, arr[4]+arr[5]=3+6=9."
+      },
+      {
+        "input": "4 10\n1 2 3 4",
+        "output": "No pairs found"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "2 5\n2 3",
+        "output": "0 1"
+      },
+      {
+        "input": "2 5\n2 4",
+        "output": "No pairs found"
+      },
+      {
+        "input": "4 6\n1 5 3 3",
+        "output": "0 1\n2 3"
+      },
+      {
+        "input": "5 0\n-3 0 3 -2 2",
+        "output": "0 2\n3 4"
+      },
+      {
+        "input": "4 10\n10 0 5 5",
+        "output": "0 1\n2 3"
+      },
+      {
+        "input": "3 100\n1 2 3",
+        "output": "No pairs found"
+      },
+      {
+        "input": "6 7\n3 4 1 6 3 4",
+        "output": "0 1\n0 5\n1 4\n2 3\n4 5"
+      },
+      {
+        "input": "4 4\n2 2 2 2",
+        "output": "0 1\n0 2\n0 3\n1 2\n1 3\n2 3"
+      },
+      {
+        "input": "1 5\n5",
+        "output": "No pairs found"
+      },
+      {
+        "input": "5 1\n0 0 1 0 1",
+        "output": "0 2\n0 4\n1 2\n1 4\n3 2\n3 4"
+      },
+      {
+        "input": "3 6\n3 3 3",
+        "output": "0 1\n0 2\n1 2"
+      },
+      {
+        "input": "4 0\n0 0 0 0",
+        "output": "0 1\n0 2\n0 3\n1 2\n1 3\n2 3"
+      }
+    ],
+    "hint": "Use a HashMap (value → list of indices). For each index i, check if K - arr[i] is already in the map, then record all (j, i) pairs. Then add arr[i] → i to the map. Sort pairs by first index then second before printing.",
+    "starterCode": "# Find all index pairs (i < j) where arr[i] + arr[j] == K\n\nfrom collections import defaultdict\n\ndef solve():\n    parts = input().split()\n    n, k = int(parts[0]), int(parts[1])\n    arr = list(map(int, input().split()))\n    \n    seen = defaultdict(list)  # value -> [indices]\n    pairs = []\n    \n    # Write your logic here\n    \n    if pairs:\n        pairs.sort()\n        for i, j in pairs:\n            print(i, j)\n    else:\n        print('No pairs found')\n\nsolve()"
+  },
+  {
+    "id": 48,
+    "title": "Count Vowels and Consonants",
+    "topic": "Strings / Counting",
+    "difficulty": "easy",
+    "maxScore": 100,
+    "scenario": "A linguistics researcher wants a quick script to count the number of vowels and consonants in any given sentence.",
+    "statement": "Given a string S of English letters (upper and/or lower case), count and print the number of vowels (a, e, i, o, u — case-insensitive) and consonants separately.",
+    "constraints": [
+      "1 ≤ |S| ≤ 100000",
+      "S contains only English alphabets (no digits or spaces)"
+    ],
+    "inputFormat": "A single line containing string S",
+    "outputFormat": "Line 1: Vowels: X\nLine 2: Consonants: Y",
+    "sampleCases": [
+      {
+        "input": "Hello",
+        "output": "Vowels: 2\nConsonants: 3",
+        "explanation": "Vowels: e, o (2). Consonants: H, l, l (3)."
+      },
+      {
+        "input": "AEIOU",
+        "output": "Vowels: 5\nConsonants: 0"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "a",
+        "output": "Vowels: 1\nConsonants: 0"
+      },
+      {
+        "input": "b",
+        "output": "Vowels: 0\nConsonants: 1"
+      },
+      {
+        "input": "aeiouAEIOU",
+        "output": "Vowels: 10\nConsonants: 0"
+      },
+      {
+        "input": "bcdfg",
+        "output": "Vowels: 0\nConsonants: 5"
+      },
+      {
+        "input": "Python",
+        "output": "Vowels: 1\nConsonants: 5"
+      },
+      {
+        "input": "Beautiful",
+        "output": "Vowels: 5\nConsonants: 4"
+      },
+      {
+        "input": "rhythm",
+        "output": "Vowels: 0\nConsonants: 6"
+      },
+      {
+        "input": "OpenAI",
+        "output": "Vowels: 4\nConsonants: 2"
+      },
+      {
+        "input": "abcdefghij",
+        "output": "Vowels: 3\nConsonants: 7"
+      },
+      {
+        "input": "PROGRAMMING",
+        "output": "Vowels: 3\nConsonants: 8"
+      },
+      {
+        "input": "aA",
+        "output": "Vowels: 2\nConsonants: 0"
+      },
+      {
+        "input": "zzz",
+        "output": "Vowels: 0\nConsonants: 3"
+      }
+    ],
+    "hint": "Lowercase the string. For each character, check if it is in the set {'a','e','i','o','u'} — if yes increment vowels, else increment consonants.",
+    "starterCode": "# Count vowels and consonants in the string\n\ndef solve():\n    s = input()\n    vowels_set = set('aeiouAEIOU')\n    \n    v_count = 0\n    c_count = 0\n    \n    # Write your counting logic here\n    \n    print(f'Vowels: {v_count}')\n    print(f'Consonants: {c_count}')\n\nsolve()"
+  },
+  {
+    "id": 49,
+    "title": "Power of a Number",
+    "topic": "Math / Fast Exponentiation",
+    "difficulty": "easy",
+    "maxScore": 100,
+    "scenario": "A scientist frequently computes large powers of numbers for compound interest calculations. Implement efficient exponentiation without using Python's ** operator or pow().",
+    "statement": "Given a base B and an exponent E (both non-negative integers), compute B^E using fast (binary) exponentiation. Do NOT use the built-in ** operator or pow().",
+    "constraints": [
+      "0 ≤ B ≤ 1000",
+      "0 ≤ E ≤ 30"
+    ],
+    "inputFormat": "A single line with two space-separated integers B and E",
+    "outputFormat": "Print B^E as a single integer.",
+    "sampleCases": [
+      {
+        "input": "2 10",
+        "output": "1024",
+        "explanation": "2^10 = 1024."
+      },
+      {
+        "input": "5 0",
+        "output": "1",
+        "explanation": "Any number to the power 0 is 1."
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "0 5",
+        "output": "0"
+      },
+      {
+        "input": "1 100",
+        "output": "1"
+      },
+      {
+        "input": "3 3",
+        "output": "27"
+      },
+      {
+        "input": "10 5",
+        "output": "100000"
+      },
+      {
+        "input": "2 0",
+        "output": "1"
+      },
+      {
+        "input": "7 3",
+        "output": "343"
+      },
+      {
+        "input": "2 30",
+        "output": "1073741824"
+      },
+      {
+        "input": "0 0",
+        "output": "1"
+      },
+      {
+        "input": "100 2",
+        "output": "10000"
+      },
+      {
+        "input": "6 6",
+        "output": "46656"
+      },
+      {
+        "input": "9 4",
+        "output": "6561"
+      },
+      {
+        "input": "1000 1",
+        "output": "1000"
+      }
+    ],
+    "hint": "Binary exponentiation (fast power): if E==0 return 1; if E is odd return B * power(B, E-1); if E is even return power(B*B, E//2). Alternatively, iterative: result=1; while E>0: if E%2==1 result*=B; B*=B; E//=2.",
+    "starterCode": "# Compute B^E using fast (binary) exponentiation\n# Do NOT use ** or pow()\n\ndef fast_power(b, e):\n    # Write your iterative or recursive solution here\n    pass\n\ndef solve():\n    parts = input().split()\n    b, e = int(parts[0]), int(parts[1])\n    print(fast_power(b, e))\n\nsolve()"
+  },
+  {
+    "id": 50,
+    "title": "Matrix Row-Column Sum",
+    "topic": "2D Arrays / Math",
+    "difficulty": "easy",
+    "maxScore": 100,
+    "scenario": "A spreadsheet tool must display both the row-totals and column-totals for any rectangular data table entered by the user.",
+    "statement": "Given an M×N matrix of integers, compute and print the sum of each row followed by the sum of each column.",
+    "constraints": [
+      "1 ≤ M, N ≤ 100",
+      "-10000 ≤ matrix[i][j] ≤ 10000"
+    ],
+    "inputFormat": "Line 1: two integers M and N\nNext M lines: N space-separated integers each",
+    "outputFormat": "Line 1 to M: 'Row i: X' (1-indexed)\nLine M+1 to M+N: 'Col j: Y' (1-indexed)",
+    "sampleCases": [
+      {
+        "input": "2 3\n1 2 3\n4 5 6",
+        "output": "Row 1: 6\nRow 2: 15\nCol 1: 5\nCol 2: 7\nCol 3: 9",
+        "explanation": "Row sums: 6, 15. Column sums: 1+4=5, 2+5=7, 3+6=9."
+      },
+      {
+        "input": "1 1\n42",
+        "output": "Row 1: 42\nCol 1: 42"
+      }
+    ],
+    "hiddenCases": [
+      {
+        "input": "2 2\n1 2\n3 4",
+        "output": "Row 1: 3\nRow 2: 7\nCol 1: 4\nCol 2: 6"
+      },
+      {
+        "input": "3 3\n0 0 0\n0 0 0\n0 0 0",
+        "output": "Row 1: 0\nRow 2: 0\nRow 3: 0\nCol 1: 0\nCol 2: 0\nCol 3: 0"
+      },
+      {
+        "input": "1 4\n10 20 30 40",
+        "output": "Row 1: 100\nCol 1: 10\nCol 2: 20\nCol 3: 30\nCol 4: 40"
+      },
+      {
+        "input": "3 1\n5\n10\n15",
+        "output": "Row 1: 5\nRow 2: 10\nRow 3: 15\nCol 1: 30"
+      },
+      {
+        "input": "2 2\n-1 -2\n-3 -4",
+        "output": "Row 1: -3\nRow 2: -7\nCol 1: -4\nCol 2: -6"
+      },
+      {
+        "input": "2 2\n1000 -1000\n-1000 1000",
+        "output": "Row 1: 0\nRow 2: 0\nCol 1: 0\nCol 2: 0"
+      },
+      {
+        "input": "3 2\n1 2\n3 4\n5 6",
+        "output": "Row 1: 3\nRow 2: 7\nRow 3: 11\nCol 1: 9\nCol 2: 12"
+      },
+      {
+        "input": "2 4\n1 1 1 1\n2 2 2 2",
+        "output": "Row 1: 4\nRow 2: 8\nCol 1: 3\nCol 2: 3\nCol 3: 3\nCol 4: 3"
+      },
+      {
+        "input": "1 1\n0",
+        "output": "Row 1: 0\nCol 1: 0"
+      },
+      {
+        "input": "2 3\n-1 2 -3\n4 -5 6",
+        "output": "Row 1: -2\nRow 2: 5\nCol 1: 3\nCol 2: -3\nCol 3: 3"
+      },
+      {
+        "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+        "output": "Row 1: 6\nRow 2: 15\nRow 3: 24\nCol 1: 12\nCol 2: 15\nCol 3: 18"
+      },
+      {
+        "input": "2 2\n100 200\n300 400",
+        "output": "Row 1: 300\nRow 2: 700\nCol 1: 400\nCol 2: 600"
+      }
+    ],
+    "hint": "Double loop: rowSum[i] = sum of row i; colSum[j] = sum of column j. Accumulate in one pass. Then print 'Row i: rowSum[i-1]' for i 1..M and 'Col j: colSum[j-1]' for j 1..N.",
+    "starterCode": "# Compute and print row sums and column sums of a matrix\n\ndef solve():\n    parts = input().split()\n    m, n = int(parts[0]), int(parts[1])\n    matrix = []\n    for _ in range(m):\n        matrix.append(list(map(int, input().split())))\n    \n    # Compute row sums\n    for i in range(m):\n        print(f'Row {i+1}: {sum(matrix[i])}')\n    \n    # Compute column sums\n    for j in range(n):\n        col_sum = sum(matrix[i][j] for i in range(m))\n        print(f'Col {j+1}: {col_sum}')\n\nsolve()"
   }
 ]
