@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   normalizeQuestion,
   normalizeQuestionDifficulty,
-} from "../src/lib/questionCatalog.mjs";
+} from "../src/lib/questions/questionCatalog.mjs";
 
 const tests = [];
 

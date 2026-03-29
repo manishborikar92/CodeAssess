@@ -6,13 +6,12 @@ import {
   buildPracticeConfig,
   getOrderedQuestionSubset,
   selectRandomQuestionSubset,
-} from "../src/lib/assessmentConfig.mjs";
+} from "../src/lib/assessment/assessmentConfig.mjs";
 import {
   EXAM_DURATION_SECONDS,
   EXAM_MODE,
   EXAM_VIOLATION_LIMIT,
-} from "../src/lib/examSession.mjs";
-import { QUESTION_TIME_LIMIT_SECONDS } from "../src/lib/practiceSession.mjs";
+} from "../src/lib/session/examSession.mjs";
 
 const tests = [];
 
@@ -26,13 +25,13 @@ const questionPool = [
   { id: 13, title: "Three", maxScore: 200 },
 ];
 
-test("buildPracticeConfig exposes the practice timer and full question pool", () => {
+test("buildPracticeConfig exposes a timer-free practice workspace and full question pool", () => {
   const config = buildPracticeConfig(questionPool);
 
   assert.equal(config.mode, "practice");
   assert.equal(config.totalQuestions, questionPool.length);
-  assert.equal(config.questionTimeLimitMinutes, QUESTION_TIME_LIMIT_SECONDS / 60);
   assert.equal(config.totalScore, 450);
+  assert.equal("questionTimeLimitMinutes" in config, false);
 });
 
 test("buildExamConfig selects a focused exam set with secure-mode rules", () => {

@@ -1,16 +1,9 @@
 import assert from "node:assert/strict";
 
 import {
-  QUESTION_TIME_LIMIT_SECONDS,
   buildPracticeSummary,
-  enableQuestionTimer,
-  getQuestionTimerState,
   normalizePracticeSession,
-  pauseQuestionTimer,
-  resumeQuestionTimer,
-  switchQuestionTimer,
-  unlockQuestionTimer,
-} from "../src/lib/practiceSession.mjs";
+} from "../src/lib/session/practiceSession.mjs";
 
 const tests = [];
 
@@ -18,138 +11,47 @@ function test(name, fn) {
   tests.push({ name, fn });
 }
 
-test("resumeQuestionTimer does not start a timer until it is explicitly enabled", () => {
-  const now = Date.UTC(2026, 2, 28, 10, 0, 0);
-
-  const timers = resumeQuestionTimer({}, 7, now);
-  const timer = getQuestionTimerState(timers, 7, now);
-
-  assert.equal(timer.isEnabled, false);
-  assert.equal(timer.isRunning, false);
-  assert.equal(timer.hasStarted, false);
-  assert.equal(timer.spentSeconds, 0);
-  assert.equal(timer.remainingSeconds, QUESTION_TIME_LIMIT_SECONDS);
-});
-
-test("enableQuestionTimer starts the timer for the selected question", () => {
-  const now = Date.UTC(2026, 2, 28, 10, 0, 0);
-
-  const timers = enableQuestionTimer({}, 7, now);
-  const timer = getQuestionTimerState(timers, 7, now);
-
-  assert.equal(timer.isEnabled, true);
-  assert.equal(timer.isRunning, true);
-  assert.equal(timer.hasStarted, true);
-  assert.equal(timer.remainingSeconds, QUESTION_TIME_LIMIT_SECONDS);
-});
-
-test("pauseQuestionTimer accumulates elapsed time and clears the running flag", () => {
-  const start = Date.UTC(2026, 2, 28, 10, 0, 0);
-  const end = start + 5 * 60 * 1000;
-
-  const runningTimers = enableQuestionTimer({}, 4, start);
-  const pausedTimers = pauseQuestionTimer(runningTimers, 4, end);
-  const timer = getQuestionTimerState(pausedTimers, 4, end);
-
-  assert.equal(timer.isEnabled, true);
-  assert.equal(timer.isRunning, false);
-  assert.equal(timer.spentSeconds, 5 * 60);
-  assert.equal(timer.remainingSeconds, 25 * 60);
-  assert.equal(timer.isExpired, false);
-});
-
-test("switchQuestionTimer only resumes the next question if its timer was already enabled", () => {
-  const firstStart = Date.UTC(2026, 2, 28, 10, 0, 0);
-  const switchAt = firstStart + 2 * 60 * 1000;
-
-  const firstQuestion = enableQuestionTimer({}, 1, firstStart);
-  const switched = switchQuestionTimer(firstQuestion, 1, 2, switchAt);
-
-  const questionOne = getQuestionTimerState(switched, 1, switchAt);
-  const questionTwo = getQuestionTimerState(switched, 2, switchAt);
-
-  assert.equal(questionOne.isRunning, false);
-  assert.equal(questionOne.spentSeconds, 2 * 60);
-  assert.equal(questionTwo.isEnabled, false);
-  assert.equal(questionTwo.isRunning, false);
-  assert.equal(questionTwo.spentSeconds, 0);
-});
-
-test("getQuestionTimerState marks a question as expired once the limit is reached", () => {
-  const start = Date.UTC(2026, 2, 28, 10, 0, 0);
-  const expiredAt = start + QUESTION_TIME_LIMIT_SECONDS * 1000;
-
-  const runningTimers = enableQuestionTimer({}, 9, start);
-  const pausedTimers = pauseQuestionTimer(runningTimers, 9, expiredAt);
-  const timer = getQuestionTimerState(pausedTimers, 9, expiredAt);
-
-  assert.equal(timer.isExpired, true);
-  assert.equal(timer.remainingSeconds, 0);
-  assert.equal(timer.spentSeconds, QUESTION_TIME_LIMIT_SECONDS);
-});
-
-test("unlockQuestionTimer clears an expired timer back to the untimed state", () => {
-  const start = Date.UTC(2026, 2, 28, 10, 0, 0);
-  const expiredAt = start + QUESTION_TIME_LIMIT_SECONDS * 1000;
-
-  const runningTimers = enableQuestionTimer({}, 9, start);
-  const pausedTimers = pauseQuestionTimer(runningTimers, 9, expiredAt);
-  const unlockedTimers = unlockQuestionTimer(pausedTimers, 9);
-  const timer = getQuestionTimerState(unlockedTimers, 9, expiredAt);
-
-  assert.equal(timer.isEnabled, false);
-  assert.equal(timer.isExpired, false);
-  assert.equal(timer.isRunning, false);
-  assert.equal(timer.spentSeconds, 0);
-});
-
-test("buildPracticeSummary reports solved count, score, and time spent across questions", () => {
-  const start = Date.UTC(2026, 2, 28, 10, 0, 0);
-  const now = start + 8 * 60 * 1000;
-
+test("buildPracticeSummary reports score, solved count, and draft progress without timer state", () => {
   const questions = [
     { id: 1, title: "One", difficulty: "easy", maxScore: 100 },
     { id: 2, title: "Two", difficulty: "medium", maxScore: 100 },
   ];
 
-  const timers = {
-    1: {
-      accumulatedSeconds: 8 * 60,
-      startedAt: null,
-      expiredAt: null,
-    },
-    2: {
-      accumulatedSeconds: 0,
-      startedAt: null,
-      expiredAt: null,
-    },
-  };
-
-  const submissions = {
-    1: { score: 100, passed: 5, total: 5 },
-  };
-
   const summary = buildPracticeSummary({
     questions,
-    questionTimers: timers,
-    submissions,
-    now,
+    drafts: {
+      2: {
+        code: "print('draft')",
+        language: "python",
+        updatedAt: "2026-03-28T10:05:00.000Z",
+      },
+    },
+    submissions: {
+      1: { score: 100, passed: 5, total: 5 },
+    },
   });
 
   assert.equal(summary.attempted, 1);
   assert.equal(summary.solved, 1);
   assert.equal(summary.totalScore, 100);
   assert.equal(summary.maxPossibleScore, 200);
-  assert.equal(summary.totalTimeSpent, 8 * 60);
-  assert.equal(summary.breakdown[0].timer.remainingSeconds, 22 * 60);
+  assert.equal(summary.draftCount, 1);
+  assert.equal(summary.breakdown[0].hasDraft, false);
+  assert.equal(summary.breakdown[1].hasDraft, true);
+  assert.equal("timer" in summary.breakdown[0], false);
 });
 
-test("normalizePracticeSession migrates legacy session data to the practice shape", () => {
+test("normalizePracticeSession drops legacy timer data from the practice session shape", () => {
   const legacySession = {
     status: "active",
     currentQuestionIndex: 3,
     drafts: { 4: "print('draft')" },
     submissions: { 4: { score: 50 } },
+    questionTimers: {
+      4: {
+        isEnabled: true,
+      },
+    },
   };
 
   const normalized = normalizePracticeSession(legacySession, 5);
@@ -158,7 +60,7 @@ test("normalizePracticeSession migrates legacy session data to the practice shap
   assert.equal(normalized.currentQuestionIndex, 3);
   assert.deepEqual(normalized.drafts, { 4: "print('draft')" });
   assert.deepEqual(normalized.submissions, { 4: { score: 50 } });
-  assert.deepEqual(normalized.questionTimers, {});
+  assert.equal("questionTimers" in normalized, false);
 });
 
 let failed = false;

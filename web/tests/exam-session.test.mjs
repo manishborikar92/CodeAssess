@@ -9,13 +9,13 @@ import {
   normalizeExamSession,
   registerIntegrityViolation,
   startExamSession,
-} from "../src/lib/examSession.mjs";
+} from "../src/lib/session/examSession.mjs";
 import {
   clampQuestionIndex,
   getNextQuestionIndex,
   getPreviousQuestionIndex,
   getRandomQuestionIndex,
-} from "../src/lib/workspaceNavigation.mjs";
+} from "../src/lib/workspace/navigation.mjs";
 
 const tests = [];
 
@@ -34,19 +34,24 @@ test("normalizeExamSession creates an idle exam session shape", () => {
   assert.deepEqual(session.integrityViolations, []);
 });
 
-test("getExamTimerState reports remaining time for an active exam", () => {
+test("getExamTimerState reports remaining time for an active exam session aggregate", () => {
   const start = Date.UTC(2026, 2, 29, 9, 0, 0);
   const now = start + 15 * 60 * 1000;
 
   const timer = getExamTimerState({
-    status: "active",
-    startedAt: new Date(start).toISOString(),
-    durationSeconds: EXAM_DURATION_SECONDS,
+    lifecycle: {
+      status: "active",
+      startedAt: new Date(start).toISOString(),
+    },
+    assessment: {
+      durationSeconds: EXAM_DURATION_SECONDS,
+    },
   }, now);
 
   assert.equal(timer.elapsedSeconds, 15 * 60);
   assert.equal(timer.remainingSeconds, 75 * 60);
   assert.equal(timer.isExpired, false);
+  assert.equal(timer.isRunning, true);
 });
 
 test("startExamSession marks the session active and stores the start timestamp", () => {

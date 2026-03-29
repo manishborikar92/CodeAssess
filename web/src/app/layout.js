@@ -1,5 +1,4 @@
 import { JetBrains_Mono, Sora, Space_Grotesk } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const sora = Sora({
@@ -23,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata = {
   title: "CodeAssess - Practice Workspace and Secure Coding Exams",
   description:
-    "Client-side coding practice and secure browser-based exam workspace with Pyodide, timed assessments, and reusable candidate flows.",
+    "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
   keywords: ["coding", "practice", "online judge", "programming", "assessment", "exam"],
   appleWebApp: {
     title: "CodeAssess",
@@ -37,13 +36,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${sora.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
-        {children}
-        <Script
-          src="https://cdn.jsdelivr.net/pyodide/v0.27.3/full/pyodide.js"
-          strategy="afterInteractive"
-        />
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

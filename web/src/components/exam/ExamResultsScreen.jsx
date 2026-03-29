@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { formatQuestionDifficulty } from "@/lib/questionCatalog.mjs";
+import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
 
 function formatTime(seconds) {
   const safeSeconds = Math.max(0, seconds);
@@ -27,11 +27,12 @@ function getFinishLabel(finishReason) {
 
 export default function ExamResultsScreen({
   onReset,
+  onResetLabel = "Start Fresh Exam",
   questions,
   session,
   totalDurationSeconds,
 }) {
-  const submissions = Object.values(session.submissions || {});
+  const submissions = Object.values(session.workspace?.submissionsByQuestionId || {});
   const totalScore = submissions.reduce(
     (sum, submission) => sum + (submission.score || 0),
     0
@@ -46,8 +47,12 @@ export default function ExamResultsScreen({
     0
   );
   const accuracy = totalCases > 0 ? Math.round((totalPassed / totalCases) * 100) : 0;
-  const startedAt = session.startedAt ? new Date(session.startedAt).toLocaleString() : "-";
-  const finishedAt = session.finishedAt ? new Date(session.finishedAt).toLocaleString() : "-";
+  const startedAt = session.lifecycle?.startedAt
+    ? new Date(session.lifecycle.startedAt).toLocaleString()
+    : "-";
+  const finishedAt = session.lifecycle?.finishedAt
+    ? new Date(session.lifecycle.finishedAt).toLocaleString()
+    : "-";
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
@@ -59,7 +64,7 @@ export default function ExamResultsScreen({
           <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <h1 className="text-[clamp(2.4rem,4vw,3.5rem)] font-extrabold text-text-primary">
-                {getFinishLabel(session.finishReason)}
+                {getFinishLabel(session.lifecycle?.finishReason)}
               </h1>
               <p className="mt-3 max-w-2xl text-[0.95rem] leading-7 text-text-secondary">
                 Review the session outcome, integrity warnings, and per-question
@@ -90,7 +95,7 @@ export default function ExamResultsScreen({
 
             <div className="rounded-2xl border border-border-main bg-bg-card p-4">
               <div className="font-mono text-[1.6rem] font-bold text-accent-blue">
-                {session.integrityViolations.length}
+                {session.integrity?.violations.length || 0}
               </div>
               <div className="mt-1 text-[0.72rem] uppercase tracking-[1px] text-text-muted">
                 Integrity Warnings
@@ -134,9 +139,9 @@ export default function ExamResultsScreen({
                 Integrity Notes
               </div>
               <div className="mt-1">
-                {session.integrityViolations.length === 0
+                {session.integrity?.violations.length === 0
                   ? "No warnings recorded during this session."
-                  : `${session.integrityViolations.length} warning(s) recorded.`}
+                  : `${session.integrity?.violations.length || 0} warning(s) recorded.`}
               </div>
             </div>
           </div>
@@ -153,7 +158,7 @@ export default function ExamResultsScreen({
             </div>
 
             {questions.map((question) => {
-              const submission = session.submissions?.[question.id];
+              const submission = session.workspace?.submissionsByQuestionId?.[question.id];
               const score = submission?.score || 0;
               const passed = submission ? `${submission.passed}/${submission.total}` : "-";
               const percentage = question.maxScore > 0 ? score / question.maxScore : 0;
@@ -202,7 +207,7 @@ export default function ExamResultsScreen({
               onClick={onReset}
               className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-4 py-3 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90"
             >
-              Start Fresh Exam
+              {onResetLabel}
             </button>
             <Link
               href="/practice"
