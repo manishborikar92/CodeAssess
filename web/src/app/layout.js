@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://codeassess.vercel.app"),
   title: {
     default: "CodeAssess - Practice Workspace and Secure Coding Exams",
     template: "%s | CodeAssess",
