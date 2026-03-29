@@ -3,7 +3,7 @@ import FlowSection from "@/components/home/FlowSection";
 import Footer from "@/components/home/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import ModeSection from "@/components/home/ModeSection";
-import Navigation from "@/components/home/Navigation";
+import Header from "@/components/home/Header";
 import { getExamConfig, getPracticeConfig } from "@/lib/api";
 
 export default async function Home() {
@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary">
-      <Navigation />
+      <Header />
       <HeroSection examConfig={examConfig} practiceConfig={practiceConfig} />
       <ModeSection />
       <FeatureSection />
