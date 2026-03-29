@@ -63,13 +63,18 @@ export default function Footer() {
 
       <div className="mx-auto mt-10 flex max-w-[1200px] flex-col gap-3 border-t border-border-main/50 pt-6 text-[0.82rem] text-text-muted md:flex-row md:items-center md:justify-between">
         <div>© {currentYear} CodeAssess. Practice routes, exam sessions, join tokens, and results are all public-first flows.</div>
-        <div className="flex items-center gap-4">
-          <Link href="/help" className="transition-colors duration-200 hover:text-text-primary">
-            Help
-          </Link>
-          <Link href="/about" className="transition-colors duration-200 hover:text-text-primary">
-            About
-          </Link>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+          <span>
+            A product by{' '}
+            <a 
+              href="https://vaelix.in" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-accent-cyan transition-colors duration-200 hover:text-accent-blue"
+            >
+              Vaelix
+            </a>
+          </span>
         </div>
       </div>
     </footer>
