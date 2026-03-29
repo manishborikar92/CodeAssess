@@ -1,6 +1,7 @@
 "use client";
 
 import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
+import { DifficultyBadge } from "@/components/ui/Badge";
 
 export default function ProblemPanel({
   question,
@@ -27,18 +28,7 @@ export default function ProblemPanel({
             {question.topic}
           </span>
 
-          <span
-            className={`text-[0.66rem] font-bold px-2 py-0.5 rounded-xl uppercase tracking-[0.5px] ${
-              difficulty === "easy"
-                ? "text-diff-easy bg-[rgba(46,204,143,0.12)]"
-                : difficulty === "medium"
-                ? "text-diff-medium bg-[rgba(240,192,64,0.12)]"
-                : "text-diff-hard bg-[rgba(255,77,106,0.12)]"
-            }`}
-          >
-            {formatQuestionDifficulty(question.difficulty)}
-          </span>
-
+          <DifficultyBadge difficulty={difficulty} />
         </div>
 
         <h2 className="text-[1.15rem] font-bold leading-tight text-text-primary">

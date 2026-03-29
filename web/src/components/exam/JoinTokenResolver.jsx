@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { WorkspaceLoadingScreen } from "../workspace/WorkspaceLoadingStates.jsx";
+import { PageContainer, ContentWrapper, HeroCard } from "@/components/ui/Layout";
+import { SectionEyebrow } from "@/components/ui/Section";
+import { LinkButton } from "@/components/ui/Button";
 import { examAccessRepository } from "../../lib/repositories/examAccessRepository.js";
 import { questionRepository } from "../../lib/repositories/questionRepository.js";
 import { createExamSessionAttempt } from "../../lib/use-cases/createExamSessionAttempt.js";
@@ -52,28 +54,26 @@ export default function JoinTokenResolver({ token }) {
   }
 
   return (
-    <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <WorkspacePageNavigation
-        backHref="/join"
-        backLabel="Back to Join"
-        links={[
-          { href: "/exam", label: "Exam" },
-          { href: "/results", label: "Results" },
-          { href: "/practice", label: "Practice" },
-        ]}
-      />
+    <PageContainer>
+      <ContentWrapper>
+        <WorkspacePageNavigation
+          backHref="/join"
+          backLabel="Back to Join"
+          links={[
+            { href: "/exam", label: "Exam" },
+            { href: "/results", label: "Results" },
+            { href: "/practice", label: "Practice" },
+          ]}
+        />
 
-      <div className="mx-auto max-w-[1180px]">
-        <section className="rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(255,77,106,0.14),transparent_34%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-          <p className="text-[0.76rem] font-semibold uppercase tracking-[0.24em] text-accent-red">
-            Join Failed
-          </p>
+        <HeroCard variant="red">
+          <SectionEyebrow>Join Failed</SectionEyebrow>
           <h1 className="mt-3 text-[clamp(2.2rem,5vw,3.8rem)] font-extrabold text-text-primary">
             This invitation token could not be used
           </h1>
           <p className="mt-4 max-w-3xl text-[0.95rem] leading-8 text-text-secondary">
             The access repository rejected this token before an exam session was
-            provisioned, so no `sessionId` was created and nothing was written into the
+            provisioned, so no sessionId was created and nothing was written into the
             exam session repository.
           </p>
 
@@ -87,21 +87,15 @@ export default function JoinTokenResolver({ token }) {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/join"
-              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-5 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
-            >
+            <LinkButton href="/join" variant="primary">
               Try Another Token
-            </Link>
-            <Link
-              href="/exam"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </LinkButton>
+            <LinkButton href="/exam" variant="secondary">
               Back to Exam Lobby
-            </Link>
+            </LinkButton>
           </div>
-        </section>
-      </div>
-    </div>
+        </HeroCard>
+      </ContentWrapper>
+    </PageContainer>
   );
 }

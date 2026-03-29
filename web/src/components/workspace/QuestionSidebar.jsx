@@ -1,21 +1,7 @@
 "use client";
 
 import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
-
-function getStatusClasses(status) {
-  switch (status) {
-    case "completed":
-      return "bg-accent-green border-accent-green";
-    case "partial":
-      return "bg-accent-gold border-accent-gold";
-    case "expired":
-      return "bg-accent-red border-accent-red";
-    case "in-progress":
-      return "bg-accent-blue border-accent-blue";
-    default:
-      return "bg-transparent border-border-bright";
-  }
-}
+import { DifficultyBadge, StatusDot } from "@/components/ui/Badge";
 
 export default function QuestionSidebar({
   currentQuestionIndex,
@@ -68,23 +54,14 @@ export default function QuestionSidebar({
                 </span>
 
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className={`hidden rounded-full px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.5px] lg:inline-block ${
-                      difficulty === "easy"
-                        ? "bg-[rgba(46,204,143,0.12)] text-diff-easy"
-                        : difficulty === "medium"
-                        ? "bg-[rgba(240,192,64,0.12)] text-diff-medium"
-                        : "bg-[rgba(255,77,106,0.12)] text-diff-hard"
-                    }`}
-                  >
-                    {formatQuestionDifficulty(difficulty)}
-                  </span>
+                  <DifficultyBadge 
+                    difficulty={difficulty} 
+                    className="hidden lg:inline-block"
+                  />
 
-                  <span
+                  <StatusDot
+                    status={question.status}
                     title={question.statusTitle || "Question status"}
-                    className={`h-[7px] w-[7px] shrink-0 rounded-full border ${getStatusClasses(
-                      question.status
-                    )}`}
                   />
                 </div>
               </button>

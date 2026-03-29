@@ -1,3 +1,5 @@
+import { StepCard } from "@/components/ui/Card";
+
 function FlowStep({ index, summary, title }) {
   return (
     <div className="relative rounded-2xl border border-border-main bg-bg-secondary p-5">

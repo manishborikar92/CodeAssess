@@ -7,46 +7,8 @@ import {
   List,
   Shuffle,
 } from "lucide-react";
-
-function HeaderIconButton({
-  ariaLabel,
-  disabled = false,
-  icon: Icon,
-  onClick,
-  title,
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      title={title || ariaLabel}
-      onClick={onClick}
-      disabled={disabled}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border-subtle bg-transparent text-text-secondary transition-all duration-200 hover:border-border-bright hover:bg-bg-hover hover:text-text-primary disabled:cursor-not-allowed disabled:opacity-35"
-    >
-      <Icon size={20} strokeWidth={2.1} />
-    </button>
-  );
-}
-
-function HeaderBadge({ tone = "neutral", value }) {
-  const toneClass =
-    tone === "critical"
-      ? "border-accent-red text-accent-red"
-      : tone === "warning"
-      ? "border-accent-gold text-accent-gold"
-      : tone === "success"
-      ? "border-accent-green text-accent-green"
-      : "border-border-main text-text-primary";
-
-  return (
-    <div
-      className={`rounded-xl border bg-bg-card px-3 py-2 font-mono text-[0.8rem] font-semibold ${toneClass}`}
-    >
-      {value}
-    </div>
-  );
-}
+import { IconButton } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 export default function WorkspaceHeader({
   currentQuestionLabel,
@@ -94,20 +56,20 @@ export default function WorkspaceHeader({
         </button>
 
         <div className="flex items-center gap-2">
-          <HeaderIconButton
+          <IconButton
             ariaLabel="Previous question"
             disabled={!canGoPrevious}
             icon={ChevronLeft}
             onClick={onPreviousQuestion}
           />
-          <HeaderIconButton
+          <IconButton
             ariaLabel="Next question"
             disabled={!canGoNext}
             icon={ChevronRight}
             onClick={onNextQuestion}
           />
           {showShuffleButton && (
-            <HeaderIconButton
+            <IconButton
               ariaLabel="Random question"
               disabled={!canShuffle}
               icon={Shuffle}
@@ -128,13 +90,14 @@ export default function WorkspaceHeader({
 
       <div className="flex items-center gap-2">
         {integrityCount !== null && integrityCount !== undefined && (
-          <HeaderBadge
+          <Badge
             tone={integrityCount > 0 ? "warning" : "neutral"}
-            value={`Warnings ${integrityCount}`}
-          />
+          >
+            Warnings {integrityCount}
+          </Badge>
         )}
-        {scoreLabel && <HeaderBadge value={scoreLabel} />}
-        {timerLabel && <HeaderBadge tone={timerTone} value={timerLabel} />}
+        {scoreLabel && <Badge>{scoreLabel}</Badge>}
+        {timerLabel && <Badge tone={timerTone}>{timerLabel}</Badge>}
         {primaryActionLabel && (
           <button
             type="button"

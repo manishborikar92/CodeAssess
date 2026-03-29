@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
+
+import { PageContainer, ContentWrapper, TwoColumnLayout, HeroCard, SidePanel } from "@/components/ui/Layout";
+import { SectionEyebrow, AsideTitle } from "@/components/ui/Section";
+import { InfoPanel } from "@/components/ui/Panel";
+import { Button, LinkButton } from "@/components/ui/Button";
 
 export default function ErrorPage({ error, reset }) {
   useEffect(() => {
@@ -10,11 +14,9 @@ export default function ErrorPage({ error, reset }) {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
-        <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(255,77,106,0.18),transparent_38%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-          <p className="text-[0.76rem] font-semibold uppercase tracking-[0.28em] text-accent-red">
-            Application Error
-          </p>
+      <TwoColumnLayout variant="wide" className="mx-auto max-w-[1180px]">
+        <HeroCard variant="red">
+          <SectionEyebrow>Application Error</SectionEyebrow>
           <h1 className="mt-3 max-w-[15ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
             Something went wrong
           </h1>
@@ -39,72 +41,47 @@ export default function ErrorPage({ error, reset }) {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={reset}
-              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-5 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
-            >
+            <Button variant="primary" onClick={reset}>
               Try Again
-            </button>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </Button>
+            <LinkButton href="/" variant="secondary">
               Return Home
-            </Link>
+            </LinkButton>
           </div>
-        </section>
+        </HeroCard>
 
-        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-          <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            Recovery Options
-          </div>
-          <h2 className="mt-3 text-[1.8rem] font-bold text-text-primary">
+        <SidePanel>
+          <AsideTitle eyebrow="Recovery Options">
             What you can do next
-          </h2>
+          </AsideTitle>
 
-          <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
-            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-blue">
-              Retry
-            </div>
+          <InfoPanel header="Retry" variant="blue" className="mt-6">
             <p className="mt-3 text-[0.88rem] leading-6 text-text-secondary">
               Click the "Try Again" button to reload the page and attempt to recover
               from the error.
             </p>
-          </div>
+          </InfoPanel>
 
-          <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
-            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-gold">
-              Navigate Away
-            </div>
+          <InfoPanel header="Navigate Away" variant="gold" className="mt-6">
             <p className="mt-3 text-[0.88rem] leading-6 text-text-secondary">
               If the error persists, navigate to a different section using the links
               below.
             </p>
-          </div>
+          </InfoPanel>
 
           <div className="mt-6 flex flex-col gap-3">
-            <Link
-              href="/practice"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            <LinkButton href="/practice" variant="secondary">
               Open Practice
-            </Link>
-            <Link
-              href="/exam"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </LinkButton>
+            <LinkButton href="/exam" variant="secondary">
               Start Exam
-            </Link>
-            <Link
-              href="/help"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </LinkButton>
+            <LinkButton href="/help" variant="secondary">
               View Help
-            </Link>
+            </LinkButton>
           </div>
-        </aside>
-      </div>
+        </SidePanel>
+      </TwoColumnLayout>
     </div>
   );
 }

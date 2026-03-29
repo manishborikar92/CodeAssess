@@ -1,14 +1,4 @@
-function FeatureCard({ eyebrow, summary, title }) {
-  return (
-    <article className="rounded-2xl border border-border-main bg-bg-secondary p-5">
-      <div className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
-        {eyebrow}
-      </div>
-      <h3 className="mt-3 text-[1.15rem] font-bold text-text-primary">{title}</h3>
-      <p className="mt-3 text-[0.9rem] leading-7 text-text-secondary">{summary}</p>
-    </article>
-  );
-}
+import { FeatureCard } from "@/components/ui/Card";
 
 export default function FeatureSection() {
   return (

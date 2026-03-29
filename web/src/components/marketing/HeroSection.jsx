@@ -1,15 +1,6 @@
-import Link from "next/link";
-
-function MetricCard({ label, value }) {
-  return (
-    <div className="rounded-2xl border border-border-main bg-bg-card/80 p-4">
-      <div className="font-mono text-[1.7rem] font-bold text-accent-cyan">{value}</div>
-      <div className="mt-1 text-[0.72rem] uppercase tracking-[1px] text-text-muted">
-        {label}
-      </div>
-    </div>
-  );
-}
+import { MetricCard } from "@/components/ui/Card";
+import { InfoPanel } from "@/components/ui/Panel";
+import { LinkButton } from "@/components/ui/Button";
 
 export default function HeroSection({ examConfig, practiceConfig }) {
   return (
@@ -34,24 +25,15 @@ export default function HeroSection({ examConfig, practiceConfig }) {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/practice"
-              className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-6 py-3.5 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
-            >
+            <LinkButton href="/practice" variant="primary" className="px-6 py-3.5">
               Open Practice Workspace
-            </Link>
-            <Link
-              href="/exam"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-6 py-3.5 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </LinkButton>
+            <LinkButton href="/exam" variant="secondary" className="px-6 py-3.5">
               Start Secure Exam
-            </Link>
-            <Link
-              href="/help"
-              className="inline-flex items-center justify-center rounded-2xl border border-border-main px-6 py-3.5 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-            >
+            </LinkButton>
+            <LinkButton href="/help" variant="secondary" className="px-6 py-3.5">
               Read Help
-            </Link>
+            </LinkButton>
           </div>
         </div>
 
@@ -66,12 +48,12 @@ export default function HeroSection({ examConfig, practiceConfig }) {
             <MetricCard label="Exam Duration" value={`${examConfig.durationMinutes} min`} />
           </div>
 
-          <div className="mt-5 rounded-3xl border border-border-main bg-black/25 p-5">
+          <InfoPanel variant="default" className="mt-5">
             <div className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-accent-gold">
               Active Modes
             </div>
             <div className="mt-4 grid gap-3">
-              <div className="rounded-2xl border border-accent-cyan/15 bg-[rgba(15,240,200,0.05)] px-4 py-4">
+              <InfoPanel variant="cyan" className="px-4 py-4">
                 <div className="text-[0.74rem] uppercase tracking-[0.14em] text-accent-cyan">
                   Practice
                 </div>
@@ -79,8 +61,8 @@ export default function HeroSection({ examConfig, practiceConfig }) {
                   Pick any problem, move between question routes instantly, and keep
                   drafts plus best submissions inside one persistent workspace.
                 </div>
-              </div>
-              <div className="rounded-2xl border border-accent-blue/20 bg-[rgba(77,124,255,0.08)] px-4 py-4">
+              </InfoPanel>
+              <InfoPanel variant="blue" className="px-4 py-4">
                 <div className="text-[0.74rem] uppercase tracking-[0.14em] text-accent-blue">
                   Exam
                 </div>
@@ -88,9 +70,9 @@ export default function HeroSection({ examConfig, practiceConfig }) {
                   Work through a randomly assigned set of problems revealed only at
                   launch inside a guarded 90-minute session with persistent recovery.
                 </div>
-              </div>
+              </InfoPanel>
             </div>
-          </div>
+          </InfoPanel>
         </div>
       </div>
     </section>

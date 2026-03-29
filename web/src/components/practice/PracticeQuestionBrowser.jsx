@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo } from "react";
 
 import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
+import { StatCard } from "@/components/ui/Card";
+import { TableContainer, TableHeader, Table, TableHead, TableBody, TableRow, TableCell, TableHeaderCell } from "@/components/ui/Table";
+import { PageContainer, ContentWrapper, TwoColumnLayout, HeroCard, SidePanel } from "@/components/ui/Layout";
+import { SectionEyebrow, SectionTitle, SectionDescription, AsideTitle } from "@/components/ui/Section";
+import { InfoPanel } from "@/components/ui/Panel";
+import { LinkButton } from "@/components/ui/Button";
 import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
 import { buildPracticeSummary } from "@/lib/session/practiceSession.mjs";
 import { usePracticeStore } from "@/providers/PracticeStoreProvider.jsx";
+import { Badge } from "@/components/ui/Badge";
 
 function getStatusPresentation(questionSummary) {
   if (!questionSummary) {
@@ -41,18 +49,6 @@ function getStatusPresentation(questionSummary) {
     label: "Not Started",
     tone: "text-text-muted",
   };
-}
-
-function StatCard({ label, value, summary }) {
-  return (
-    <div className="rounded-2xl border border-border-main bg-bg-card p-4">
-      <div className="font-mono text-[1.6rem] font-bold text-accent-cyan">{value}</div>
-      <div className="mt-1 text-[0.72rem] uppercase tracking-[1px] text-text-muted">
-        {label}
-      </div>
-      <p className="mt-2 text-[0.82rem] leading-6 text-text-secondary">{summary}</p>
-    </div>
-  );
 }
 
 export default function PracticeQuestionBrowser({ questions }) {
@@ -93,179 +89,163 @@ export default function PracticeQuestionBrowser({ questions }) {
       : 0;
 
   return (
-    <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <WorkspacePageNavigation
-        backHref="/exam"
-        backLabel="Back to Exam"
-        links={[
-          { href: "/practice/progress", label: "View Progress", tone: "primary" },
-          { href: "/results", label: "Results" },
-        ]}
-      />
+    <PageContainer>
+      <ContentWrapper>
+        <WorkspacePageNavigation
+          backHref="/exam"
+          backLabel="Back to Exam"
+          links={[
+            { href: "/practice/progress", label: "View Progress", tone: "primary" },
+            { href: "/results", label: "Results" },
+          ]}
+        />
 
-      <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
-        <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.22),transparent_42%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-          <p className="text-[0.76rem] font-semibold uppercase tracking-[0.28em] text-accent-cyan">
-            Practice Workspace
-          </p>
-          <h1 className="mt-3 max-w-[15ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
-            Browse every practice question from one persistent workspace
-          </h1>
-          <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-text-secondary">
-            Practice keeps your drafts, best submissions, and progress summary inside
-            one route-scoped workspace store. Each question still has its own URL, but
-            the workspace stays mounted while you switch between problems.
-          </p>
-
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <StatCard
-              label="Catalog"
-              value={questions.length}
-              summary="Full public question pool available for open practice."
-            />
-            <StatCard
-              label="Solved"
-              value={`${summary.solved}/${questions.length}`}
-              summary="Questions with a full-score submission saved in the practice store."
-            />
-            <StatCard
-              label="Score"
-              value={`${summary.totalScore}/${summary.maxPossibleScore}`}
-              summary={`${scorePercentage}% of the available practice score has been captured.`}
-            />
-          </div>
-        </section>
-
-        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-          <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
-            Practice Rules
-          </div>
-          <h2 className="mt-3 text-[1.8rem] font-bold text-text-primary">
-            Flexible reps with persistent progress
-          </h2>
-
-          <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
-            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-blue">
-              Workspace Behavior
+        <TwoColumnLayout>
+          <HeroCard>
+            <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-border-subtle bg-black/25 px-4 py-2">
+              <Image
+                src="/logo.svg"
+                alt="CodeAssess"
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
+              <span className="text-sm font-bold tracking-[0.16em] text-text-primary">
+                CodeAssess
+              </span>
+              <Badge variant="small" tone="gold">
+                Practice Mode
+              </Badge>
             </div>
-            <ul className="mt-3 space-y-2 text-[0.88rem] leading-6 text-text-secondary">
-              <li>Question switching updates the URL without remounting the workspace shell.</li>
-              <li>Drafts save automatically and remain attached to the selected question.</li>
-              <li>Best submissions are kept per question for progress tracking.</li>
-            </ul>
-          </div>
+            <SectionEyebrow>Practice Workspace</SectionEyebrow>
+            <SectionTitle>
+              Browse every practice question from one persistent workspace
+            </SectionTitle>
+            <SectionDescription>
+              Practice keeps your drafts, best submissions, and progress summary inside
+              one route-scoped workspace store. Each question still has its own URL, but
+              the workspace stays mounted while you switch between problems.
+            </SectionDescription>
 
-          <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
-            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-gold">
-              Saved Progress
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <StatCard
+                label="Catalog"
+                value={questions.length}
+                summary="Full public question pool available for open practice."
+              />
+              <StatCard
+                label="Solved"
+                value={`${summary.solved}/${questions.length}`}
+                summary="Questions with a full-score submission saved in the practice store."
+              />
+              <StatCard
+                label="Score"
+                value={`${summary.totalScore}/${summary.maxPossibleScore}`}
+                summary={`${scorePercentage}% of the available practice score has been captured.`}
+              />
             </div>
-            <div className="mt-3 text-[0.88rem] leading-6 text-text-secondary">
-              {hydrationStatus === "ready"
-                ? "This device already has a synced practice workspace snapshot."
-                : "The practice workspace is syncing its saved snapshot."}
-            </div>
-            <div className="mt-4 flex flex-wrap gap-3">
-              {resumeQuestionId ? (
-                <Link
-                  href={`/practice/${resumeQuestionId}`}
-                  className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-5 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
-                >
-                  Resume Question {resumeQuestionId}
-                </Link>
-              ) : (
-                <div className="text-[0.82rem] leading-6 text-text-secondary">
-                  Open any question from the catalog to start building a saved
-                  practice history.
-                </div>
-              )}
-            </div>
-          </div>
-        </aside>
-      </div>
+          </HeroCard>
 
-      <div className="mx-auto mt-6 max-w-[1180px] overflow-hidden rounded-[28px] border border-border-main bg-bg-secondary shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
-        <div className="flex flex-col gap-3 border-b border-border-subtle px-6 py-5 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-[1.1rem] font-semibold text-text-primary">
-              Question Catalog
-            </h2>
-            <p className="mt-1 text-[0.82rem] text-text-secondary">
-              Open any question instantly. The workspace persists while the content
-              updates to the selected problem route.
-            </p>
-          </div>
-          <div className="font-mono text-[0.78rem] text-text-muted">
-            {summary.draftCount} saved draft{summary.draftCount === 1 ? "" : "s"}
-          </div>
-        </div>
+          <SidePanel>
+            <AsideTitle eyebrow="Practice Rules">
+              Flexible reps with persistent progress
+            </AsideTitle>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-bg-tertiary text-left text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-text-muted">
+            <InfoPanel header="Workspace Behavior" variant="card" className="mt-6">
+              <ul className="mt-3 space-y-2 text-[0.88rem] leading-6 text-text-secondary">
+                <li>Question switching updates the URL without remounting the workspace shell.</li>
+                <li>Drafts save automatically and remain attached to the selected question.</li>
+                <li>Best submissions are kept per question for progress tracking.</li>
+              </ul>
+            </InfoPanel>
+
+            <InfoPanel header="Saved Progress" variant="card" className="mt-6">
+              <div className="mt-3 text-[0.88rem] leading-6 text-text-secondary">
+                {hydrationStatus === "ready"
+                  ? "This device already has a synced practice workspace snapshot."
+                  : "The practice workspace is syncing its saved snapshot."}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {resumeQuestionId ? (
+                  <LinkButton href={`/practice/${resumeQuestionId}`} variant="primary">
+                    Resume Question {resumeQuestionId}
+                  </LinkButton>
+                ) : (
+                  <div className="text-[0.82rem] leading-6 text-text-secondary">
+                    Open any question from the catalog to start building a saved
+                    practice history.
+                  </div>
+                )}
+              </div>
+            </InfoPanel>
+          </SidePanel>
+        </TwoColumnLayout>
+
+        <TableContainer className="mt-6">
+          <TableHeader
+            title="Question Catalog"
+            description="Open any question instantly. The workspace persists while the content updates to the selected problem route."
+            metadata={`${summary.draftCount} saved draft${summary.draftCount === 1 ? "" : "s"}`}
+          />
+
+          <Table>
+            <TableHead>
               <tr>
-                <th className="px-6 py-3">Question</th>
-                <th className="px-4 py-3">Topic</th>
-                <th className="px-4 py-3">Difficulty</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Best Score</th>
-                <th className="px-4 py-3">Draft</th>
-                <th className="px-6 py-3 text-right">Open</th>
+                <TableHeaderCell>Question</TableHeaderCell>
+                <TableHeaderCell>Topic</TableHeaderCell>
+                <TableHeaderCell>Difficulty</TableHeaderCell>
+                <TableHeaderCell>Status</TableHeaderCell>
+                <TableHeaderCell>Best Score</TableHeaderCell>
+                <TableHeaderCell>Draft</TableHeaderCell>
+                <TableHeaderCell align="right">Open</TableHeaderCell>
               </tr>
-            </thead>
-            <tbody>
+            </TableHead>
+            <TableBody>
               {questions.map((question) => {
                 const questionSummary = summaryById.get(question.id) || null;
                 const status = getStatusPresentation(questionSummary);
                 const isCurrentQuestion = resumeQuestionId === question.id;
 
                 return (
-                  <tr
-                    key={question.id}
-                    className={`border-t border-border-subtle text-[0.84rem] transition-colors duration-200 hover:bg-bg-hover ${
-                      isCurrentQuestion ? "bg-[rgba(77,124,255,0.08)]" : ""
-                    }`}
-                  >
-                    <td className="px-6 py-4">
+                  <TableRow key={question.id} isHighlighted={isCurrentQuestion}>
+                    <TableCell className="px-6">
                       <div className="font-mono text-[0.74rem] text-text-muted">
                         Q{question.id}
                       </div>
                       <div className="mt-1 font-semibold text-text-primary">
                         {question.title}
                       </div>
-                      <p className="mt-2 max-w-[46ch] text-[0.78rem] leading-6 text-text-secondary">
-                        {question.scenario}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 text-text-secondary">{question.topic}</td>
-                    <td className="px-4 py-4 text-text-secondary">
+                    </TableCell>
+                    <TableCell className="text-text-secondary">{question.topic}</TableCell>
+                    <TableCell className="text-text-secondary">
                       {formatQuestionDifficulty(question.difficulty)}
-                    </td>
-                    <td className={`px-4 py-4 font-semibold ${status.tone}`}>
+                    </TableCell>
+                    <TableCell className={`font-semibold ${status.tone}`}>
                       {status.label}
-                    </td>
-                    <td className="px-4 py-4 font-mono text-text-secondary">
+                    </TableCell>
+                    <TableCell className="font-mono text-text-secondary">
                       {questionSummary
                         ? `${questionSummary.score}/${questionSummary.maxScore}`
                         : `0/${question.maxScore}`}
-                    </td>
-                    <td className="px-4 py-4 text-text-secondary">
+                    </TableCell>
+                    <TableCell className="text-text-secondary">
                       {questionSummary?.hasDraft ? "Saved" : "None"}
-                    </td>
-                    <td className="px-6 py-4 text-right">
+                    </TableCell>
+                    <TableCell align="right" className="px-6">
                       <Link
                         href={`/practice/${question.id}`}
                         className="inline-flex items-center justify-center rounded-xl border border-border-main px-3 py-2 text-[0.76rem] font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-card"
                       >
                         {isCurrentQuestion ? "Resume" : "Open"}
                       </Link>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </ContentWrapper>
+    </PageContainer>
   );
 }
