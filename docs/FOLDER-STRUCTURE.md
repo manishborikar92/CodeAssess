@@ -65,6 +65,9 @@ web/
 │   │   │           └── page.js                # Individual result view
 │   │   │
 │   │   ├── layout.js                          # Root layout (fonts, metadata)
+│   │   ├── loading.js                         # Global loading state
+│   │   ├── not-found.js                       # 404 page
+│   │   ├── error.js                           # Error boundary
 │   │   ├── globals.css                        # Global styles
 │   │   ├── manifest.json                      # PWA manifest
 │   │   ├── favicon.ico

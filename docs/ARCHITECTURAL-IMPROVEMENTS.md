@@ -170,6 +170,26 @@ This document summarizes the architectural standardization work completed to imp
 
 ---
 
+### 5. Error and Loading Pages
+
+**Problem:** Missing global error handling and loading states.
+
+**Solution:** Created consistent error, not-found, and loading pages following design system.
+
+**New Files:**
+- `web/src/app/loading.js` - Global loading state with spinner
+- `web/src/app/not-found.js` - 404 page with navigation options
+- `web/src/app/error.js` - Error boundary with retry functionality
+
+**Features:**
+- Consistent layout patterns matching workspace pages
+- Design system compliance (spacing, typography, colors)
+- Clear navigation options
+- User-friendly error messages
+- Retry functionality for error page
+
+---
+
 ## Remaining Considerations
 
 ### Future Improvements (Not Implemented)

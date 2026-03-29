@@ -476,3 +476,51 @@ Individual exam result view.
 - Renders ExamResultsScreen for completed sessions
 
 ---
+
+
+## Global Pages
+
+### LoadingPage (`app/loading.js`)
+
+Global loading state displayed during page transitions.
+
+**Features:**
+- Centered spinner with loading message
+- Minimal design matching application theme
+- Automatically shown by Next.js during navigation
+
+---
+
+### NotFoundPage (`app/not-found.js`)
+
+404 error page for invalid routes.
+
+**Features:**
+- Clear 404 error message
+- Common routes explanation cards
+- Navigation links to main sections (Home, Practice, Exam, Results)
+- Consistent layout matching workspace pages
+
+---
+
+### ErrorPage (`app/error.js`)
+
+Global error boundary for unexpected errors.
+
+**Props:**
+| Prop | Type | Description |
+|------|------|-------------|
+| `error` | Error | Error object with message |
+| `reset` | function | Retry function provided by Next.js |
+
+**Features:**
+- User-friendly error message
+- Error details display (message)
+- Retry button to attempt recovery
+- Navigation links to main sections
+- Recovery options sidebar
+- Consistent layout matching workspace pages
+
+---
+
+## UI Primitives
