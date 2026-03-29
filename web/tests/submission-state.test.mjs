@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   sumSubmissionScores,
   upsertBestSubmission,
-} from "../src/lib/submissionState.mjs";
+} from "../src/lib/session/submissionState.mjs";
 
 const tests = [];
 

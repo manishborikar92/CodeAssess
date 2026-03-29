@@ -1,5 +1,4 @@
 import { JetBrains_Mono, Sora, Space_Grotesk } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const sora = Sora({
@@ -21,14 +20,42 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "CodeAssess - Practice Workspace and Secure Coding Exams",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+  title: {
+    default: "CodeAssess - Practice Workspace and Secure Coding Exams",
+    template: "%s | CodeAssess",
+  },
   description:
-    "Client-side coding practice and secure browser-based exam workspace with Pyodide, timed assessments, and reusable candidate flows.",
+    "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
   keywords: ["coding", "practice", "online judge", "programming", "assessment", "exam"],
   appleWebApp: {
     title: "CodeAssess",
   },
-  manifest: "/manifest.json",
+  openGraph: {
+    title: "CodeAssess - Practice Workspace and Secure Coding Exams",
+    description:
+      "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
+    type: "website",
+    locale: "en_US",
+    siteName: "CodeAssess",
+    images: [
+      {
+        url: "/api/og?title=Practice freely. Run exams seriously.&subtitle=Client-side coding practice and secure browser-based exam workflows&category=Coding Assessment Platform&accentColor=%234d7cff",
+        width: 1200,
+        height: 630,
+        alt: "CodeAssess - Practice Workspace and Secure Coding Exams",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CodeAssess - Practice Workspace and Secure Coding Exams",
+    description:
+      "Client-side coding practice and secure browser-based exam workflows with Pyodide, persistent session recovery, and a shared exam timer.",
+    images: [
+      "/api/og?title=Practice freely. Run exams seriously.&subtitle=Client-side coding practice and secure browser-based exam workflows&category=Coding Assessment Platform&accentColor=%234d7cff",
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -37,13 +64,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${sora.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">
-        {children}
-        <Script
-          src="https://cdn.jsdelivr.net/pyodide/v0.27.3/full/pyodide.js"
-          strategy="afterInteractive"
-        />
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

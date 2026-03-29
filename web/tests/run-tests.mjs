@@ -7,8 +7,15 @@ const __dirname = path.dirname(__filename);
 
 const testFiles = [
   "question-catalog.test.mjs",
+  "invitation-token.test.mjs",
   "practice-session.test.mjs",
+  "practice-route-state.test.mjs",
+  "practice-store.test.mjs",
+  "practice-workspace-repository.test.mjs",
   "exam-session.test.mjs",
+  "exam-store.test.mjs",
+  "exam-session-repository.test.mjs",
+  "results-session.test.mjs",
   "assessment-config.test.mjs",
   "submission-state.test.mjs",
 ];

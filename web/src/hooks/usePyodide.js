@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import * as Judge from "@/lib/judge";
+import * as Judge from "@/lib/execution/pyodideJudge.js";
 
 /**
  * Hook to manage Pyodide WebAssembly runtime lifecycle.
