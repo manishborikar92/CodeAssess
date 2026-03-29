@@ -1,9 +1,30 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll(); // Check scroll position immediately on mount
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-20 border-b border-border-main/50 bg-[rgba(10,13,20,0.78)] backdrop-blur-xl">
+    <header 
+      className={`fixed left-0 right-0 top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled 
+          ? "border-b border-border-main/50 bg-[rgba(10,13,20,0.78)] backdrop-blur-xl" 
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link href="/" className="group inline-flex items-center gap-3">
           <div className="rounded-2xl border border-border-main bg-bg-card p-2 transition-all duration-300 group-hover:border-accent-cyan/30 group-hover:shadow-[0_0_15px_rgba(15,240,200,0.1)]">
