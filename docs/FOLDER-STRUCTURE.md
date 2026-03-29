@@ -1,18 +1,18 @@
-# CodeAssess — Final Folder Structure
+# CodeAssess — Folder Structure
 
-**Project:** CodeAssess (Next.js 16, JavaScript)  
+**Project:** CodeAssess (Next.js 15, JavaScript)  
 **Date:** March 29, 2026  
-**Status:** Approved
+**Status:** Current Implementation
 
 ---
 
-## Legend
+## Overview
 
-| Symbol | Meaning |
-|--------|---------|
-| `← EXISTS` | File/folder already exists — kept as-is |
-| `← MOVED` | Existing file relocated to this path |
-| `NEW` | New file to be created |
+CodeAssess follows a feature-based organization with clear separation between:
+- **Marketing pages** (SSG with Header/Footer)
+- **Workspace routes** (client-heavy with route-scoped stores)
+- **Shared components** (reusable UI and IDE components)
+- **Data layer** (repositories, stores, domain logic)
 
 ---
 
@@ -21,171 +21,205 @@
 ```
 web/
 ├── public/
-│   ├── logo.svg                               ← EXISTS
-│   └── og/                                    NEW
-│       ├── home.png                           NEW  (1200×630 — landing page)
-│       ├── practice.png                       NEW  (1200×630 — practice workspace)
-│       └── default.png                        NEW  (1200×630 — fallback)
+│   ├── logo.svg
+│   ├── web-app-manifest-192x192.png
+│   └── web-app-manifest-512x512.png
 │
 ├── src/
 │   │
-│   ├── app/
+│   ├── app/                                   # Next.js app router
 │   │   │
-│   │   ├── (marketing)/                       NEW  — Public pages, SSG, no auth required
-│   │   │   ├── layout.jsx                     NEW  — Nav + footer shell
-│   │   │   └── page.jsx                       ← MOVED  (was: app/page.js)
+│   │   ├── (marketing)/                       # Public pages (SSG)
+│   │   │   ├── layout.js                      # Header + Footer wrapper
+│   │   │   ├── page.js                        # Landing page
+│   │   │   ├── about/
+│   │   │   │   └── page.js                    # About page
+│   │   │   └── help/
+│   │   │       └── page.js                    # Help/FAQ page
 │   │   │
-│   │   ├── (workspace)/                       NEW  — All active-session routes
-│   │   │   │                                        layout.jsx is auth-check only —
-│   │   │   │                                        no header, sidebar, or shell UI.
-│   │   │   │                                        Each page renders its own full UI.
-│   │   │   ├── layout.jsx                     NEW  — Bare auth guard, zero chrome
+│   │   ├── (workspace)/                       # Protected workspace routes
+│   │   │   ├── layout.js                      # Pyodide script loader
 │   │   │   │
 │   │   │   ├── practice/
-│   │   │   │   ├── page.jsx                   NEW  — Question browser / selector
+│   │   │   │   ├── layout.js                  # PracticeStoreProvider
+│   │   │   │   ├── page.js                    # Question browser
+│   │   │   │   ├── progress/
+│   │   │   │   │   └── page.js                # Progress summary
 │   │   │   │   └── [id]/
-│   │   │   │       ├── page.jsx               ← MOVED  (was: app/practice/page.js)
-│   │   │   │       ├── loading.jsx            NEW
-│   │   │   │       └── error.jsx              NEW
+│   │   │   │       └── page.js                # Practice IDE for question
 │   │   │   │
 │   │   │   ├── exam/
+│   │   │   │   ├── layout.js                  # ExamStoreProvider
+│   │   │   │   ├── page.js                    # Exam lobby
 │   │   │   │   └── [sessionId]/
-│   │   │   │       ├── page.jsx               ← MOVED  (was: app/exam/page.js)
-│   │   │   │       ├── loading.jsx            NEW
-│   │   │   │       └── error.jsx              NEW
+│   │   │   │       └── page.js                # Active exam session
 │   │   │   │
 │   │   │   ├── join/
+│   │   │   │   ├── page.js                    # Token input form
 │   │   │   │   └── [token]/
-│   │   │   │       └── page.jsx               NEW  — Invitation flow → lobby → exam start
+│   │   │   │       └── page.js                # Token resolver
 │   │   │   │
 │   │   │   └── results/
+│   │   │       ├── page.js                    # Results list
 │   │   │       └── [sessionId]/
-│   │   │           └── page.jsx               NEW  — Post-exam results view
+│   │   │           └── page.js                # Individual result view
 │   │   │
-│   │   ├── api/
-│   │   │   └── auth/
-│   │   │       └── [...nextauth]/
-│   │   │           └── route.js               NEW  — Auth.js handler (Google, GitHub, Credentials)
-│   │   │
-│   │   ├── layout.jsx                         ← EXISTS  — Root layout (fonts, metadata, providers)
-│   │   ├── globals.css                        ← EXISTS
-│   │   ├── manifest.json                      ← EXISTS
-│   │   ├── favicon.ico                        ← EXISTS
-│   │   ├── apple-icon.png                     ← EXISTS
-│   │   ├── icon0.svg                          ← EXISTS
-│   │   ├── icon1.png                          ← EXISTS
-│   │   ├── not-found.jsx                      NEW  — Global 404 page
-│   │   ├── error.jsx                          NEW  — Global error boundary
-│   │   ├── robots.js                          NEW  — Dynamic robots.txt
-│   │   └── sitemap.js                         NEW  — Dynamic sitemap.xml
+│   │   ├── layout.js                          # Root layout (fonts, metadata)
+│   │   ├── globals.css                        # Global styles
+│   │   ├── manifest.json                      # PWA manifest
+│   │   ├── favicon.ico
+│   │   ├── apple-icon.png
+│   │   ├── icon0.svg
+│   │   └── icon1.png
 │   │
-│   ├── components/
-│   │   ├── ui/                                ← EXISTS  — Reusable primitives
-│   │   │   ├── Modal.jsx                      ← EXISTS
-│   │   │   ├── Spinner.jsx                    ← EXISTS
-│   │   │   └── Toast.jsx                      ← EXISTS
+│   ├── components/                            # React components
 │   │   │
-│   │   ├── exam/                              ← EXISTS  — IDE panel components
-│   │   │   ├── ExamShell.jsx                  ← EXISTS  — Grid layout orchestrator
-│   │   │   ├── Header.jsx                     ← EXISTS  — Timer, score, controls
-│   │   │   ├── Sidebar.jsx                    ← EXISTS  — Question navigator
-│   │   │   ├── ProblemPanel.jsx               ← EXISTS  — Problem description
-│   │   │   ├── CodePanel.jsx                  ← EXISTS  — CodeMirror 6 editor
-│   │   │   ├── OutputPanel.jsx                ← EXISTS  — Test results / console
-│   │   │   └── ResultsScreen.jsx              ← EXISTS  — Post-exam results
+│   │   ├── ui/                                # Reusable primitives
+│   │   │   ├── Modal.jsx                      # Confirmation dialog
+│   │   │   ├── Spinner.jsx                    # Loading indicator
+│   │   │   ├── Toast.jsx                      # Notification system
+│   │   │   └── WorkspacePageNavigation.jsx    # Page navigation bar
 │   │   │
-│   │   ├── home/                              ← EXISTS  — Landing page sections
-│   │   │   ├── HeroSection.jsx                ← EXISTS
-│   │   │   ├── FeatureSection.jsx             ← EXISTS
-│   │   │   ├── FlowSection.jsx                ← EXISTS
-│   │   │   ├── ModeSection.jsx                ← EXISTS
-│   │   │   ├── Navigation.jsx                 ← EXISTS
-│   │   │   └── Footer.jsx                     ← EXISTS
+│   │   ├── marketing/                         # Landing page sections
+│   │   │   ├── Header.jsx                     # Site header with nav
+│   │   │   ├── Footer.jsx                     # Site footer
+│   │   │   ├── HeroSection.jsx                # Hero with CTA
+│   │   │   ├── ModeSection.jsx                # Practice vs Exam modes
+│   │   │   ├── FeatureSection.jsx             # Feature cards
+│   │   │   └── FlowSection.jsx                # Candidate journey
 │   │   │
-│   │   └── shared/                            NEW  — Cross-concern providers
-│   │       ├── AuthProvider.jsx               NEW  — Auth.js SessionProvider wrapper
-│   │       └── QueryProvider.jsx              NEW  — TanStack Query setup
+│   │   ├── workspace/                         # Shared IDE components
+│   │   │   ├── WorkspaceChrome.jsx            # IDE layout with resizable panels
+│   │   │   ├── WorkspaceHeader.jsx            # IDE header bar
+│   │   │   ├── WorkspaceLoadingStates.jsx     # Loading screens
+│   │   │   ├── workspaceHooks.js              # Composite workspace hooks
+│   │   │   ├── CodePanel.jsx                  # Code editor panel
+│   │   │   ├── OutputPanel.jsx                # Test results panel
+│   │   │   ├── ProblemPanel.jsx               # Problem description panel
+│   │   │   └── QuestionSidebar.jsx            # Question list sidebar
+│   │   │
+│   │   ├── practice/                          # Practice-specific components
+│   │   │   ├── PracticeWorkspaceClient.jsx    # Practice IDE orchestrator
+│   │   │   ├── PracticeQuestionBrowser.jsx    # Question catalog browser
+│   │   │   ├── PracticeProgressPage.jsx       # Progress summary
+│   │   │   └── PracticeRouteViewport.jsx      # Route resolver
+│   │   │
+│   │   ├── exam/                              # Exam-specific components
+│   │   │   ├── ExamSessionClient.jsx          # Exam IDE orchestrator
+│   │   │   ├── ExamStartPageClient.jsx        # Exam lobby client
+│   │   │   ├── ExamStartScreen.jsx            # Exam lobby screen
+│   │   │   ├── ExamResultsScreen.jsx          # Results summary
+│   │   │   ├── ExamIntegrityOverlay.jsx       # Fullscreen resume overlay
+│   │   │   ├── JoinTokenForm.jsx              # Token input form
+│   │   │   └── JoinTokenResolver.jsx          # Token validation
+│   │   │
+│   │   └── results/                           # Results display components
+│   │       ├── ResultsListClient.jsx          # Results list
+│   │       └── SessionResultClient.jsx        # Individual result view
 │   │
-│   ├── hooks/                                 ← EXISTS  — All hooks in one flat directory
-│   │   ├── usePyodide.js                      ← EXISTS  — Pyodide WASM lifecycle
-│   │   ├── useTimer.js                        ← EXISTS  — Countdown timer
-│   │   ├── useExamIntegrityGuards.js          ← EXISTS  — Fullscreen / tab-switch detection
-│   │   ├── useSubmission.js                   NEW  — Polls / listens for judge results
-│   │   ├── useAutoSave.js                     NEW  — Debounced draft save
-│   │   └── useWebSocket.js                    NEW  — WebSocket wrapper for live results
+│   ├── stores/                                # Zustand vanilla stores
+│   │   ├── examStore.js                       # Exam session state
+│   │   ├── practiceStore.js                   # Practice workspace state
+│   │   └── internal/
+│   │       └── createPersistScheduler.js      # Debounced persistence
 │   │
-│   ├── lib/
-│   │   ├── api/                               NEW  — Structured API client (wraps fetch → NestJS)
-│   │   │   ├── client.js                      NEW  — Base fetch with auth headers
-│   │   │   ├── questions.js                   NEW  — Questions API calls
-│   │   │   ├── exams.js                       NEW  — Exams API calls
-│   │   │   ├── submissions.js                 NEW  — Submissions API calls
-│   │   │   └── index.js                       NEW  — Re-exports
+│   ├── providers/                             # React context providers
+│   │   ├── ExamStoreProvider.jsx              # Exam store context
+│   │   └── PracticeStoreProvider.jsx          # Practice store context
+│   │
+│   ├── hooks/                                 # Custom React hooks
+│   │   ├── useTimer.js                        # Countdown timer
+│   │   ├── usePyodide.js                      # Pyodide lifecycle
+│   │   └── useExamIntegrityGuards.js          # Integrity enforcement
+│   │
+│   ├── lib/                                   # Business logic & utilities
 │   │   │
-│   │   ├── auth/                              NEW  — Auth.js integration helpers
-│   │   │   ├── auth.config.js                 NEW  — Providers + callbacks config
-│   │   │   └── session.js                     NEW  — getServerSession helper
+│   │   ├── repositories/                      # Data access layer
+│   │   │   ├── questionRepository.js          # Question catalog
+│   │   │   ├── examSessionRepository.js       # Exam sessions CRUD
+│   │   │   ├── practiceWorkspaceRepository.js # Practice persistence
+│   │   │   └── examAccessRepository.js        # Token validation
 │   │   │
-│   │   ├── judge/                             NEW  — Judge module
-│   │   │   └── pyodide.js                     ← MOVED  (was: lib/judge.js)
+│   │   ├── session/                           # Session state logic
+│   │   │   ├── examSession.mjs                # Exam state normalization
+│   │   │   ├── practiceSession.mjs            # Practice state normalization
+│   │   │   ├── submissionState.mjs            # Submission tracking
+│   │   │   └── resultsSession.js              # Results view logic
 │   │   │
-│   │   └── utils/                             NEW  — Pure utility functions
-│   │       ├── navigation.js                  ← MOVED  (was: lib/workspaceNavigation.mjs)
-│   │       └── time.js                        NEW  — Time formatting helpers
+│   │   ├── assessment/                        # Assessment configuration
+│   │   │   └── assessmentConfig.mjs           # Question selection logic
+│   │   │
+│   │   ├── execution/                         # Code execution
+│   │   │   └── pyodideJudge.js                # Pyodide WASM judge
+│   │   │
+│   │   ├── storage/                           # Storage abstraction
+│   │   │   └── repositoryStorage.js           # IndexedDB wrapper
+│   │   │
+│   │   ├── routing/                           # Route state utilities
+│   │   │   └── practiceRouting.js             # Practice route resolver
+│   │   │
+│   │   ├── workspace/                         # Workspace utilities
+│   │   │   └── navigation.mjs                 # Question navigation
+│   │   │
+│   │   ├── questions/                         # Question utilities
+│   │   │   └── questionCatalog.mjs            # Question formatting
+│   │   │
+│   │   ├── tokens/                            # Token handling
+│   │   │   └── invitationToken.js             # Token validation
+│   │   │
+│   │   └── use-cases/                         # Business workflows
+│   │       └── createExamSessionAttempt.js    # Session creation orchestration
 │   │
-│   ├── store/                                 NEW  — Zustand global state (CSR only)
-│   │   ├── examStore.js                       NEW  — Active exam state (replaces ExamContext.js)
-│   │   └── editorStore.js                     NEW  — Per-question language / code state
-│   │
-│   ├── types/                                 NEW  — Shared JSDoc @typedef definitions
-│   │   ├── question.types.js                  NEW
-│   │   ├── submission.types.js                NEW
-│   │   ├── session.types.js                   NEW
-│   │   └── index.js                           NEW  — Re-exports all typedefs
-│   │
-│   └── data/                                  ← EXISTS  — Static data (temporary)
-│       └── questions.json                     ← EXISTS  — 37 questions (→ PostgreSQL in Phase 2)
+│   └── data/                                  # Static data
+│       ├── questions.json                     # Question catalog (37 questions)
+│       └── exam/
+│           └── blueprints.js                  # Exam blueprint definitions
 │
-├── proxy.js                                   NEW  — Next.js 16 request proxy
-│                                                     Replaces middleware.js. Node.js runtime
-│                                                     (not edge). Handles auth route protection
-│                                                     and role-based redirects.
-├── next.config.mjs                            ← EXISTS
-├── jsconfig.json                              ← EXISTS
-├── eslint.config.mjs                          ← EXISTS
-├── postcss.config.mjs                         ← EXISTS
-└── package.json                               ← EXISTS
+├── tests/                                     # Test files
+│   ├── exam-store.test.mjs
+│   ├── exam-session-repository.test.mjs
+│   └── invitation-token.test.mjs
+│
+├── next.config.mjs
+├── jsconfig.json
+├── eslint.config.mjs
+├── postcss.config.mjs
+├── package.json
+└── .env.local.example
 ```
 
 ---
 
 ## Route Group Summary
 
-| Group | URL Pattern | Layout | Auth |
-|-------|-------------|--------|------|
-| `(marketing)` | `/`, `/pricing` | Nav + footer | None |
-| `(workspace)` | `/practice`, `/practice/[id]`, `/exam/[sessionId]`, `/join/[token]`, `/results/[sessionId]` | Auth check only — no chrome | Required (any role) |
-
-> **Note:** `(auth)` and `(examiner)` route groups are planned for future phases (Phase 1 and Phase 3 respectively) and are not part of the current implementation scope.
+| Group | URL Pattern | Layout | Purpose |
+|-------|-------------|--------|---------|
+| `(marketing)` | `/`, `/about`, `/help` | Header + Footer | Public landing pages |
+| `(workspace)` | `/practice/*`, `/exam/*`, `/join/*`, `/results/*` | Minimal (Pyodide script only) | Protected workspace routes |
 
 ---
 
-## Files Removed / Superseded
+## Component Organization Principles
 
-| Old Path | Reason |
-|----------|--------|
-| `app/page.js` | Moved to `app/(marketing)/page.jsx` |
-| `app/exam/page.js` | Moved to `app/(workspace)/exam/[sessionId]/page.jsx` |
-| `app/practice/page.js` | Moved to `app/(workspace)/practice/[id]/page.jsx` |
-| `lib/judge.js` | Moved to `lib/judge/pyodide.js` |
-| `lib/workspaceNavigation.mjs` | Moved to `lib/utils/navigation.js` |
-| `lib/api.js` | Replaced by `lib/api/` directory (structured API client) |
-| `context/ExamContext.js` | Replaced by `store/examStore.js` (Zustand) |
-| `lib/assessmentConfig.mjs` | Merged into `lib/api/exams.js` |
-| `lib/submissionState.mjs` | Merged into `store/examStore.js` |
-| `lib/examSession.mjs` | Merged into `store/examStore.js` |
-| `lib/practiceSession.mjs` | Merged into `store/editorStore.js` |
-| `lib/questionCatalog.mjs` | Replaced by `lib/api/questions.js` |
+1. **Feature-based grouping**: Components organized by feature (exam, practice, results, marketing)
+2. **Shared components**: Common UI primitives in `ui/`, shared IDE components in `workspace/`
+3. **Client suffix**: Interactive components use `*Client.jsx` naming
+4. **Screen suffix**: Presentational components use `*Screen.jsx` naming
+5. **Co-located hooks**: Feature-specific hooks stay with components (e.g., workspaceHooks.js)
+
+## State Management Organization
+
+1. **Stores**: Zustand vanilla stores in `stores/` directory
+2. **Providers**: React context wrappers in `providers/` directory
+3. **Hooks**: Custom hooks in `hooks/` directory
+4. **Pattern**: Store → Provider → Hook → Component
+
+## Data Layer Organization
+
+1. **Repositories**: Data access abstraction in `lib/repositories/`
+2. **Session Logic**: State normalization in `lib/session/`
+3. **Storage**: IndexedDB abstraction in `lib/storage/`
+4. **Use Cases**: Business workflows in `lib/use-cases/`
 
 ---
 

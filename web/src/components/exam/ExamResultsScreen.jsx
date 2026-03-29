@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
 
 function formatTime(seconds) {
@@ -56,7 +58,16 @@ export default function ExamResultsScreen({
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto max-w-[1100px]">
+      <div className="mx-auto max-w-[1180px]">
+        <WorkspacePageNavigation
+          backHref="/results"
+          backLabel="Back to Results"
+          links={[
+            { href: "/exam", label: "Exam", tone: "primary" },
+            { href: "/practice", label: "Practice" },
+          ]}
+        />
+
         <div className="rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(15,240,200,0.16),transparent_35%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.22em] text-accent-cyan">
             Exam Summary
@@ -147,8 +158,8 @@ export default function ExamResultsScreen({
           </div>
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="overflow-hidden rounded-[24px] border border-border-main bg-bg-secondary">
+        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <section className="overflow-hidden rounded-[28px] border border-border-main bg-bg-secondary shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
             <div className="grid grid-cols-[40px_1fr_90px_90px_110px] gap-3 bg-bg-tertiary px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[1.5px] text-text-muted">
               <div>#</div>
               <div>Question</div>
@@ -201,7 +212,7 @@ export default function ExamResultsScreen({
             })}
           </section>
 
-          <aside className="flex flex-col gap-3 rounded-[24px] border border-border-main bg-bg-secondary p-5">
+          <aside className="self-start flex flex-col gap-3 rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
             <button
               type="button"
               onClick={onReset}

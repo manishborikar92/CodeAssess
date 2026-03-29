@@ -5,8 +5,8 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 import { usePracticeStore } from "@/providers/PracticeStoreProvider.jsx";
 
-import PracticeWorkspaceShell from "./PracticeWorkspaceShell.jsx";
-import { getPracticeRouteState } from "./practiceRouteState.js";
+import PracticeWorkspaceClient from "./PracticeWorkspaceClient.jsx";
+import { getPracticeRouteState } from "../../lib/routing/practiceRouting.js";
 
 export default function PracticeRouteViewport({ children }) {
   const segment = useSelectedLayoutSegment();
@@ -18,7 +18,7 @@ export default function PracticeRouteViewport({ children }) {
   );
 
   if (routeState.view === "question") {
-    return <PracticeWorkspaceShell questionId={routeState.questionId} />;
+    return <PracticeWorkspaceClient questionId={routeState.questionId} />;
   }
 
   return children;

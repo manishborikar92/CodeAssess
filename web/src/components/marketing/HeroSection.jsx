@@ -55,7 +55,7 @@ export default function HeroSection({ examConfig, practiceConfig }) {
           </div>
         </div>
 
-        <div className="relative rounded-[30px] border border-border-main bg-[linear-gradient(180deg,rgba(20,27,44,0.95),rgba(12,16,27,0.96))] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
+        <div className="relative rounded-[28px] border border-border-main bg-[linear-gradient(180deg,rgba(20,27,44,0.95),rgba(12,16,27,0.96))] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
           <div className="grid gap-3 sm:grid-cols-2">
             <MetricCard label="Practice Problems" value={practiceConfig.totalQuestions} />
             <MetricCard

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import ExamResultsScreen from "../exam/ExamResultsScreen.jsx";
 import { WorkspaceLoadingScreen } from "../workspace/WorkspaceLoadingStates.jsx";
 import { examSessionRepository } from "../../lib/repositories/examSessionRepository.js";
@@ -50,8 +51,17 @@ export default function SessionResultClient({ sessionId }) {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-bg-primary px-6 py-12">
-        <div className="mx-auto max-w-[760px] rounded-[28px] border border-border-main bg-bg-secondary p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+      <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
+        <WorkspacePageNavigation
+          backHref="/results"
+          backLabel="Back to Results"
+          links={[
+            { href: "/exam", label: "Exam" },
+            { href: "/practice", label: "Practice" },
+          ]}
+        />
+
+        <div className="mx-auto max-w-[1180px] rounded-[28px] border border-border-main bg-bg-secondary p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.22em] text-accent-red">
             Result Not Found
           </div>

@@ -8,7 +8,7 @@ export const metadata = {
 
 function HelpCard({ description, title }) {
   return (
-    <div className="rounded-[24px] border border-border-main bg-bg-secondary p-5 shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
+    <div className="rounded-2xl border border-border-main bg-bg-secondary p-5 shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
       <h3 className="text-[1.08rem] font-semibold text-text-primary">{title}</h3>
       <p className="mt-3 text-[0.9rem] leading-7 text-text-secondary">{description}</p>
     </div>
@@ -17,7 +17,7 @@ function HelpCard({ description, title }) {
 
 function FaqItem({ answer, question }) {
   return (
-    <div className="rounded-[24px] border border-border-main bg-bg-secondary p-5 shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
+    <div className="rounded-2xl border border-border-main bg-bg-secondary p-5 shadow-[0_22px_60px_rgba(0,0,0,0.22)]">
       <div className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-accent-blue">
         FAQ
       </div>
@@ -31,7 +31,7 @@ export default function HelpPage() {
   return (
     <div className="min-h-screen bg-bg-primary px-6 pb-16 pt-28">
       <div className="mx-auto grid max-w-[1200px] gap-8 lg:grid-cols-[minmax(0,1.15fr)_360px]">
-        <section className="rounded-[30px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.16),transparent_34%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
+        <section className="rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.16),transparent_34%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <p className="text-[0.76rem] font-semibold uppercase tracking-[0.24em] text-accent-cyan">
             Help Center
           </p>

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { SAMPLE_INVITATION_TOKEN } from "../../lib/repositories/examAccessRepository.js";
 
 function StepCard({ description, label, title }) {
@@ -25,12 +26,21 @@ export default function JoinTokenForm() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto grid max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
+      <WorkspacePageNavigation
+        backHref="/exam"
+        backLabel="Back to Exam"
+        links={[
+          { href: "/results", label: "Results" },
+          { href: "/practice", label: "Practice" },
+        ]}
+      />
+
+      <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
         <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.22),transparent_42%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <p className="text-[0.76rem] font-semibold uppercase tracking-[0.28em] text-accent-cyan">
             Join Exam
           </p>
-          <h1 className="mt-3 max-w-[12ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
+          <h1 className="mt-3 max-w-[15ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
             Validate an invitation token and create a real exam session
           </h1>
           <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-text-secondary">
@@ -89,7 +99,7 @@ export default function JoinTokenForm() {
           </form>
         </section>
 
-        <aside className="rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
             Join Flow
           </div>

@@ -24,8 +24,7 @@ export default function ExamStartScreen({
     config.questionSelection?.count ?? config.totalQuestions;
 
   return (
-    <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto grid max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
+    <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
         <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.22),transparent_42%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="mb-8 inline-flex items-center gap-3 rounded-full border border-border-subtle bg-black/25 px-4 py-2">
             <Image
@@ -84,7 +83,7 @@ export default function ExamStartScreen({
           </div>
         </section>
 
-        <aside className="rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
             Before You Start
           </div>
@@ -139,6 +138,5 @@ export default function ExamStartScreen({
           </button>
         </aside>
       </div>
-    </div>
   );
 }

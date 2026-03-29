@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { WorkspaceLoadingScreen } from "../workspace/WorkspaceLoadingStates.jsx";
 import { examSessionRepository } from "../../lib/repositories/examSessionRepository.js";
 
@@ -106,12 +107,21 @@ export default function ResultsListClient() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto grid max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
+      <WorkspacePageNavigation
+        backHref="/exam"
+        backLabel="Back to Exam"
+        links={[
+          { href: "/join", label: "Join", tone: "primary" },
+          { href: "/practice", label: "Practice" },
+        ]}
+      />
+
+      <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
         <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.22),transparent_42%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <p className="text-[0.76rem] font-semibold uppercase tracking-[0.28em] text-accent-cyan">
             Exam Results
           </p>
-          <h1 className="mt-3 max-w-[12ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
+          <h1 className="mt-3 max-w-[15ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
             Review every completed session stored on this device
           </h1>
           <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-text-secondary">
@@ -139,7 +149,7 @@ export default function ResultsListClient() {
           </div>
         </section>
 
-        <aside className="rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
             Results Flow
           </div>
@@ -158,22 +168,13 @@ export default function ResultsListClient() {
 
           <div className="mt-6 rounded-2xl border border-border-main bg-bg-card p-4">
             <div className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent-gold">
-              Quick Actions
+              Repository Scope
             </div>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/exam"
-                className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-br from-accent-blue to-[#3060d0] px-5 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90"
-              >
-                Start New Exam
-              </Link>
-              <Link
-                href="/join"
-                className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-              >
-                Join With Token
-              </Link>
-            </div>
+            <p className="mt-3 text-[0.88rem] leading-6 text-text-secondary">
+              Results are read from completed exam session snapshots only. Active
+              attempts stay under `/exam/[sessionId]` until the session lifecycle is
+              finalized.
+            </p>
           </div>
         </aside>
       </div>

@@ -31,7 +31,7 @@ import {
   WorkspaceToastHost,
 } from "../workspace/workspaceHooks.js";
 
-export default function PracticeWorkspaceShell({ questionId }) {
+export default function PracticeWorkspaceClient({ questionId }) {
   const router = useRouter();
   const practiceStoreApi = usePracticeStoreApi();
   const hydrationStatus = usePracticeStore((state) => state.hydrationStatus);

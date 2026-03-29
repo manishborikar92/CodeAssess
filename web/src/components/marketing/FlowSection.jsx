@@ -1,6 +1,6 @@
 function FlowStep({ index, summary, title }) {
   return (
-    <div className="relative rounded-[24px] border border-border-main bg-bg-secondary p-5">
+    <div className="relative rounded-2xl border border-border-main bg-bg-secondary p-5">
       <div className="font-mono text-[0.82rem] font-bold text-accent-gold">
         0{index}
       </div>
@@ -13,7 +13,7 @@ function FlowStep({ index, summary, title }) {
 export default function FlowSection() {
   return (
     <section className="px-6 py-8">
-      <div className="mx-auto max-w-[1200px] rounded-[32px] border border-border-main bg-[linear-gradient(180deg,rgba(19,26,42,0.95),rgba(12,16,27,0.96))] p-8">
+      <div className="mx-auto max-w-[1200px] rounded-[28px] border border-border-main bg-[linear-gradient(180deg,rgba(19,26,42,0.95),rgba(12,16,27,0.96))] p-8">
         <div className="max-w-2xl">
           <div className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-accent-blue">
             Candidate Journey

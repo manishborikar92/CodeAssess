@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { WorkspaceLoadingScreen } from "../workspace/WorkspaceLoadingStates.jsx";
 import { examAccessRepository } from "../../lib/repositories/examAccessRepository.js";
 import { questionRepository } from "../../lib/repositories/questionRepository.js";
@@ -51,9 +52,19 @@ export default function JoinTokenResolver({ token }) {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary px-6 py-10">
-      <div className="mx-auto max-w-[980px]">
-        <section className="rounded-[30px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(255,77,106,0.14),transparent_34%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_90px_rgba(0,0,0,0.35)]">
+    <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
+      <WorkspacePageNavigation
+        backHref="/join"
+        backLabel="Back to Join"
+        links={[
+          { href: "/exam", label: "Exam" },
+          { href: "/results", label: "Results" },
+          { href: "/practice", label: "Practice" },
+        ]}
+      />
+
+      <div className="mx-auto max-w-[1180px]">
+        <section className="rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(255,77,106,0.14),transparent_34%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <p className="text-[0.76rem] font-semibold uppercase tracking-[0.24em] text-accent-red">
             Join Failed
           </p>
@@ -66,7 +77,7 @@ export default function JoinTokenResolver({ token }) {
             exam session repository.
           </p>
 
-          <div className="mt-8 rounded-[24px] border border-accent-red/20 bg-[rgba(255,77,106,0.08)] p-6">
+          <div className="mt-8 rounded-2xl border border-accent-red/20 bg-[rgba(255,77,106,0.08)] p-6">
             <div className="text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-accent-red">
               Validation Error
             </div>

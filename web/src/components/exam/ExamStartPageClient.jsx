@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { showToast } from "@/components/ui/Toast";
 
 import ExamStartScreen from "./ExamStartScreen.jsx";
@@ -62,9 +63,18 @@ export default function ExamStartPageClient() {
   }, [blueprint.integrityPolicy.requireFullscreen, examStoreApi, router]);
 
   return (
-    <div className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
+      <WorkspacePageNavigation
+        backHref="/practice"
+        backLabel="Back to Practice"
+        links={[
+          { href: "/join", label: "Join With Token", tone: "primary" },
+          { href: "/results", label: "Results" },
+        ]}
+      />
+
       {latestActiveSession && (
-        <div className="mx-auto max-w-[1180px] px-6 pt-8">
+        <div className="mx-auto max-w-[1180px] mb-6">
           <div className="rounded-3xl border border-accent-cyan/20 bg-[rgba(15,240,200,0.06)] px-5 py-4">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
@@ -102,20 +112,6 @@ export default function ExamStartPageClient() {
         onStart={handleStart}
         rulesAccepted={rulesAccepted}
       />
-
-      <div className="mx-auto max-w-[1180px] px-6 pb-10">
-        <div className="rounded-2xl border border-border-main bg-bg-secondary px-5 py-4 text-[0.9rem] text-text-secondary">
-          Need an invitation-based session instead?{" "}
-          <Link href="/join" className="font-semibold text-accent-blue">
-            Join with a token
-          </Link>
-          . Finished sessions appear under{" "}
-          <Link href="/results" className="font-semibold text-accent-blue">
-            Results
-          </Link>
-          .
-        </div>
-      </div>
     </div>
   );
 }

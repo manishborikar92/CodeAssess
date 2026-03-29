@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo } from "react";
 
+import WorkspacePageNavigation from "@/components/ui/WorkspacePageNavigation.jsx";
 import { formatQuestionDifficulty } from "@/lib/questions/questionCatalog.mjs";
 import { buildPracticeSummary } from "@/lib/session/practiceSession.mjs";
 import { usePracticeStore } from "@/providers/PracticeStoreProvider.jsx";
@@ -93,12 +94,21 @@ export default function PracticeQuestionBrowser({ questions }) {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-bg-primary px-6 py-10">
-      <div className="mx-auto grid max-w-[1180px] gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
+      <WorkspacePageNavigation
+        backHref="/exam"
+        backLabel="Back to Exam"
+        links={[
+          { href: "/practice/progress", label: "View Progress", tone: "primary" },
+          { href: "/results", label: "Results" },
+        ]}
+      />
+
+      <div className="mx-auto grid max-w-[1180px] items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_380px]">
         <section className="overflow-hidden rounded-[28px] border border-border-main bg-[radial-gradient(circle_at_top_left,rgba(77,124,255,0.22),transparent_42%),linear-gradient(180deg,#131a2a_0%,#0d111c_100%)] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <p className="text-[0.76rem] font-semibold uppercase tracking-[0.28em] text-accent-cyan">
             Practice Workspace
           </p>
-          <h1 className="mt-3 max-w-[12ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
+          <h1 className="mt-3 max-w-[15ch] text-[clamp(2.6rem,5vw,4.4rem)] font-extrabold leading-[0.95] text-text-primary">
             Browse every practice question from one persistent workspace
           </h1>
           <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-text-secondary">
@@ -126,7 +136,7 @@ export default function PracticeQuestionBrowser({ questions }) {
           </div>
         </section>
 
-        <aside className="rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+        <aside className="self-start rounded-[28px] border border-border-main bg-bg-secondary p-6 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
           <div className="text-[0.76rem] font-semibold uppercase tracking-[0.18em] text-text-muted">
             Practice Rules
           </div>
@@ -162,13 +172,12 @@ export default function PracticeQuestionBrowser({ questions }) {
                 >
                   Resume Question {resumeQuestionId}
                 </Link>
-              ) : null}
-              <Link
-                href="/practice/progress"
-                className="inline-flex items-center justify-center rounded-2xl border border-border-main px-5 py-3 text-sm font-semibold text-text-primary transition-colors duration-200 hover:bg-bg-hover"
-              >
-                View Progress
-              </Link>
+              ) : (
+                <div className="text-[0.82rem] leading-6 text-text-secondary">
+                  Open any question from the catalog to start building a saved
+                  practice history.
+                </div>
+              )}
             </div>
           </div>
         </aside>
