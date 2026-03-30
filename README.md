@@ -193,9 +193,9 @@ The platform includes a comprehensive question bank covering essential data stru
 ### Current Architecture (Client-Side)
 
 ```
-┌──────────────────────────────────────────────────────────────────────────┐
-│                              Browser                                     │
-│                                                                          │
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              Browser                                    │
+│                                                                         │
 │  ┌─────────────────┐         ┌──────────────────────────────────────┐   │
 │  │  Marketing      │         │         Workspace Routes             │   │
 │  │  (SSG)          │         │                                      │   │
@@ -225,23 +225,23 @@ The platform includes a comprehensive question bank covering essential data stru
 │                              │  │  - Analytics & history         │  │   │
 │                              │  └────────────────────────────────┘  │   │
 │                              └──────────────────────────────────────┘   │
-│                                                                          │
+│                                                                         │
 │  ┌────────────────────────────────────────────────────────────────┐     │
 │  │                    Data & Persistence Layer                    │     │
 │  │                                                                │     │
-│  │  ┌──────────────┐    ┌──────────────┐    ┌────────────────┐  │     │
-│  │  │ Repositories │───>│  IndexedDB   │    │  Pyodide WASM  │  │     │
-│  │  │  - Question  │    │  - examSessions   │  - Python exec │  │     │
-│  │  │  - ExamSess  │    │  - practiceWork   │  - Judge logic │  │     │
+│  │  ┌──────────────┐    ┌────────────────┐    ┌────────────────┐  │     │
+│  │  │ Repositories │───>│  IndexedDB     │    │  Pyodide WASM  │  │     │
+│  │  │  - Question  │    │  - examSessions│    │   - Python exec│  │     │
+│  │  │  - ExamSess  │    │  - practiceWork│    │   - Judge logic│  │     │
 │  │  │  - Practice  │    │                │    │                │  │     │
 │  │  │  - ExamAccess│    │                │    │                │  │     │
-│  │  └──────────────┘    └──────────────┘    └────────────────┘  │     │
+│  │  └──────────────┘    └────────────────┘    └────────────────┘  │     │
 │  └────────────────────────────────────────────────────────────────┘     │
-│                                                                          │
+│                                                                         │
 │  ┌────────────────────────────────────────────────────────────────┐     │
 │  │              Static Data (questions.json, blueprints)          │     │
 │  └────────────────────────────────────────────────────────────────┘     │
-└──────────────────────────────────────────────────────────────────────────┘
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Hierarchy
