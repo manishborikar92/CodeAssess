@@ -6,7 +6,7 @@ import { buildPracticeConfig } from "@/lib/assessment/assessmentConfig.mjs";
 import { questionRepository } from "@/lib/repositories/questionRepository.js";
 
 export const metadata = {
-  title: "CodeAssess",
+  title: "Home",
   description:
     "Practice coding problems freely or launch secure browser-based exam sessions with persistent local session recovery.",
 };
