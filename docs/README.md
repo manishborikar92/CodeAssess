@@ -177,9 +177,9 @@ Comprehensive coding standards guide:
 
 ### Preparation Guides
 
-The `pdf/` and `docx/` directories contain TCS NQT preparation materials:
-- **TCS_NQT_DSA_Preparation_Guide_2025-26** — Data structures and algorithms study guide
-- **TCS_NQT_Exam_Questions_2025-26** — Previous year questions and solutions
+The `pdf/` and `docx/` directories contain coding assessment preparation materials:
+- **DSA Preparation Guide** — Data structures and algorithms study guide
+- **Exam Questions Collection** — Practice questions and solutions
 
 ---
 
@@ -210,12 +210,7 @@ docs/
 │   └── AGENT-PROMPT.md                            ← Prompt for AI coding agents
 │
 ├── pdf/                                           ← Preparation guides (PDF)
-│   ├── TCS_NQT_DSA_Preparation_Guide_2025-26.pdf
-│   └── TCS_NQT_Exam_Questions_2025-26.pdf
-│
 └── docx/                                          ← Preparation guides (Word)
-    ├── TCS_NQT_DSA_Preparation_Guide_2025-26.docx
-    └── TCS_NQT_Exam_Questions_2025-26.docx
 ```
 
 ---

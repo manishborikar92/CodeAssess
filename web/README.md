@@ -2,7 +2,7 @@
 
 > A professional-grade, scalable online coding assessment platform built with **Next.js 16**, **React 19**, **Zustand**, **Tailwind CSS v4**, and an in-browser **Pyodide** (WebAssembly Python) judge engine.
 
-This is the modern implementation of CodeAssess with dual modes (practice and exam), comprehensive session management, and exam integrity guards. For the original vanilla JavaScript version, see the [`/legacy`](../legacy) directory.
+This is the modern implementation of CodeAssess with dual modes (practice and exam), comprehensive session management, and exam integrity guards. The platform is designed for coding assessment practice and evaluation. For the original vanilla JavaScript version, see the [`/legacy`](../legacy) directory.
 
 ## 🚀 Quick Start
 
@@ -368,4 +368,4 @@ Contributions are welcome! Please follow these guidelines:
 
 ---
 
-*Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.*
+*A modern platform for coding assessment practice and evaluation with comprehensive question coverage.*

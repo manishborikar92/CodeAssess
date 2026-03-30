@@ -11,14 +11,14 @@
 
 ## 🎯 Overview
 
-CodeAssess is a modern, client-side web application designed to simulate professional coding assessments. Originally built for TCS NQT exam preparation, it features 37 curated programming questions with auto-graded test cases, dual modes (practice and exam), and comprehensive session management.
+CodeAssess is a modern, client-side web application designed to simulate professional coding assessments. It features 37 curated programming questions with auto-graded test cases, dual modes (practice and exam), and comprehensive session management.
 
 The platform runs entirely in the browser using Pyodide (CPython compiled to WebAssembly) and IndexedDB for persistence, eliminating the need for backend infrastructure while providing accurate Python 3 code evaluation with session recovery.
 
 ### Key Features
 
 - **Dual Modes** — Practice mode (unlimited time, all questions) and Exam mode (timed, random selection, integrity guards)
-- **37 Curated Questions** — 25 confirmed from previous TCS NQT papers + 12 high-probability predictions
+- **37 Curated Questions** — Comprehensive coverage of essential data structures and algorithms
 - **In-Browser Python Execution** — Pyodide WebAssembly runtime (CPython 3.12)
 - **Auto-Graded Test Cases** — Instant feedback with AC/WA/TLE/RE verdicts
 - **Session Persistence** — Auto-save with IndexedDB recovery on page refresh
@@ -47,8 +47,8 @@ CodeAssess/
 │   │   ├── README.md                  # Guide index & Phase overview
 │   │   ├── PHASE-0-FOUNDATION.md      # Infrastructure setup
 │   │   └── ...                        # Phases 1-6 & AI Agent Prompt
-│   ├── docx/                          # TCS NQT preparation guides (Word)
-│   └── pdf/                           # TCS NQT preparation guides (PDF)
+│   ├── docx/                          # Preparation guides (Word format)
+│   └── pdf/                           # Preparation guides (PDF format)
 │
 ├── legacy/                            # Original vanilla HTML/JS implementation
 │   ├── index.html                     # Single-page app shell
@@ -166,24 +166,20 @@ Open [http://localhost:8080](http://localhost:8080) in your browser.
 
 ## 🧠 Question Bank
 
-### Section A — Confirmed from Previous Papers (Q1–Q25)
+### 37 Curated Programming Questions
 
-Topics include:
-- Arrays (Move Zeros, Second Largest, Dutch National Flag, Array Rotation)
-- Strings (Palindrome Check, Anagram Detection, First Non-Repeating Character)
-- Math (Fibonacci, Prime Check, Factorial, Sum of Digits)
-- Data Structures (Binary Search, Stack Simulation, Linked List Reversal)
-- Algorithms (Jump Game, Permutations, Frequency Counter)
+The platform includes a comprehensive question bank covering essential data structures and algorithms:
 
-### Section B — Predicted High-Probability Topics (Q26–Q37)
-
-Topics include:
-- Advanced Arrays (Sliding Window Maximum, Trapping Rain Water, Kadane's Algorithm)
-- Dynamic Programming (Longest Common Subsequence, Coin Change)
-- Graphs (BFS — Minimum Steps in Grid)
-- Strings (Caesar Cipher, Valid Parentheses)
-- 2D Arrays (Matrix Spiral Traversal)
-- Sorting (Bubble Sort)
+**Topics Covered:**
+- **Arrays** — Move Zeros, Second Largest, Dutch National Flag, Array Rotation, Sliding Window Maximum, Trapping Rain Water, Kadane's Algorithm
+- **Strings** — Palindrome Check, Anagram Detection, First Non-Repeating Character, Caesar Cipher, Valid Parentheses
+- **Math** — Fibonacci, Prime Check, Factorial, Sum of Digits
+- **Data Structures** — Binary Search, Stack Simulation, Linked List Reversal
+- **Algorithms** — Jump Game, Permutations, Frequency Counter
+- **Dynamic Programming** — Longest Common Subsequence, Coin Change
+- **Graphs** — BFS (Minimum Steps in Grid)
+- **2D Arrays** — Matrix Spiral Traversal
+- **Sorting** — Bubble Sort
 
 **Difficulty Distribution:**
 - Easy: 22 questions
@@ -534,10 +530,10 @@ When migrating to a backend judge:
 
 | Score Range | Interpretation |
 |-------------|---------------|
-| 3300–3700 | Exceptional — TCS Ninja / Digital / Prime eligible |
-| 2600–3299 | Strong — High chance of clearing NQT cutoff |
-| 1800–2599 | Moderate — Revisit greedy, DP, and string topics |
-| Below 1800 | Needs improvement — Focus on Section A fundamentals |
+| 3300–3700 | Exceptional — Strong problem-solving skills across all topics |
+| 2600–3299 | Strong — Solid understanding with room for optimization |
+| 1800–2599 | Moderate — Revisit greedy algorithms, DP, and string manipulation |
+| Below 1800 | Needs improvement — Focus on fundamental data structures and algorithms |
 
 ---
 
@@ -561,11 +557,12 @@ This project is licensed under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- **TCS NQT** — Question bank sourced from previous-year papers
 - **Pyodide** — WebAssembly Python runtime
 - **Next.js** — React framework for production
 - **Tailwind CSS** — Utility-first CSS framework
 - **CodeMirror** — Code editor component
+- **React** — UI library
+- **Zustand** — State management
 
 ---
 
@@ -575,4 +572,4 @@ For questions, issues, or feature requests, please open an issue on GitHub.
 
 ---
 
-**Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.**
+**A modern platform for coding assessment practice and evaluation.**
