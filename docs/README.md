@@ -12,16 +12,20 @@ This directory contains detailed documentation about the system architecture, co
 **System Architecture & Design**
 
 Covers:
-- Current client-side architecture
-- Component hierarchy and data flow
-- State management with Context API + useReducer
-- Data access layer abstraction
+- Current client-side architecture with route-based organization
+- Component hierarchy and data flow patterns
+- State management with Zustand vanilla stores + React Context
+- Repository pattern for data access abstraction
+- IndexedDB persistence layer
+- Layout patterns and design system standards
 - Future full-stack architecture plans
 
 **Read this if you want to:**
 - Understand how the application is structured
-- Learn about the state management approach
-- See the component hierarchy
+- Learn about the Zustand + Context state management pattern
+- See the component hierarchy and route organization
+- Understand the repository pattern and persistence layer
+- Learn about layout patterns and design system standards
 - Understand the migration path to backend services
 
 ---
@@ -30,14 +34,19 @@ Covers:
 **Component Catalog**
 
 Detailed reference for all React components including:
-- **Exam Components**: ExamShell, Header, Sidebar, ProblemPanel, CodePanel, OutputPanel, ResultsScreen
-- **UI Primitives**: Toast, Spinner, Modal
+- **Workspace Components**: WorkspaceChrome, WorkspaceHeader, CodePanel, OutputPanel, ProblemPanel, QuestionSidebar
+- **Practice Components**: PracticeWorkspaceClient, PracticeQuestionBrowser, PracticeProgressPage
+- **Exam Components**: ExamSessionClient, ExamStartPageClient, ExamResultsScreen, ExamIntegrityOverlay
+- **Results Components**: ResultsListClient, SessionResultClient
+- **UI Primitives**: Modal, Spinner, Toast, WorkspacePageNavigation
+- **Marketing Components**: Header, Footer, HeroSection, FeatureSection, FlowSection, ModeSection
 - Props, features, and usage examples for each component
 
 **Read this if you want to:**
 - Understand what each component does
 - Learn about component props and features
 - Find usage examples
+- Understand naming conventions (*Client, *Screen, *Page)
 - Contribute to or modify components
 
 ---
@@ -46,20 +55,21 @@ Detailed reference for all React components including:
 **Online Judge — Pyodide Integration**
 
 In-depth coverage of the code execution engine:
-- Pyodide loading and initialization
+- Pyodide loading and initialization via Next.js Script component
 - Python execution harness design
-- Test case execution flow
-- Output normalization
-- Verdict types (AC/WA/TLE/RE)
-- Scoring algorithm
-- Security considerations
+- Test case execution flow with timeout protection
+- Output normalization for whitespace-insensitive comparison
+- Verdict types (AC/WA/TLE/RE) and scoring algorithm
+- React integration with usePyodide hook
+- Security considerations and limitations
+- Future remote judge migration path
 
 **Read this if you want to:**
-- Understand how code execution works
-- Learn about the Pyodide integration
+- Understand how code execution works in the browser
+- Learn about the Pyodide WebAssembly integration
 - Modify timeout or execution behavior
-- Understand security implications
-- Migrate to a remote judge system
+- Understand security implications and limitations
+- Plan migration to a remote judge system
 
 ---
 
@@ -120,6 +130,47 @@ Original project requirements and migration goals from legacy to modern stack.
 - See the original requirements
 - Learn about migration objectives
 
+### [FOLDER-STRUCTURE.md](FOLDER-STRUCTURE.md)
+**Detailed Folder Organization**
+
+Complete breakdown of the project structure:
+- Full directory tree with descriptions
+- Route group organization (marketing vs workspace)
+- Component organization by feature
+- State management file structure
+- Data layer organization (repositories, stores, session logic)
+- Naming conventions and file organization principles
+
+**Read this if you want to:**
+- Navigate the codebase efficiently
+- Understand where to place new files
+- Learn about route group organization
+- Understand naming conventions
+- Find specific files or features
+
+---
+
+### [CODING-STANDARDS.md](CODING-STANDARDS.md)
+**Coding Conventions & Best Practices**
+
+Comprehensive coding standards guide:
+- File naming conventions (components, utilities, stores, hooks)
+- Component structure patterns (Client, Screen, Page)
+- Layout patterns (workspace, marketing, IDE)
+- Design system constants (spacing, typography, colors, shadows)
+- State management patterns (Zustand stores, providers, hooks)
+- Repository pattern implementation
+- Import order and code style guidelines
+- Testing guidelines and error handling
+- Accessibility and performance best practices
+
+**Read this if you want to:**
+- Follow consistent coding patterns
+- Understand component naming conventions
+- Learn layout and design system standards
+- Implement new features following established patterns
+- Write maintainable and consistent code
+
 ---
 
 ## 📖 Additional Resources
@@ -141,6 +192,8 @@ docs/
 │
 ├── ARCHITECTURE.md                                ← System design & architecture
 ├── COMPONENTS.md                                  ← Component catalog
+├── FOLDER-STRUCTURE.md                            ← Detailed folder organization
+├── CODING-STANDARDS.md                            ← Coding conventions & patterns
 ├── JUDGE.md                                       ← Pyodide execution engine
 ├── SCALING.md                                     ← Full-stack migration blueprint
 ├── PROMPT.md                                      ← Migration objectives
@@ -201,9 +254,11 @@ When contributing to documentation:
 
 | Document | Last Updated | Maintainer |
 |----------|--------------|------------|
-| ARCHITECTURE.md | 2025-03 | Core Team |
-| COMPONENTS.md | 2025-03 | Core Team |
-| JUDGE.md | 2025-03 | Core Team |
+| ARCHITECTURE.md | 2026-03 | Core Team |
+| COMPONENTS.md | 2026-03 | Core Team |
+| FOLDER-STRUCTURE.md | 2026-03 | Core Team |
+| CODING-STANDARDS.md | 2026-03 | Core Team |
+| JUDGE.md | 2026-03 | Core Team |
 | SCALING.md | 2026-03 | Core Team |
 | PROMPT.md | 2025-03 | Core Team |
 | guides/*.md | 2026-03 | Core Team |
