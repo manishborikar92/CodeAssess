@@ -204,7 +204,7 @@ Manages all exam state and lifecycle.
 | `onTick` | Setter for per-second timer callback |
 | `onTimeUp` | Setter for time-expiry callback |
 
-**Persistence:** Session state is serialised to `localStorage` under the key `tcs_nqt_session` every second, so refreshing the page doesn't lose progress.
+**Persistence:** Session state is serialized to `localStorage` under the key `exam_session` every second, so refreshing the page doesn't lose progress.
 
 ### `assets/css/styles.css`
 
@@ -258,7 +258,7 @@ Standard library modules that work out of the box:
 ## 🔄 Test Case Design
 
 Each question has:
-- **2 visible sample cases** — exactly matching the TCS NQT paper
+- **2 visible sample cases** — provided for testing and understanding
 - **4–6 hidden cases** — including:
   - Edge cases (minimum N, all-same elements, empty/single values)
   - Large-range boundary values
@@ -344,9 +344,9 @@ async function runTestCase(code, input, expectedOutput, timeoutMs = 8000) {
 
 | Score Range | Interpretation |
 |-------------|---------------|
-| 3300–3700 | Exceptional — TCS Ninja / Digital / Prime eligible |
-| 2600–3299 | Strong — High chance of clearing NQT cutoff |
-| 1800–2599 | Moderate — Revisit greedy, DP, and string topics |
+| 3300–3700 | Exceptional — Strong problem-solving skills across all topics |
+| 2600–3299 | Strong — Solid understanding with room for optimization |
+| 1800–2599 | Moderate — Revisit greedy algorithms, DP, and string manipulation |
 | Below 1800 | Needs improvement — Focus on Section A fundamentals |
 
 ---
@@ -377,4 +377,4 @@ For comprehensive documentation, see:
 
 ---
 
-*Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.*
+*A modern platform for coding assessment practice and evaluation.*

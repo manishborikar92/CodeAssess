@@ -894,8 +894,8 @@
         "explanation": "Word order is fully reversed."
       },
       {
-        "input": "tcs nqt exam",
-        "output": "exam nqt tcs"
+        "input": "coding assessment platform",
+        "output": "platform assessment coding"
       }
     ],
     "hiddenCases": [
@@ -2240,8 +2240,8 @@
         "output": "NOPQRSTUVWXYZABCDEFGHIJKLM"
       },
       {
-        "input": "TCS\n5",
-        "output": "YHX"
+        "input": "ABC\n5",
+        "output": "FGH"
       },
       {
         "input": "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n1",

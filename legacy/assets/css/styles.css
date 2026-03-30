@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   TCS NQT Exam Platform — Stylesheet
+   CodeAssess Platform — Stylesheet
    Aesthetic: Industrial precision meets digital clarity
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -173,7 +173,7 @@ body {
   white-space: nowrap;
 }
 
-.header-brand .tcs-tag {
+.header-brand .brand-tag {
   background: var(--accent-blue); color: #fff;
   border-radius: var(--radius-sm); padding: 2px 8px;
   font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;

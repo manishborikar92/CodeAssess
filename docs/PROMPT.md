@@ -2,7 +2,7 @@
 
 ## Current Context
 The workspace currently consists of two parts:
-1. **Legacy Frontend (Root Directory):** A fully functional, plain HTML/CSS/JS frontend application (`index.html`, `assets/`) that simulates a TCS NQT exam. It features:
+1. **Legacy Frontend (Root Directory):** A fully functional, plain HTML/CSS/JS frontend application (`index.html`, `assets/`) that simulates a coding assessment exam. It features:
    - 37 hardcoded coding challenges (`assets/js/questions.js`).
    - An in-browser code execution engine powered by Pyodide (WebAssembly Python) (`assets/js/judge.js`).
    - State management, countdown timer, scoring, and session handling utilizing `localStorage` (`assets/js/examEngine.js`).
@@ -10,7 +10,7 @@ The workspace currently consists of two parts:
 2. **New Next.js App (`web/` Directory):** A freshly initialized Next.js project using the **App Router**, **Tailwind CSS**, and **JavaScript**, intended to be the future home of the platform.
 
 ## Objective
-The primary objective is to **migrate** the legacy HTML/JS implementation into the new Next.js project inside the `web/` directory, while simultaneously **expanding** its scope. The platform must transition from a hardcoded TCS-specific simulation into a **full-fledged, generic, and scalable online examination platform** (similar to HackerRank or LeetCode). 
+The primary objective is to **migrate** the legacy HTML/JS implementation into the new Next.js project inside the `web/` directory, while simultaneously **expanding** its scope. The platform must transition from a hardcoded exam-specific simulation into a **full-fledged, generic, and scalable online examination platform** (similar to HackerRank or LeetCode). 
 
 It should serve as a professional-grade technical assessment system where candidates can:
 * Select and navigate through various programming challenges.
@@ -30,7 +30,7 @@ It should serve as a professional-grade technical assessment system where candid
 
 ### 2. Core Engine Adaptation
 * **Pyodide Judge:** Adapt the existing `judge.js` (Pyodide Wasm Python runtime) to work efficiently within the Next.js/React ecosystem (handling asynchronous WASM loading and preventing UI blocking).
-* **Data Structure:** Extricate the hardcoded TCS-specific questions from `questions.js` and design a generic JSON/data structure that can be easily expanded or fetched from an API in the future.
+* **Data Structure:** Extricate the hardcoded exam-specific questions from `questions.js` and design a generic JSON/data structure that can be easily expanded or fetched from an API in the future.
 
 ### 3. Future-Proofing for Full-Stack Expansion
 Initially, the system will remain frontend-only (relying on Pyodide for the judge and local storage for sessions), but the architecture *must* support seamless migration to a backend infrastructure:
