@@ -6,7 +6,7 @@ const ExamEngine = (() => {
 
   // ── Constants ──────────────────────────────────────────────────────────────
   const TOTAL_SECONDS = 90 * 60;   // 90 minutes in seconds
-  const STORAGE_KEY   = 'tcs_nqt_session';
+  const STORAGE_KEY   = 'exam_session';
 
   // ── Session state ──────────────────────────────────────────────────────────
   let state = {

@@ -1,5 +1,5 @@
-// TCS NQT 2025-26 — Complete Question Bank
-// 37 Questions | Section A (Q1–Q25) + Section B (Q26–Q37)
+// Complete Question Bank — 37 Programming Questions
+// Section A (Q1–Q25) + Section B (Q26–Q37)
 
 const QUESTIONS = [
   // ─────────────────────────── SECTION A ───────────────────────────
@@ -426,7 +426,7 @@ solve()`
     outputFormat: "Print the sentence with word order reversed on a single line.",
     sampleCases: [
       { input: "hello world how are you", output: "you are how world hello", explanation: "Word order is fully reversed." },
-      { input: "tcs nqt exam", output: "exam nqt tcs" }
+      { input: "coding assessment platform", output: "platform assessment coding" }
     ],
     hiddenCases: [
       { input: "single", output: "single" },
@@ -1061,7 +1061,7 @@ solve()`
       { input: "A\n1", output: "B" },
       { input: "Z\n1", output: "A" },
       { input: "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n13", output: "NOPQRSTUVWXYZABCDEFGHIJKLM" },
-      { input: "TCS\n5", output: "YHX" }
+      { input: "ABC\n5", output: "FGH" }
     ],
     hint: "For each character c: encrypted_char = chr((ord(c) - ord('A') + K) % 26 + ord('A')). The modulo 26 handles the wrap-around from Z back to A automatically.",
     starterCode: `# Encrypt string using Caesar Cipher with shift K

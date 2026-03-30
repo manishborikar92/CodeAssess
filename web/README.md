@@ -1,8 +1,8 @@
 # CodeAssess — Modern Next.js Implementation
 
-> A professional-grade, scalable online coding assessment platform built with **Next.js 16**, **React 19**, **Tailwind CSS v4**, and an in-browser **Pyodide** (WebAssembly Python) judge engine.
+> A professional-grade, scalable online coding assessment platform built with **Next.js 16**, **React 19**, **Zustand**, **Tailwind CSS v4**, and an in-browser **Pyodide** (WebAssembly Python) judge engine.
 
-This is the modern implementation of CodeAssess. For the original vanilla JavaScript version, see the [`/legacy`](../legacy) directory.
+This is the modern implementation of CodeAssess with dual modes (practice and exam), comprehensive session management, and exam integrity guards. The platform is designed for coding assessment practice and evaluation. For the original vanilla JavaScript version, see the [`/legacy`](../legacy) directory.
 
 ## 🚀 Quick Start
 
@@ -31,26 +31,30 @@ npm run build
 npm start
 ```
 
-### Linting
+### Linting & Testing
 
 ```bash
+# Run ESLint
 npm run lint
+
+# Run tests
+npm run test
 ```
 
 ## 🎨 Tech Stack
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| **Frontend Framework** | Next.js | 16.2.1 | App Router, SSR, API routes |
+| **Frontend Framework** | Next.js | 16.2.1 | App Router, SSR, route groups |
 | **UI Library** | React | 19.2.4 | Component-based UI |
 | **Styling** | Tailwind CSS | 4.0 | Utility-first CSS framework |
 | **Code Editor** | @uiw/react-codemirror | 4.25.9 | Python syntax highlighting |
 | **Resizing Engine** | react-resizable-panels | 4.7.6 | IDE-style adjustable layout |
 | **Icons** | lucide-react | 1.7.0 | Modern UI SVG icons |
 | **Python Runtime** | Pyodide | 0.27.3 | WebAssembly CPython 3.12 |
-| **State Management** | React Context + useReducer | — | Exam state, drafts, submissions |
+| **State Management** | Zustand | 5.0.12 | Vanilla stores + React context |
+| **Persistence** | IndexedDB | — | Session recovery & workspace storage |
 | **Fonts** | Google Fonts | — | Sora, Space Grotesk, JetBrains Mono |
-| **Persistence** | localStorage | — | Session recovery |
 
 ## 🏗️ Architecture
 
@@ -61,83 +65,153 @@ web/
 ├── package.json                   # Dependencies
 ├── next.config.mjs                # Next.js configuration
 ├── postcss.config.mjs             # PostCSS configuration
-├── jsconfig.json                  # JavaScript path aliases
+├── jsconfig.json                  # JavaScript path aliases (@/* → src/*)
 ├── eslint.config.mjs              # ESLint configuration
 │
 └── src/
-    ├── app/
-    │   ├── layout.js              # Root layout (fonts, Pyodide script)
-    │   ├── page.js                # Landing page (SSR)
-    │   ├── globals.css            # Global Tailwind styles
-    │   └── exam/
-    │       └── page.js            # Exam page (CSR)
+    ├── app/                       # Next.js app router
+    │   ├── (marketing)/           # Public pages (SSG)
+    │   │   ├── page.js            # Landing page
+    │   │   ├── about/             # About page
+    │   │   └── help/              # Help/FAQ page
+    │   │
+    │   ├── (workspace)/           # Protected workspace routes
+    │   │   ├── practice/          # Practice mode
+    │   │   │   ├── page.js        # Question browser
+    │   │   │   ├── [id]/          # Practice IDE
+    │   │   │   └── progress/      # Progress summary
+    │   │   │
+    │   │   ├── exam/              # Exam mode
+    │   │   │   ├── page.js        # Exam lobby
+    │   │   │   └── [sessionId]/   # Active exam session
+    │   │   │
+    │   │   ├── join/              # Invitation token flow
+    │   │   │   ├── page.js        # Token input
+    │   │   │   └── [token]/       # Token resolver
+    │   │   │
+    │   │   └── results/           # Results tracking
+    │   │       ├── page.js        # Results list
+    │   │       └── [sessionId]/   # Individual result
+    │   │
+    │   ├── layout.js              # Root layout (fonts, metadata)
+    │   ├── loading.js             # Global loading state
+    │   ├── not-found.js           # 404 page
+    │   ├── error.js               # Error boundary
+    │   └── globals.css            # Global Tailwind styles
     │
     ├── components/
-    │   ├── exam/
-    │   │   ├── ExamShell.jsx      # Main orchestrator
-    │   │   ├── Header.jsx         # Top bar with timer
-    │   │   ├── Sidebar.jsx        # Question list
-    │   │   ├── ProblemPanel.jsx   # Problem description
-    │   │   ├── CodePanel.jsx      # Code editor
-    │   │   ├── OutputPanel.jsx    # Results & console
-    │   │   └── ResultsScreen.jsx  # Final results
-    │   │
-    │   └── ui/
-    │       ├── Modal.jsx          # Confirmation dialog
-    │       ├── Toast.jsx          # Notifications
-    │       └── Spinner.jsx        # Loading indicator
+    │   ├── ui/                    # Reusable primitives
+    │   ├── marketing/             # Landing page sections
+    │   ├── workspace/             # Shared IDE components
+    │   ├── practice/              # Practice-specific components
+    │   ├── exam/                  # Exam-specific components
+    │   └── results/               # Results display components
     │
-    ├── context/
-    │   └── ExamContext.js         # State management (useReducer + Context)
+    ├── stores/                    # Zustand vanilla stores
+    │   ├── examStore.js           # Exam session state
+    │   ├── practiceStore.js       # Practice workspace state
+    │   └── internal/              # Store utilities
     │
-    ├── hooks/
+    ├── providers/                 # React context providers
+    │   ├── ExamStoreProvider.jsx  # Exam store context
+    │   └── PracticeStoreProvider.jsx
+    │
+    ├── hooks/                     # Custom React hooks
     │   ├── usePyodide.js          # Pyodide runtime management
-    │   └── useTimer.js            # Countdown timer
+    │   ├── useTimer.js            # Countdown timer
+    │   └── useExamIntegrityGuards.js
     │
-    ├── lib/
-    │   ├── api.js                 # Data access abstraction layer
-    │   └── judge.js               # Pyodide execution wrapper
+    ├── lib/                       # Business logic & utilities
+    │   ├── repositories/          # Data access layer
+    │   ├── session/               # Session state logic
+    │   ├── assessment/            # Question selection logic
+    │   ├── execution/             # Code execution (Pyodide)
+    │   ├── storage/               # IndexedDB abstraction
+    │   ├── workspace/             # Workspace utilities
+    │   └── use-cases/             # Business workflows
     │
-    └── data/
-        └── questions.json         # 37 questions with test cases
+    └── data/                      # Static data
+        ├── questions.json         # 37 questions with test cases
+        └── exam/blueprints.js     # Exam configurations
 ```
 
 ### Component Hierarchy
 
 ```
-RootLayout
-├── LandingPage (Server Component)
-│   ├── Hero section
-│   ├── Stats grid
-│   └── Feature cards
+RootLayout (fonts, metadata)
 │
-└── ExamPage (Client Component)
-    └── ExamProvider (Context)
-        └── ExamShell (orchestrator)
-            ├── Header (timer, score, question counter)
-            ├── Sidebar (question list with status dots)
-            ├── ProblemPanel (problem description, test cases)
-            ├── CodePanel (React CodeMirror editor)
-            ├── OutputPanel (test results, console, custom input)
-            ├── ResultsScreen (final score breakdown)
-            ├── Modal (End Exam, Reset Code)
-            └── Toast (notifications)
+├── MarketingLayout (Header + Footer)
+│   ├── HomePage (Hero, Modes, Features, Flow)
+│   ├── AboutPage
+│   └── HelpPage
+│
+└── WorkspaceLayout (Pyodide script)
+    ├── PracticeLayout (PracticeStoreProvider)
+    │   ├── PracticeQuestionBrowser
+    │   ├── PracticeWorkspaceClient (IDE)
+    │   └── PracticeProgressPage
+    │
+    ├── ExamLayout (ExamStoreProvider)
+    │   ├── ExamStartPageClient (lobby)
+    │   ├── ExamSessionClient (IDE)
+    │   └── ExamResultsScreen
+    │
+    ├── JoinLayout
+    │   ├── JoinTokenForm
+    │   └── JoinTokenResolver
+    │
+    └── ResultsLayout
+        ├── ResultsListClient
+        └── SessionResultClient
+```
+
+### Shared IDE Components (WorkspaceChrome)
+
+Both practice and exam modes use the same IDE layout:
+
+```
+WorkspaceChrome
+├── WorkspaceHeader (navigation, timer, score, actions)
+├── QuestionSidebar (animated overlay drawer)
+├── ProblemPanel (problem description, test cases)
+├── CodePanel (React CodeMirror editor)
+└── OutputPanel (test results, console, custom input)
 ```
 
 ## ✨ Key Features
 
-- **37 Curated Questions** — 25 confirmed from previous TCS NQT papers + 12 high-probability predictions
-- **In-Browser Python Execution** — Pyodide WebAssembly runtime (CPython 3.12)
+### Practice Mode
+- **Unlimited Time** — Practice at your own pace without time pressure
+- **All 37 Questions** — Access the complete question catalog
+- **Progress Tracking** — Track solved questions, scores, and drafts
+- **Auto-Save** — Drafts and submissions saved automatically to IndexedDB
+- **Question Navigation** — Previous, next, and random shuffle buttons
+- **Progress Dashboard** — View detailed progress summary and question breakdown
+
+### Exam Mode
+- **Timed Sessions** — 90-minute countdown timer with warning states
+- **Random Question Selection** — 2 questions randomly selected at start
+- **Integrity Guards** — Fullscreen enforcement, tab-switch detection, clipboard blocking
+- **Violation Tracking** — Records integrity violations with auto-termination after 3 warnings
+- **Session Recovery** — Resume active sessions after page refresh
+- **Immutable Results** — Completed sessions become read-only snapshots
+
+### Code Execution
+- **In-Browser Python** — Pyodide WebAssembly runtime (CPython 3.12)
 - **Auto-Graded Test Cases** — Instant feedback with AC/WA/TLE/RE verdicts
-- **Session Persistence** — Auto-save with localStorage recovery on page refresh
-- **Real-Time Scoring** — Best submission tracking per question
-- **90-Minute Timer** — Countdown with warning states (< 15min, < 5min)
-- **Custom Input Testing** — Debug with your own test cases
+- **Run Samples** — Test with visible sample cases
+- **Submit All** — Run all test cases (visible + hidden) for scoring
+- **Custom Input** — Debug with your own test cases
+- **Timeout Protection** — 8-second per-case timeout prevents infinite loops
+
+### User Experience
+- **Professional UI** — Dark industrial theme with precision aesthetics
+- **IDE-Style Layout** — Resizable panels (problem, code, output)
+- **Animated Sidebar** — Smooth slide-in drawer with question list
 - **Keyboard Shortcuts** — `Ctrl+Enter` (Run), `Ctrl+Shift+Enter` (Submit)
-- **Professional UI** — Dark theme with fully adjustable, resizable split panels (IDE-style)
-- **Resizable Panels** — Drag-to-resize horizontal and vertical dividers with smooth transitions
-- **Animated Sidebar Drawer** — Slides in from left with backdrop, 420px width, smooth animations
-- **Question Navigation** — Toggle sidebar overlay with header button or click backdrop to close
+- **Toast Notifications** — Real-time feedback for actions
+- **Loading States** — Pyodide initialization overlay
+- **Error Handling** — Global error boundary with retry functionality
 
 ## 📚 Documentation
 
@@ -170,10 +244,12 @@ This platform was migrated from a legacy single-page HTML/CSS/JS application. Ke
 | **Framework** | Vanilla HTML/JS | Next.js 16 + React 19 |
 | **Styling** | Vanilla CSS | Tailwind CSS 4 |
 | **Code Editor** | CodeMirror 5 (CDN) | React CodeMirror 6 (npm) |
-| **State Management** | IIFE with closures | useReducer + Context API |
+| **State Management** | IIFE with closures | Zustand + React Context |
 | **Components** | Inline `<script>` | Modular React components |
 | **Dialogs** | `confirm()` / `alert()` | Custom styled Modal components |
-| **Data Layer** | Hardcoded in JS | Externalized JSON with API abstraction |
+| **Data Layer** | Hardcoded in JS | Repository pattern with IndexedDB |
+| **Persistence** | localStorage | IndexedDB with structured schema |
+| **Modes** | Exam only | Practice + Exam + Results |
 | **Type Safety** | None | TypeScript-ready structure |
 
 See the [`/legacy`](../legacy) directory for the original implementation.
@@ -213,22 +289,40 @@ Edit `src/data/questions.json`:
 
 ### Change Exam Duration
 
-Edit `src/context/ExamContext.js`:
+Edit `src/lib/session/examSession.mjs`:
 
 ```javascript
-const initialState = {
-  // ...
-  totalDuration: 90 * 60, // Change 90 to desired minutes
-};
+export const EXAM_DURATION_SECONDS = 90 * 60; // Change 90 to desired minutes
 ```
 
 ### Adjust Per-Case Timeout
 
-Edit `src/hooks/usePyodide.js`:
+Edit `src/lib/execution/pyodideJudge.js`:
 
 ```javascript
-const runTestCase = async (code, input, expected, timeout = 8000) => {
-  // Change 8000 to desired milliseconds
+export async function runTestCase(
+  code,
+  input,
+  expectedOutput,
+  timeoutMs = 8000 // Change 8000 to desired milliseconds
+) {
+  // ...
+}
+```
+
+### Modify Integrity Policy
+
+Edit `src/data/exam/blueprints.js`:
+
+```javascript
+integrityPolicy: {
+  requireFullscreen: true,      // Enforce fullscreen mode
+  detectTabSwitch: true,        // Detect tab switches
+  blockClipboard: true,         // Block copy/paste
+  blockContextMenu: true,       // Block right-click
+  warnBeforeUnload: true,       // Warn before leaving page
+  maxViolations: 3,             // Max violations before termination
+}
 ```
 
 ---
@@ -274,4 +368,4 @@ Contributions are welcome! Please follow these guidelines:
 
 ---
 
-*Built for TCS NQT 2025–26 preparation. All questions sourced from confirmed previous-year papers and high-probability predictions.*
+*A modern platform for coding assessment practice and evaluation with comprehensive question coverage.*
